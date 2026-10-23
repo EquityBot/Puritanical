@@ -1,5 +1,5 @@
 {
-  "name": "ponytail",
-  "description": "Lazy senior dev mode. Forces the simplest solution that works: YAGNI, stdlib first, one line over fifty.",
+  "name": "puritanical",
+  "description": "Strict simplicity for coding agents. Correctness, safety and verification come first; then YAGNI, reuse, the standard library and the smallest change that meets every requirement.",
   "skills": "."
 }

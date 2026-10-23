@@ -8,16 +8,16 @@ I add new skills myself, so please open an issue with the idea instead of a PR.
 
 ## Changes to the ruleset need a benchmark
 
-The ruleset is what every ponytail user loads in every session. That means `skills/`, `AGENTS.md`,
+The ruleset is what every puritanical user loads in every session. That means `skills/`, `AGENTS.md`,
 the rule copies (`.cursor/`, `.windsurf/`, `.clinerules/`, `.agents/`, `.qoder/`, `.kiro/`,
 `.github/copilot-instructions.md`), `.openclaw/skills/`, and anything else that changes what the
 agent is told.
 
 I only merge a change there if the PR shows a benchmark with three arms, same task, same model:
 
-1. `baseline` (no ponytail)
-2. current ponytail (`main`)
-3. ponytail with your change
+1. `baseline` (no puritanical)
+2. current puritanical (`main`)
+3. puritanical with your change
 
 The PR should show:
 
@@ -29,20 +29,20 @@ The PR should show:
 Without that, the PR gets closed, however good the idea is.
 
 [`benchmarks/agentic/run.py`](../benchmarks/agentic/run.py) does the work (setup in
-[its README](../benchmarks/agentic/README.md#reproduce)). The `ponytail` arm loads the plugin from
-`PONYTAIL_PLUGIN_DIR`, so run it once against a checkout of `main` and once against your branch:
+[its README](../benchmarks/agentic/README.md#reproduce)). The `puritanical` arm loads the plugin from
+`PURITANICAL_PLUGIN_DIR`, so run it once against a checkout of `main` and once against your branch:
 
 ```bash
 cd benchmarks/agentic
 python run.py --selftest
-PONYTAIL_PLUGIN_DIR=/abs/path/to/ponytail-main python run.py --task <task> --arms baseline,ponytail --models opus --runs 6
-PONYTAIL_PLUGIN_DIR=/abs/path/to/your-branch python run.py --task <task> --arms ponytail --models opus --runs 6
+PURITANICAL_PLUGIN_DIR=/abs/path/to/puritanical-main python run.py --task <task> --arms baseline,puritanical --models opus --runs 6
+PURITANICAL_PLUGIN_DIR=/abs/path/to/your-branch python run.py --task <task> --arms puritanical --models opus --runs 6
 ```
 
 If your task isn't in `tasks.py` yet, add it with a `good` and a `bad` reference, so `--selftest`
 proves the scorer catches the difference.
 
-Rule text lives in `AGENTS.md` and `skills/ponytail/SKILL.md`. Keep the copies in sync
+Rule text lives in `AGENTS.md` and `skills/puritanical/SKILL.md`. Keep the copies in sync
 (`node scripts/check-rule-copies.js`) and regenerate `.openclaw/` with
 `node scripts/build-openclaw-skills.js`.
 

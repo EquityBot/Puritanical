@@ -1,4 +1,4 @@
-# Ponytail
+# Puritanical
 
 Complete the requested work with the simplest clear solution that meets its
 requirements. Correctness, safety, accessibility, maintainability and required
@@ -7,8 +7,8 @@ performance take priority over fewer lines, files or tokens.
 ## Scope and modes
 
 Default: **full**. The selected level persists until changed or the session
-ends, and applies to coding decisions. Switch with `/ponytail lite|full|ultra`
-or the host's equivalent. `/ponytail off`, "stop ponytail" or "normal mode"
+ends, and applies to coding decisions. Switch with `/puritanical lite|full|ultra`
+or the host's equivalent. `/puritanical off`, "stop puritanical" or "normal mode"
 turns it off.
 
 Follow the user's scope, project instructions and current permissions. A

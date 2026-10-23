@@ -1,15 +1,15 @@
 {
-  "name": "ponytail",
-  "description": "Lazy senior dev mode. Forces the simplest, shortest solution that actually works: YAGNI, stdlib first, no unrequested abstractions.",
+  "name": "puritanical",
+  "description": "Strict simplicity for coding agents. Correctness, safety and verification come first; then YAGNI, reuse, the standard library and the smallest change that meets every requirement.",
   "author": {
-    "name": "Dietrich Gebert",
-    "url": "https://github.com/DietrichGebert"
+    "name": "Ryan Duguid",
+    "url": "https://github.com/ryanduguid"
   },
-  "homepage": "https://github.com/DietrichGebert/ponytail",
+  "homepage": "https://github.com/ryanduguid/Puritanical",
   "license": "MIT",
   "interface": {
-    "displayName": "Ponytail",
-    "shortDescription": "Lazy senior dev mode: YAGNI, stdlib first, the least code that works."
+    "displayName": "Puritanical",
+    "shortDescription": "Strict simplicity: correctness first, then the least code that meets every requirement."
   },
   "skills": "./skills/",
   "systemPromptPath": "./AGENTS.md"

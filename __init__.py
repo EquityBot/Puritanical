@@ -1,4 +1,4 @@
-"""Hermes plugin for Ponytail."""
+"""Hermes plugin for Puritanical."""
 
 from __future__ import annotations
 
@@ -11,15 +11,15 @@ from typing import Any, Callable
 DEFAULT_MODE = "full"
 RUNTIME_MODES = {"off", "lite", "full", "ultra"}
 SKILL_COMMANDS = {
-    "ponytail-review": "Review the current diff or provided target: bugs, security, load, missing tests, speed, and what to cut.",
-    "ponytail-audit": "Audit the whole repo: bugs, security, load, missing tests, speed, and what to cut.",
-    "ponytail-debt": "List every deliberate `shortcut:` comment and its upgrade path.",
-    "ponytail-help": "Show the Ponytail command reference.",
+    "puritanical-review": "Review the current diff or provided target: bugs, security, load, missing tests, speed, and what to cut.",
+    "puritanical-audit": "Audit the whole repo: bugs, security, load, missing tests, speed, and what to cut.",
+    "puritanical-debt": "List every deliberate `shortcut:` comment and its upgrade path.",
+    "puritanical-help": "Show the Puritanical command reference.",
 }
 
 ROOT = Path(__file__).resolve().parent
 SKILLS_DIR = ROOT / "skills"
-PONYTAIL_SKILL = SKILLS_DIR / "ponytail" / "SKILL.md"
+PURITANICAL_SKILL = SKILLS_DIR / "puritanical" / "SKILL.md"
 
 _current_mode = None
 
@@ -33,14 +33,14 @@ def _normalize_runtime_mode(mode: str | None) -> str | None:
 
 def _config_dir() -> Path:
     if os.environ.get("XDG_CONFIG_HOME"):
-        return Path(os.environ["XDG_CONFIG_HOME"]) / "ponytail"
+        return Path(os.environ["XDG_CONFIG_HOME"]) / "puritanical"
     if os.name == "nt":
-        return Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming")) / "ponytail"
-    return Path.home() / ".config" / "ponytail"
+        return Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming")) / "puritanical"
+    return Path.home() / ".config" / "puritanical"
 
 
 def _default_mode() -> str:
-    env_mode = _normalize_runtime_mode(os.environ.get("PONYTAIL_DEFAULT_MODE"))
+    env_mode = _normalize_runtime_mode(os.environ.get("PURITANICAL_DEFAULT_MODE"))
     if env_mode:
         return env_mode
     try:
@@ -74,7 +74,7 @@ def _filter_skill_body_for_mode(body: str, mode: str) -> str:
         # this, an ordinary rule bullet that happens to start with a mode word
         # (e.g. "- Full: ...") is silently dropped in every other mode — it looks
         # like a worked example but is really prose meant to survive verbatim.
-        # Mirrors the fix in hooks/ponytail-instructions.js (#571).
+        # Mirrors the fix in hooks/puritanical-instructions.js (#571).
         example_label = re.match(r'^-\s*([^:]+):\s*"', line)
         if example_label:
             label_mode = _normalize_runtime_mode(example_label.group(1))
@@ -85,20 +85,20 @@ def _filter_skill_body_for_mode(body: str, mode: str) -> str:
     return "\n".join(lines)
 
 
-_FALLBACK_SKILL_BODY = '# Ponytail\n\nComplete the requested work with the simplest clear solution that meets its\nrequirements. Correctness, safety, accessibility, maintainability and required\nperformance take priority over fewer lines, files or tokens.\n\n## Scope and modes\n\nDefault: **full**. The selected level persists until changed or the session\nends, and applies to coding decisions. Switch with `/ponytail lite|full|ultra`\nor the host\'s equivalent. `/ponytail off`, "stop ponytail" or "normal mode"\nturns it off.\n\nFollow the user\'s scope, project instructions and current permissions. A\nreview, diagnosis or plan stays read-only unless changes are requested.\nComplete explicit requirements without substituting a reduced feature set.\nResolve routine authorised choices from context; ask when a missing decision\nmaterially affects scope, correctness or authority. Use subagents only within explicit user authorisation, including standing permission in the host instructions; retain its model, task and read-only limits.\n\n## Understand the change\n\nRead the relevant instructions, implementation and contracts before choosing\na solution. Search for the affected symbols and inspect their callers. Start\nlarge files with structure and targeted sections; expand the reading whenever\na dependency, invariant or uncertainty requires it. Include relevant files\nthat will remain unchanged. Stop expanding once the affected behaviour and\nconstraints are accounted for.\n\nFor a bug, establish expected and actual behaviour with an existing failing\ncheck or a focused reproduction when possible. Find the first owner that\nviolates the contract and fix the cause there. Check affected callers; avoid\na guard that hides an upstream error. State missing evidence when the failure\ncannot be reproduced.\n\n## The ladder\n\nChoose the first suitable option that meets the complete requirements:\n\n1. **Required now?** Omit speculative additions and future scaffolding.\n2. **Already in this codebase?** Reuse suitable code, types and patterns.\n3. **Standard library?** Use it when its semantics and resource costs fit.\n4. **Native platform feature?** Prefer it when behaviour and accessibility fit.\n5. **Installed dependency?** Reuse it; add a dependency only for a concrete benefit\n   that justifies its maintenance cost.\n6. **Direct expression?** Use a clear one-liner when it remains easy to inspect.\n7. **New code needed?** Write the smallest cohesive implementation.\n\n## Design judgement\n\n- Keep necessary policy behind a clear boundary. One implementation or one\n  export alone is not evidence of bloat. Remove a wrapper when it adds no useful\n  contract; keep a helper when it improves clarity or removes real duplication.\n- Prefer fewer concepts and fewer places a maintainer must inspect. Use diff\n  size as a tie-breaker after correctness and clarity. Preserve unrelated work.\n- Select algorithms by their semantics, failure modes and resource costs.\n  A shorter implementation can still use too much time or memory. Reuse the\n  project\'s optimised stack when a simpler-looking replacement would regress it.\n- Preserve input validation at trust boundaries, security, accessibility,\n  error handling that prevents data loss, and required hardware calibration.\n- Mark deliberate simplifications that cut a real corner, such as a global\n  lock or naive heuristic, with a `shortcut:` comment naming the ceiling and\n  upgrade path. Ordinary straightforward code needs no justification comment.\n\n## Verification and reporting\n\nUse the project\'s existing test tools and run its required checks. Add focused\nregression coverage for changed failure modes when existing coverage is\ninsufficient. A one-line money calculation or security check can need several\ncases; size alone does not determine risk. Existing sufficient coverage needs\nno duplicate self-check. There is no one-test ceiling or ban on existing\nframeworks and fixtures.\n\nReuse valid results. Repeat or broaden checks when a change, failure,\nintegration risk or unresolved concern justifies it. A timeout is inconclusive:\ninvestigate its cause and adjust the check when supported by evidence. Report\nany required check that could not run.\n\nLead with the requested result. Explain what changed, the verification and\nmaterial limitations in the user\'s requested format. Give requested reports\nand walkthroughs the detail they need. Inspect generated artefacts using the\nrelevant workflow before claiming they are usable.\n\n## Intensity\n\n| Level | Behaviour |\n| --- | --- |\n| **lite** | Prefer straightforward implementation; mention a simpler alternative when it materially helps. |\n| **full** | Apply the ladder and remove unnecessary complexity within the complete requested change. Default. |\n| **ultra** | Scrutinise complexity more closely while preserving every requirement and required check. |\n'
+_FALLBACK_SKILL_BODY = '# Puritanical\n\nComplete the requested work with the simplest clear solution that meets its\nrequirements. Correctness, safety, accessibility, maintainability and required\nperformance take priority over fewer lines, files or tokens.\n\n## Scope and modes\n\nDefault: **full**. The selected level persists until changed or the session\nends, and applies to coding decisions. Switch with `/puritanical lite|full|ultra`\nor the host\'s equivalent. `/puritanical off`, "stop puritanical" or "normal mode"\nturns it off.\n\nFollow the user\'s scope, project instructions and current permissions. A\nreview, diagnosis or plan stays read-only unless changes are requested.\nComplete explicit requirements without substituting a reduced feature set.\nResolve routine authorised choices from context; ask when a missing decision\nmaterially affects scope, correctness or authority. Use subagents only within explicit user authorisation, including standing permission in the host instructions; retain its model, task and read-only limits.\n\n## Understand the change\n\nRead the relevant instructions, implementation and contracts before choosing\na solution. Search for the affected symbols and inspect their callers. Start\nlarge files with structure and targeted sections; expand the reading whenever\na dependency, invariant or uncertainty requires it. Include relevant files\nthat will remain unchanged. Stop expanding once the affected behaviour and\nconstraints are accounted for.\n\nFor a bug, establish expected and actual behaviour with an existing failing\ncheck or a focused reproduction when possible. Find the first owner that\nviolates the contract and fix the cause there. Check affected callers; avoid\na guard that hides an upstream error. State missing evidence when the failure\ncannot be reproduced.\n\n## The ladder\n\nChoose the first suitable option that meets the complete requirements:\n\n1. **Required now?** Omit speculative additions and future scaffolding.\n2. **Already in this codebase?** Reuse suitable code, types and patterns.\n3. **Standard library?** Use it when its semantics and resource costs fit.\n4. **Native platform feature?** Prefer it when behaviour and accessibility fit.\n5. **Installed dependency?** Reuse it; add a dependency only for a concrete benefit\n   that justifies its maintenance cost.\n6. **Direct expression?** Use a clear one-liner when it remains easy to inspect.\n7. **New code needed?** Write the smallest cohesive implementation.\n\n## Design judgement\n\n- Keep necessary policy behind a clear boundary. One implementation or one\n  export alone is not evidence of bloat. Remove a wrapper when it adds no useful\n  contract; keep a helper when it improves clarity or removes real duplication.\n- Prefer fewer concepts and fewer places a maintainer must inspect. Use diff\n  size as a tie-breaker after correctness and clarity. Preserve unrelated work.\n- Select algorithms by their semantics, failure modes and resource costs.\n  A shorter implementation can still use too much time or memory. Reuse the\n  project\'s optimised stack when a simpler-looking replacement would regress it.\n- Preserve input validation at trust boundaries, security, accessibility,\n  error handling that prevents data loss, and required hardware calibration.\n- Mark deliberate simplifications that cut a real corner, such as a global\n  lock or naive heuristic, with a `shortcut:` comment naming the ceiling and\n  upgrade path. Ordinary straightforward code needs no justification comment.\n\n## Verification and reporting\n\nUse the project\'s existing test tools and run its required checks. Add focused\nregression coverage for changed failure modes when existing coverage is\ninsufficient. A one-line money calculation or security check can need several\ncases; size alone does not determine risk. Existing sufficient coverage needs\nno duplicate self-check. There is no one-test ceiling or ban on existing\nframeworks and fixtures.\n\nReuse valid results. Repeat or broaden checks when a change, failure,\nintegration risk or unresolved concern justifies it. A timeout is inconclusive:\ninvestigate its cause and adjust the check when supported by evidence. Report\nany required check that could not run.\n\nLead with the requested result. Explain what changed, the verification and\nmaterial limitations in the user\'s requested format. Give requested reports\nand walkthroughs the detail they need. Inspect generated artefacts using the\nrelevant workflow before claiming they are usable.\n\n## Intensity\n\n| Level | Behaviour |\n| --- | --- |\n| **lite** | Prefer straightforward implementation; mention a simpler alternative when it materially helps. |\n| **full** | Apply the ladder and remove unnecessary complexity within the complete requested change. Default. |\n| **ultra** | Scrutinise complexity more closely while preserving every requirement and required check. |\n'
 
 def _fallback_instructions(mode: str) -> str:
-    return f"PONYTAIL MODE ACTIVE — level: {mode}\n\n" + _filter_skill_body_for_mode(_FALLBACK_SKILL_BODY, mode)
+    return f"PURITANICAL MODE ACTIVE — level: {mode}\n\n" + _filter_skill_body_for_mode(_FALLBACK_SKILL_BODY, mode)
 
 
 def build_injected_context(mode: str | None = None) -> str:
-    """Return the mode-filtered Ponytail context injected before LLM turns."""
+    """Return the mode-filtered Puritanical context injected before LLM turns."""
     effective = _normalize_runtime_mode(mode) or _default_mode()
     if effective == "off":
         return ""
     try:
-        body = PONYTAIL_SKILL.read_text(encoding="utf-8")
-        return f"PONYTAIL MODE ACTIVE — level: {effective}\n\n{_filter_skill_body_for_mode(body, effective)}"
+        body = PURITANICAL_SKILL.read_text(encoding="utf-8")
+        return f"PURITANICAL MODE ACTIVE — level: {effective}\n\n{_filter_skill_body_for_mode(body, effective)}"
     except OSError:
         return _fallback_instructions(effective)
 
@@ -108,8 +108,8 @@ def _pre_llm_call(
 ) -> dict[str, str] | None:
     mode = _current_mode or _default_mode()
     # Off is injected too: the ruleset from an earlier turn is replayed every turn,
-    # and the /ponytail off reply goes to the user, never to the model.
-    context = build_injected_context(mode) or "PONYTAIL MODE OFF"
+    # and the /puritanical off reply goes to the user, never to the model.
+    context = build_injected_context(mode) or "PURITANICAL MODE OFF"
 
     # Hermes persists hook context in api_content for cache-stable replay.
     # Re-inject only when the active mode changed or compaction removed it.
@@ -119,7 +119,7 @@ def _pre_llm_call(
         api_content = message.get("api_content")
         if not isinstance(api_content, str):
             continue
-        matches = re.findall(r"PONYTAIL MODE (?:ACTIVE — level: ([a-z]+)|OFF)", api_content)
+        matches = re.findall(r"PURITANICAL MODE (?:ACTIVE — level: ([a-z]+)|OFF)", api_content)
         if matches:
             return None if (matches[-1] or "off") == mode else {"context": context}
 
@@ -131,7 +131,7 @@ def _skill_prompt(command: str, args: str = "") -> str:
     tail = args.strip()
     target = f"\n\nUser arguments: {tail}" if tail else ""
     return (
-        f"Load and follow the Hermes plugin skill `ponytail:{command}`. "
+        f"Load and follow the Hermes plugin skill `puritanical:{command}`. "
         f"{SKILL_COMMANDS[command]}{target}"
     )
 
@@ -150,7 +150,7 @@ def _slash_access_denied(event: Any, gateway: Any, command: str) -> bool:
 
 
 def rewrite_gateway_command(event: Any = None, gateway: Any = None, **_: Any) -> dict[str, str] | None:
-    """Rewrite authorized gateway /ponytail-* commands into normal agent prompts."""
+    """Rewrite authorized gateway /puritanical-* commands into normal agent prompts."""
     text = str(getattr(event, "text", "") or "").strip()
     if not text.startswith("/"):
         return None
@@ -167,17 +167,17 @@ def _handle_mode_command(raw_args: str) -> str:
     global _current_mode
     arg = (raw_args or "").strip().lower()
     if not arg:
-        # Bare /ponytail switches ponytail on, or reports the level when it already is (#639).
+        # Bare /puritanical switches puritanical on, or reports the level when it already is (#639).
         mode = _current_mode or _default_mode()
         if mode != "off":
-            return f"Ponytail mode: {mode}. Use `/ponytail lite|full|ultra|off`."
+            return f"Puritanical mode: {mode}. Use `/puritanical lite|full|ultra|off`."
         _current_mode = "full" if _default_mode() == "off" else _default_mode()
-        return f"Ponytail mode set to {_current_mode}."
+        return f"Puritanical mode set to {_current_mode}."
     mode = _normalize_runtime_mode(arg)
     if not mode:
-        return "Usage: /ponytail [lite|full|ultra|off]"
+        return "Usage: /puritanical [lite|full|ultra|off]"
     _current_mode = mode
-    return f"Ponytail mode set to {mode}."
+    return f"Puritanical mode set to {mode}."
 
 
 def _make_skill_command_handler(ctx: Any, command: str) -> Callable[[str], str]:
@@ -196,7 +196,7 @@ def _make_skill_command_handler(ctx: Any, command: str) -> Callable[[str], str]:
 
 
 def register(ctx: Any) -> None:
-    """Register Ponytail hooks, skills, and slash commands with Hermes."""
+    """Register Puritanical hooks, skills, and slash commands with Hermes."""
     for child in sorted(SKILLS_DIR.iterdir() if SKILLS_DIR.exists() else []):
         skill_md = child / "SKILL.md"
         if child.is_dir() and skill_md.exists():
@@ -206,9 +206,9 @@ def register(ctx: Any) -> None:
     ctx.register_hook("pre_gateway_dispatch", rewrite_gateway_command)
 
     ctx.register_command(
-        "ponytail",
+        "puritanical",
         _handle_mode_command,
-        description="Set Ponytail lazy senior dev mode: lite, full, ultra, or off.",
+        description="Set the Puritanical level: lite, full, ultra or off.",
         args_hint="[lite|full|ultra|off]",
     )
     for command, description in SKILL_COMMANDS.items():

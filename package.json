@@ -1,25 +1,25 @@
 {
-  "name": "@dietrichgebert/ponytail",
-  "version": "5.3.2",
-  "description": "Lazy senior dev mode for AI agents. The best code is the code you never wrote.",
-  "keywords": ["opencode-plugin", "opencode", "ponytail", "pi-package", "pi", "skills", "qoder"],
+  "name": "@ryanduguid/puritanical",
+  "version": "1.0.0",
+  "description": "Strict simplicity for coding agents: the smallest correct change, verified.",
+  "keywords": ["opencode-plugin", "opencode", "puritanical", "pi-package", "pi", "skills", "qoder"],
   "license": "MIT",
   "author": {
-    "name": "Dietrich Gebert",
-    "url": "https://github.com/DietrichGebert"
+    "name": "Ryan Duguid",
+    "url": "https://github.com/ryanduguid"
   },
-  "homepage": "https://github.com/DietrichGebert/ponytail",
+  "homepage": "https://github.com/ryanduguid/Puritanical",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DietrichGebert/ponytail.git"
+    "url": "git+https://github.com/ryanduguid/Puritanical.git"
   },
   "bugs": {
-    "url": "https://github.com/DietrichGebert/ponytail/issues"
+    "url": "https://github.com/ryanduguid/Puritanical/issues"
   },
-  "main": "./.opencode/plugins/ponytail.mjs",
+  "main": "./.opencode/plugins/puritanical.mjs",
   "exports": {
-    ".": "./.opencode/plugins/ponytail.mjs",
-    "./plugin": "./.opencode/plugins/ponytail.mjs"
+    ".": "./.opencode/plugins/puritanical.mjs",
+    "./plugin": "./.opencode/plugins/puritanical.mjs"
   },
   "files": [
     "AGENTS.md",
