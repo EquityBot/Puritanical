@@ -2,45 +2,26 @@
 const fs = require('fs');
 const path = require('path');
 
+const { render } = require('./sync-rules');
+
 const root = path.join(__dirname, '..');
 
 function read(relPath) {
   return fs.readFileSync(path.join(root, relPath), 'utf8').replace(/\r\n/g, '\n').trim();
 }
 
-function stripFrontmatter(text) {
-  return text.replace(/^---\n[\s\S]*?\n---\n*/, '').trim();
-}
-
-const agents = read('AGENTS.md');
-const canonical = agents.replace(/\n\n\(Yes, this file also applies[\s\S]*?\)$/, '').trim();
-
-// Compact copies: same body as AGENTS.md, host-specific frontmatter stripped.
-const copies = [
-  ['.cursor/rules/puritanical.mdc', stripFrontmatter],
-  ['.windsurf/rules/puritanical.md', text => text.trim()],
-  ['.clinerules/puritanical.md', text => text.trim()],
-  ['.agents/rules/puritanical.md', text => text.trim()],
-  ['.qoder/rules/puritanical.md', text => text.trim()],
-  ['.github/copilot-instructions.md', text => text.trim()],
-  ['.kiro/steering/puritanical.md', stripFrontmatter],
-];
-
 let failed = false;
 
-for (const [relPath, normalize] of copies) {
-  const actual = normalize(read(relPath));
-  if (actual !== canonical) {
-    console.error(`${relPath} drifted from AGENTS.md`);
+// Every copy is generated from skills/ by scripts/sync-rules.js; compare them all.
+for (const [relPath, expected] of Object.entries(render())) {
+  if (!fs.existsSync(path.join(root, relPath)) || read(relPath) !== expected.trim()) {
+    console.error(`${relPath} drifted from skills/ (run node scripts/sync-rules.js)`);
     failed = true;
   }
 }
 
-// SKILL.md is the runtime source of truth and is longer than the compact body,
-// so it cannot be byte-compared. shortcut: canary, not full equality. Assert the
-// load-bearing rules survive verbatim in both the source and AGENTS.md. Changing
-// a rule's wording trips this, which is the reminder to propagate it everywhere.
-// Upgrade path: generate the copies from SKILL.md if this ever misses a real drift.
+// The load-bearing rules must survive any rewording of the core skill. Changing
+// one of these phrases is a deliberate policy change: update this list with it.
 const INVARIANTS = [
   "in this codebase",
   "inspect their callers",
@@ -51,23 +32,19 @@ const INVARIANTS = [
   "validation at trust boundaries",
   "prevents data loss",
   "security",
-  "accessibility"
+  "accessibility",
+  "fails without the fix",
+  "not run",
 ];
 
 const skill = read('skills/puritanical/SKILL.md');
-const sources = [['skills/puritanical/SKILL.md', skill], ['AGENTS.md', agents]];
 for (const phrase of INVARIANTS) {
-  for (const [label, text] of sources) {
-    if (!text.includes(phrase)) {
-      console.error(`${label} is missing rule invariant: "${phrase}"`);
-      failed = true;
-    }
+  if (!skill.includes(phrase)) {
+    console.error(`skills/puritanical/SKILL.md is missing rule invariant: "${phrase}"`);
+    failed = true;
   }
 }
 
-if (failed) {
-  console.error('Update the copied rule text, AGENTS.md, or SKILL.md so the shared rules match.');
-  process.exit(1);
-}
+if (failed) process.exit(1);
 
-console.log(`Rule copies match AGENTS.md; ${INVARIANTS.length} rule invariants present in SKILL.md and AGENTS.md.`);
+console.log(`All rule copies match skills/; ${INVARIANTS.length} rule invariants present.`);

@@ -17,7 +17,7 @@ const ROOT = path.join(__dirname, '..');
 const HOMEPAGE = 'https://github.com/ryanduguid/Puritanical';
 
 const DESCRIPTIONS = {
-  'puritanical': 'Lazy senior dev mode for any coding task: the smallest change that fully solves it, and a reply a busy human understands in one read.',
+  'puritanical': 'Strict simplicity for coding tasks: correctness, safety and verification first, then the smallest change that meets every requirement.',
   'puritanical-review': 'Quality review of a diff: bugs, security, real load, missing tests, speed, and what to delete. Each finding says what goes wrong and how to fix it.',
   'puritanical-audit': 'Quality audit of the whole repo: bugs, security, real load, missing tests, speed, and what to delete. Most important first.',
   'puritanical-debt': 'Harvest every shortcut: comment into one debt ledger, so deferrals get tracked instead of forgotten. One-shot report.',

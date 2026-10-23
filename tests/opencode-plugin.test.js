@@ -100,7 +100,7 @@ test('V2 skill transform matches what OpenCode derives from the same SKILL.md', 
   const puritanical = added.skills.find((s) => s.id === 'puritanical');
   const source = parseSkillFile(path.join(__dirname, '..', 'skills', 'puritanical', 'SKILL.md'));
   assert.equal(puritanical.description, source.description);
-  assert.ok(puritanical.description.startsWith('Use on any coding task:'), 'folded > block joined');
+  assert.ok(puritanical.description.startsWith('Applies to coding tasks:'), 'folded > block joined');
   assert.ok(puritanical.description.endsWith('\n'), 'YAML closes a folded scalar with a newline');
   assert.ok(!puritanical.description.includes('argument-hint'), 'block scalar stops at the next key');
   assert.equal(puritanical.content, source.body);
