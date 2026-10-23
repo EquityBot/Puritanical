@@ -231,9 +231,11 @@ export default function puritanicalExtension(pi) {
     const instructions = getPuritanicalInstructions(currentMode);
     // Prefer structured sections so Pi can keep the cached prefix when other
     // extensions change their own section (#953). Fall back to replacement
-    // for older Pi versions without systemPromptOptions.sections.
+    // for older Pi versions without systemPromptOptions.sections. An earlier
+    // extension that returned a systemPrompt sets forceSystemPrompt, and Pi then
+    // sends that text instead of the sections, so append to it instead.
     const sections = event?.systemPromptOptions?.sections;
-    if (sections && typeof sections === "object") {
+    if (sections && typeof sections === "object" && event.systemPromptOptions.forceSystemPrompt === undefined) {
       sections.puritanical = instructions;
       return;
     }

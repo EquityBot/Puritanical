@@ -23,7 +23,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // The shared instruction builder is CommonJS; bridge to it from this ES module.
 const require = createRequire(import.meta.url);
 const { getPuritanicalInstructions } = require('../../hooks/puritanical-instructions');
-const { getDefaultMode, normalizeMode, writeDefaultMode } = require('../../hooks/puritanical-config');
+const { getDefaultMode, normalizeMode, writeDefaultMode, writeFileNoFollow } = require('../../hooks/puritanical-config');
 const { parseCommandFile, parseSkillFile } = require('./puritanical-frontmatter.cjs');
 
 // OpenCode has no flag-file convention of its own; keep mode beside its config.
@@ -44,8 +44,7 @@ function readMode() {
 }
 
 function writeMode(mode) {
-  fs.mkdirSync(path.dirname(statePath), { recursive: true });
-  fs.writeFileSync(statePath, mode);
+  writeFileNoFollow(statePath, mode);
 }
 
 // `off` is persisted like any mode; the injection reads it and stays silent.

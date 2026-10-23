@@ -17,6 +17,17 @@ const DEFAULT_MODE = 'full';
 const VALID_MODES = ['off', 'lite', 'full', 'ultra', 'review'];
 const RUNTIME_MODES = ['off', 'lite', 'full', 'ultra'];
 
+// The flag and config files sit at predictable paths. O_NOFOLLOW makes the write
+// fail instead of following a symlink planted there to clobber another file.
+// Windows has no O_NOFOLLOW (and symlinks need privilege there), so it is a plain write.
+const NO_FOLLOW_WRITE = fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_TRUNC |
+  (fs.constants.O_NOFOLLOW || 0);
+
+function writeFileNoFollow(file, data) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, data, { encoding: 'utf8', flag: NO_FOLLOW_WRITE });
+}
+
 function normalizeMode(mode) {
   if (typeof mode !== 'string') return null;
   const normalized = mode.trim().toLowerCase();
@@ -144,14 +155,13 @@ function writeDefaultMode(mode) {
   if (!normalized) return null;
 
   const configPath = getConfigPath();
-  fs.mkdirSync(path.dirname(configPath), { recursive: true });
   let config = {};
   try {
     config = JSON.parse(fs.readFileSync(configPath, 'utf8').replace(/^\uFEFF/, ''));
     if (!config || typeof config !== 'object' || Array.isArray(config)) config = {};
   } catch (_) {}
   config.defaultMode = normalized;
-  fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf8');
+  writeFileNoFollow(configPath, JSON.stringify(config, null, 2));
   return normalized;
 }
 
@@ -172,4 +182,5 @@ module.exports = {
   normalizePersistedMode,
   isDeactivationCommand,
   writeDefaultMode,
+  writeFileNoFollow,
 };

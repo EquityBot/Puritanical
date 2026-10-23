@@ -38,6 +38,9 @@ delete process.env.COPILOT_PLUGIN_DATA;
 // A leaked subagent matcher would scope the inject-into-every-subagent assertions.
 delete process.env.PURITANICAL_SUBAGENT_MATCHER;
 delete process.env.QODER_SESSION_ID;
+// Qoder sets QODER_PROJECT_DIR for every hook it runs; a leaked one would make
+// the native-Claude cases look like Qoder and change their output shape.
+delete process.env.QODER_PROJECT_DIR;
 // A leaked project dir would move the flag into puritanical-modes/ (#662).
 delete process.env.CLAUDE_PROJECT_DIR;
 // Cursor sets these only for hook processes, but a suite launched from a Cursor
@@ -605,6 +608,34 @@ result = run('puritanical-subagent.js', qoderCustomEnv);
 assert.equal(result.status, 0, result.stderr);
 assert.match(JSON.parse(result.stdout).hookSpecificOutput.additionalContext, /PURITANICAL MODE ACTIVE — level: ultra/);
 
+// Qoder does not pass QODER_SESSION_ID to plugin hook processes; the session id
+// it documents is not in the env its hooks receive (#1092). Detection must also
+// read QODER_PROJECT_DIR, which it does pass, or every hook takes the Claude
+// branch: raw stdout that Qoder never injects, and the mode written to
+// ~/.claude instead of Qoder's own config dir.
+const qoderProjectDir = path.join(temp, 'qoder-project-config');
+const qoderProjectEnv = {
+  HOME: qoderHome,
+  USERPROFILE: qoderHome,
+  QODER_PROJECT_DIR: path.join(temp, 'demo-project'),
+  QODER_CONFIG_DIR: qoderProjectDir,
+  PURITANICAL_DEFAULT_MODE: 'full',
+};
+result = run(
+  'puritanical-mode-tracker.js',
+  qoderProjectEnv,
+  JSON.stringify({ prompt: 'write a function' }),
+);
+assert.equal(result.status, 0, result.stderr);
+assert.equal(
+  fs.readFileSync(path.join(qoderProjectDir, '.puritanical-active'), 'utf8'),
+  'full',
+  'QODER_PROJECT_DIR alone must be detected as Qoder',
+);
+output = JSON.parse(result.stdout);
+assert.equal(output.hookSpecificOutput.hookEventName, 'UserPromptSubmit');
+assert.match(output.hookSpecificOutput.additionalContext, /PURITANICAL MODE ACTIVE — level: full/);
+
 // Bare `/puritanical` on Qoder is report-only: there's no SessionStart, so the
 // double-duty block below emits the full ruleset as the report. A second
 // confirmation here would push two JSON objects to stdout. The point is that
@@ -673,7 +704,7 @@ assert.equal(result.status, 0, result.stderr);
 assert.equal(JSON.parse(result.stdout).hookSpecificOutput.additionalContext, 'PURITANICAL DEFAULT SET — new sessions start in full.');
 assert.equal(fs.readFileSync(qoderState, 'utf8'), 'off');
 
-// Subagent injection via PreToolUse (task|Task matcher): when puritanical is
+// Subagent injection via SubagentStart (agent-type matcher): when puritanical is
 // active, the subagent hook injects the ruleset. Qoder shares the same
 // puritanical-subagent.js script; the isQoder branch outputs hookSpecificOutput
 // JSON instead of raw stdout.

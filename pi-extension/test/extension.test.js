@@ -122,6 +122,13 @@ test("before_agent_start keeps OMP prompt parts and uses Pi sections (#776, #953
   const event = { systemPrompt: "BASE", systemPromptOptions: { sections: {} } };
   assert.equal(await events.get("before_agent_start")(event, ctx), undefined);
   assert.match(event.systemPromptOptions.sections.puritanical, /PURITANICAL MODE ACTIVE/);
+
+  // Another extension forced the prompt: Pi ignores sections then, so append to the forced text.
+  const forced = { systemPrompt: "FORCED", systemPromptOptions: { sections: {}, forceSystemPrompt: "FORCED" } };
+  const forcedResult = await events.get("before_agent_start")(forced, ctx);
+  assert.match(forcedResult.systemPrompt, /^FORCED\n\nPURITANICAL MODE ACTIVE/);
+  assert.equal(forced.systemPromptOptions.sections.puritanical, undefined);
+
   await commands.get("puritanical").handler("off", ctx);
   await events.get("before_agent_start")(event, ctx);
   assert.equal(event.systemPromptOptions.sections.puritanical, undefined);
