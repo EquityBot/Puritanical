@@ -36,6 +36,8 @@ jobs:
 
       - name: Check Rust tooling
         working-directory: tools
+        # pwsh on Windows checks only the last command's exit code.
+        shell: bash
         run: |
           cargo fmt --check
           cargo clippy --locked --all-targets -- -D warnings
