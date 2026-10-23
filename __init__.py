@@ -75,7 +75,7 @@ def _filter_skill_body_for_mode(body: str, mode: str) -> str:
         # (e.g. "- Full: ...") is silently dropped in every other mode — it looks
         # like a worked example but is really prose meant to survive verbatim.
         # Mirrors the fix in hooks/puritanical-instructions.js (#571).
-        example_label = re.match(r'^-\s*([^:]+):\s*"', line)
+        example_label = re.match(r'^-\s*([^:\s][^:]*):\s*"', line)
         if example_label:
             label_mode = _normalize_runtime_mode(example_label.group(1))
             if label_mode and label_mode != effective:
