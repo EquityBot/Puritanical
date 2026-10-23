@@ -166,13 +166,13 @@ test("filterSkillBodyForMode keeps rule bullets that contain a colon", () => {
   // "No unrequested abstractions:" rule or the `shortcut:` comment convention)
   // contain a colon and must not be mistaken for mode-example lines.
   const skillPath = new URL("../../skills/ponytail/SKILL.md", import.meta.url);
-  const body = readFileSync(skillPath, "utf8");
+  const body = readFileSync(skillPath, "utf8") + "\n- Bug fix: synthetic colon rule.\n- Never cut: synthetic colon rule.\n";
 
   const filtered = filterSkillBodyForMode(body, "full");
 
-  assert.ok(filtered.includes("Bug fix: before you edit, grep every caller"));
-  assert.ok(filtered.includes("Never cut: validation at trust boundaries"));
-  assert.ok(filtered.includes("code comment in this form: `shortcut: <the limit>, <when to upgrade>`"));
+  assert.ok(filtered.includes("Bug fix: synthetic colon rule."));
+  assert.ok(filtered.includes("Never cut: synthetic colon rule."));
+  assert.ok(filtered.includes("with a `shortcut:` comment naming the ceiling and"));
   // The level rows are still filtered down to the active mode.
   assert.ok(filtered.includes("| **full** |"));
   assert.ok(!filtered.includes("| **lite** |"));

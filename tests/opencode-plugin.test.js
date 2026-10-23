@@ -100,7 +100,7 @@ test('V2 skill transform matches what OpenCode derives from the same SKILL.md', 
   const ponytail = added.skills.find((s) => s.id === 'ponytail');
   const source = parseSkillFile(path.join(__dirname, '..', 'skills', 'ponytail', 'SKILL.md'));
   assert.equal(ponytail.description, source.description);
-  assert.ok(ponytail.description.startsWith('Lazy senior dev mode: the smallest change'), 'folded > block joined');
+  assert.ok(ponytail.description.startsWith('Use on any coding task:'), 'folded > block joined');
   assert.ok(ponytail.description.endsWith('\n'), 'YAML closes a folded scalar with a newline');
   assert.ok(!ponytail.description.includes('argument-hint'), 'block scalar stops at the next key');
   assert.equal(ponytail.content, source.body);
@@ -155,7 +155,7 @@ test('V2 context hook injects the ruleset, and stays silent when off', async () 
   assert.equal(event.system.length, 1);
   assert.equal(event.system[0].type, 'text', 'V2 system entries are typed parts');
   assert.match(event.system[0].text, /PONYTAIL MODE ACTIVE — level: full/);
-  assert.match(event.system[0].text, /lazy senior developer/);
+  assert.match(event.system[0].text, /Complete the requested work/);
 
   const { added } = await setupV2();
   await added.commands.ponytail.execute({ sessionID: 's', prompt: { text: 'off' }, delivery: 'steer' });
@@ -229,7 +229,7 @@ test('system.transform injects the ruleset at the default mode (full)', async ()
   const system = await transform(hooks);
   assert.equal(system.length, 1);
   assert.match(system[0], /PONYTAIL MODE ACTIVE — level: full/);
-  assert.match(system[0], /lazy senior developer/);
+  assert.match(system[0], /Complete the requested work/);
 });
 
 test('command.execute.before persists /ponytail ultra, transform follows it', async () => {

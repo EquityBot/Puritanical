@@ -17,7 +17,7 @@ test('Kimi manifest points at AGENTS.md and the six skills', () => {
   assert.equal(manifest.name, 'ponytail');
   // Kimi ignores a systemPromptPath file over 32 KB.
   assert.ok(fs.statSync(path.join(root, manifest.systemPromptPath)).size < 32 * 1024);
-  assert.match(fs.readFileSync(path.join(root, manifest.systemPromptPath), 'utf8'), /lazy senior/);
+  assert.match(fs.readFileSync(path.join(root, manifest.systemPromptPath), 'utf8'), /Complete the requested work/);
   const skills = path.join(root, manifest.skills);
   for (const name of ['ponytail', 'ponytail-review', 'ponytail-audit', 'ponytail-debt', 'ponytail-gain', 'ponytail-help']) {
     assert.ok(fs.existsSync(path.join(skills, name, 'SKILL.md')), `${name} must ship`);

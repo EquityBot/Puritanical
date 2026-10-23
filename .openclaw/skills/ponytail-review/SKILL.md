@@ -1,5 +1,6 @@
 ---
 name: ponytail-review
+disable-model-invocation: true
 description: "Quality review of a diff: bugs, security, real load, missing tests, speed, and what to delete. Each finding says what goes wrong and how to fix it."
 homepage: https://github.com/DietrichGebert/ponytail
 license: MIT
@@ -13,8 +14,7 @@ This is a report the user asked for, so give it in full.
 ## 1. Understand first
 
 - Review what the user names: uncommitted or staged changes, a branch, a PR
-  link, or files. Nothing named: the uncommitted changes, or the last commit
-  if there are none.
+  link, or files. Nothing named: the uncommitted changes. If there are none, report the empty scope and ask for a target; never guess a last-commit review.
 - Read the diff, then the code it touches: callers of every changed function,
   the functions it calls, the tests, the README.
 - Trace the real flow: where data comes in, what is stored, what goes out.
@@ -36,8 +36,7 @@ This is a report the user asked for, so give it in full.
    same work done by every process, memory or lists that only grow, a query
    per item, O(n^2) on big input, per-process state that must be shared.
 4. **Missing test:** risky new logic (a branch, a parser, money, security,
-   data writes, a bug fix) with no test that fails when it breaks. One good
-   test, not coverage.
+   data writes, a bug fix) with no test that fails when it breaks. Require proportionate regression coverage and the project's defined checks; there is no one-test ceiling.
 5. **Speed:** big slowdowns are problems. Small wins (work repeated in a hot
    loop) are suggestions; some software counts every millisecond.
 6. **Lean:** code that should not exist or should be smaller.
@@ -64,6 +63,8 @@ This is a report the user asked for, so give it in full.
 - No style taste, no "consider", no vague worries.
 
 ## 4. Output
+
+Follow the user's requested format and higher host instructions. The structure below is a default. Review and audit remain read-only; connected-code inspection expands evidence, not edit authority. Use subagents only within explicit user authorisation, including standing permission in the host instructions; retain its model, task and read-only limits.
 
 Very simple English: short sentences, everyday words. Explain a technical
 term the first time you use it. The reader may never have seen this code.

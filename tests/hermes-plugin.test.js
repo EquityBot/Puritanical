@@ -114,7 +114,7 @@ print(json.dumps({'ctx': ctx}))
   const { ctx } = JSON.parse(output);
 
   assert.match(ctx, /PONYTAIL MODE ACTIVE — level: ultra/);
-  assert.match(ctx, /The best\s+code is the code never written/);
+  assert.match(ctx, /Complete the requested work/);
   assert.match(ctx, /ultra/i);
   assert.doesNotMatch(ctx, /^---/);
   assert.doesNotMatch(ctx, /\|\s*\*\*Lite\*\*/i);

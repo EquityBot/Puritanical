@@ -60,10 +60,11 @@ function activate(mode) {
   // 2. Emit the ponytail ruleset, filtered to the active intensity level.
   let output = getPonytailInstructions(mode);
 
-  // 2b. Codebase map: what already exists, so "reuse first" costs no search. Fail open: the map
-  // gets 3 s, well inside the 15 s hook limit, so a stalled map never costs the rules (#1079, #1157).
+  // 2b. Opt-in codebase map (PONYTAIL_MAP=1): what already exists, so "reuse first" costs no
+  // search. Off by default because it runs git ls-files and adds tokens to every session start.
+  // Fail open: the map gets 3 s, well inside the 15 s hook limit, so a stalled map never costs the rules.
   // shortcut: a map slower than 3 s is still dropped; a cached per-repo map would lift that if it shows up.
-  if (mode !== 'review' && process.env.PONYTAIL_MAP !== '0') try {
+  if (mode !== 'review' && process.env.PONYTAIL_MAP === '1') try {
     const map = execFileSync(process.execPath, [path.join(__dirname, 'ponytail-map.js')], {
       encoding: 'utf8', timeout: 3000, maxBuffer: 64 * 1024, stdio: ['ignore', 'pipe', 'ignore'],
     }).trimEnd();
@@ -152,7 +153,7 @@ function activate(mode) {
           statusLineSnippet + " " +
           "Proactively offer to set this up for the user on first interaction.";
       } else {
-        // ponytail: config dir path has shell metacharacters; don't embed it in a
+        // shortcut: config dir path has shell metacharacters; don't embed it in a
         // command snippet; have the agent wire it up by hand instead.
         output += "\n\n" +
           "STATUSLINE SETUP NEEDED: The ponytail plugin includes a statusline badge showing active mode. " +
@@ -190,6 +191,8 @@ function finish() {
   } catch (e) {
     // No payload, or an unparseable one: treat it as a fresh session
   }
+  // Keep the trusted registration stable; resumed sessions already carry the rules.
+  if (source === 'resume') return;
   activate(source === 'compact' ? (readMode() || 'off') : getDefaultMode());
 }
 

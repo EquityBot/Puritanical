@@ -7,7 +7,7 @@ const { spawnSync } = require('node:child_process');
 
 const root = path.join(__dirname, '..');
 
-for (const scenario of ['blocked', 'failed', 'oversized', 'successful', 'disabled']) {
+for (const scenario of ['blocked', 'failed', 'oversized', 'successful', 'disabled', 'default']) {
   test(`SessionStart preserves instructions when the optional map is ${scenario}`, (t) => {
     const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'ponytail activation '));
     t.after(() => fs.rmSync(temp, { recursive: true, force: true }));
@@ -24,6 +24,7 @@ for (const scenario of ['blocked', 'failed', 'oversized', 'successful', 'disable
         failed: 'throw new Error("map unavailable");',
         oversized: 'return "x".repeat(100000);',
         disabled: 'require("node:fs").writeFileSync("map-ran", "yes"); return "unexpected map";',
+        default: 'require("node:fs").writeFileSync("map-ran", "yes"); return "unexpected map";',
       }[scenario];
       fs.writeFileSync(path.join(hooks, 'ponytail-map.js'),
         `exports.buildMap = () => { ${body} };\n` +
@@ -43,7 +44,7 @@ for (const scenario of ['blocked', 'failed', 'oversized', 'successful', 'disable
         COPILOT_PLUGIN_DATA: '',
         XDG_CONFIG_HOME: path.join(temp, 'config'),
         PONYTAIL_DEFAULT_MODE: 'full',
-        PONYTAIL_MAP: scenario === 'disabled' ? '0' : '1',
+        PONYTAIL_MAP: { disabled: '0', default: '' }[scenario] ?? '1',
       },
     });
     assert.equal(result.error, undefined, 'optional mapping must finish before the hook timeout');
@@ -52,7 +53,8 @@ for (const scenario of ['blocked', 'failed', 'oversized', 'successful', 'disable
     const output = JSON.parse(result.stdout).hookSpecificOutput;
     assert.equal(output.hookEventName, 'SessionStart');
     assert.match(output.additionalContext, /PONYTAIL MODE ACTIVE — level: full/);
-    assert.match(output.additionalContext, /Never cut:/);
+    assert.match(output.additionalContext, /validation at trust boundaries/);
+    // The map is opt-in: only PONYTAIL_MAP=1 with a working map adds it.
     if (scenario === 'successful') {
       assert.match(output.additionalContext, /Codebase map[^]*lib\/: usefulHelper/);
     } else {

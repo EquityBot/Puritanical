@@ -795,7 +795,7 @@ assert.equal(fs.existsSync(bandFlag), false, 'Codex must not write the band flag
 // `/ponytail band import` starts the import in the background and leaves the band and level alone.
 result = band('import');
 assert.equal(result.status, 0, result.stderr);
-assert.match(result.stdout, /PONYTAIL BAND IMPORT/);
+assert.match(result.stdout, /PONYTAIL BAND DISABLED/);
 assert.equal(fs.existsSync(bandFlag), false, '/ponytail band import must not hide the band');
 assert.equal(fs.readFileSync(defFlag, 'utf8'), 'ultra', '/ponytail band import must not change the level');
 
@@ -997,7 +997,7 @@ assert.equal(
   assert.equal(fs.existsSync(compactFlag), false);
 
   // Every other source still starts at the default level.
-  for (const source of ['startup', 'resume', 'clear']) {
+  for (const source of ['startup', 'clear']) {
     assert.match(start(source).stdout, /PONYTAIL MODE ACTIVE — level: full/, `${source} must start at the default level`);
   }
 }

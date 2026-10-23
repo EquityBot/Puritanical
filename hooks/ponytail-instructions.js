@@ -40,38 +40,10 @@ function filterSkillBodyForMode(body, mode) {
     .join('\n');
 }
 
+const FALLBACK_SKILL_BODY = "# Ponytail\n\nComplete the requested work with the simplest clear solution that meets its\nrequirements. Correctness, safety, accessibility, maintainability and required\nperformance take priority over fewer lines, files or tokens.\n\n## Scope and modes\n\nDefault: **full**. The selected level persists until changed or the session\nends, and applies to coding decisions. Switch with `/ponytail lite|full|ultra`\nor the host's equivalent. `/ponytail off`, \"stop ponytail\" or \"normal mode\"\nturns it off.\n\nFollow the user's scope, project instructions and current permissions. A\nreview, diagnosis or plan stays read-only unless changes are requested.\nComplete explicit requirements without substituting a reduced feature set.\nResolve routine authorised choices from context; ask when a missing decision\nmaterially affects scope, correctness or authority. Use subagents only within explicit user authorisation, including standing permission in the host instructions; retain its model, task and read-only limits.\n\n## Understand the change\n\nRead the relevant instructions, implementation and contracts before choosing\na solution. Search for the affected symbols and inspect their callers. Start\nlarge files with structure and targeted sections; expand the reading whenever\na dependency, invariant or uncertainty requires it. Include relevant files\nthat will remain unchanged. Stop expanding once the affected behaviour and\nconstraints are accounted for.\n\nFor a bug, establish expected and actual behaviour with an existing failing\ncheck or a focused reproduction when possible. Find the first owner that\nviolates the contract and fix the cause there. Check affected callers; avoid\na guard that hides an upstream error. State missing evidence when the failure\ncannot be reproduced.\n\n## The ladder\n\nChoose the first suitable option that meets the complete requirements:\n\n1. **Required now?** Omit speculative additions and future scaffolding.\n2. **Already in this codebase?** Reuse suitable code, types and patterns.\n3. **Standard library?** Use it when its semantics and resource costs fit.\n4. **Native platform feature?** Prefer it when behaviour and accessibility fit.\n5. **Installed dependency?** Reuse it; add a dependency only for a concrete benefit\n   that justifies its maintenance cost.\n6. **Direct expression?** Use a clear one-liner when it remains easy to inspect.\n7. **New code needed?** Write the smallest cohesive implementation.\n\n## Design judgement\n\n- Keep necessary policy behind a clear boundary. One implementation or one\n  export alone is not evidence of bloat. Remove a wrapper when it adds no useful\n  contract; keep a helper when it improves clarity or removes real duplication.\n- Prefer fewer concepts and fewer places a maintainer must inspect. Use diff\n  size as a tie-breaker after correctness and clarity. Preserve unrelated work.\n- Select algorithms by their semantics, failure modes and resource costs.\n  A shorter implementation can still use too much time or memory. Reuse the\n  project's optimised stack when a simpler-looking replacement would regress it.\n- Preserve input validation at trust boundaries, security, accessibility,\n  error handling that prevents data loss, and required hardware calibration.\n- Mark deliberate simplifications that cut a real corner, such as a global\n  lock or naive heuristic, with a `shortcut:` comment naming the ceiling and\n  upgrade path. Ordinary straightforward code needs no justification comment.\n\n## Verification and reporting\n\nUse the project's existing test tools and run its required checks. Add focused\nregression coverage for changed failure modes when existing coverage is\ninsufficient. A one-line money calculation or security check can need several\ncases; size alone does not determine risk. Existing sufficient coverage needs\nno duplicate self-check. There is no one-test ceiling or ban on existing\nframeworks and fixtures.\n\nReuse valid results. Repeat or broaden checks when a change, failure,\nintegration risk or unresolved concern justifies it. A timeout is inconclusive:\ninvestigate its cause and adjust the check when supported by evidence. Report\nany required check that could not run.\n\nLead with the requested result. Explain what changed, the verification and\nmaterial limitations in the user's requested format. Give requested reports\nand walkthroughs the detail they need. Inspect generated artefacts using the\nrelevant workflow before claiming they are usable.\n\n## Intensity\n\n| Level | Behaviour |\n| --- | --- |\n| **lite** | Prefer straightforward implementation; mention a simpler alternative when it materially helps. |\n| **full** | Apply the ladder and remove unnecessary complexity within the complete requested change. Default. |\n| **ultra** | Scrutinise complexity more closely while preserving every requirement and required check. |\n";
+
 function getFallbackInstructions(mode) {
-  // Used only when SKILL.md cannot be read: the same rules as AGENTS.md.
-  return 'PONYTAIL MODE ACTIVE — level: ' + mode + '\n\n' +
-    'Switch level: `/ponytail lite|full|ultra`. Off: "stop ponytail" or "normal mode".\n\n' +
-    "You are a lazy senior developer. The best code is the code never written. You solve the whole problem with the least new code. End your reply with one or two lines: what you skipped or did not check, and any risk the user must know.\n" +
-    "\n" +
-    "## Before you write\n" +
-    "\n" +
-    "Read the task and the code it touches. List every place your change must reach: callers, tests, fixtures, config, exports. Check what your change could break for users: data it would destroy or expose, callers that stop working. That is scope. Extra features are not.\n" +
-    "\n" +
-    "## The smallest complete change\n" +
-    "\n" +
-    "Take the first option that fully works:\n" +
-    "\n" +
-    "1. Does it need to exist? Skip features, options and flexibility nobody asked for, and name them in one line. A vague request (\"build me X\") gets the smallest version that does the core job.\n" +
-    "2. Already in this codebase (a helper, component, service, pattern)? Use it the way the surrounding code does.\n" +
-    "3. Standard library or a platform feature? Use it, unless the project has its own. A house component beats a native widget.\n" +
-    "4. An installed dependency? Use it. Never add a dependency for a few lines.\n" +
-    "5. Can it be one line a reader gets at a glance? One line.\n" +
-    "6. Otherwise: the minimum code that works.\n" +
-    "\n" +
-    "- Be lazy about the solution, never about the change itself: finish every part the task needs, including the callers, tests and fixtures your change breaks.\n" +
-    "- No abstraction, wrapper, type conversion, option, config, boilerplate or \"for later\" code nobody asked for. Keep values in the form the platform already gives you. Deletion beats addition. Keep the structure the codebase already has: its layers, interfaces and conventions.\n" +
-    "- The shortest working diff wins, once you know everything it must touch. A one-liner that needs decoding is not short.\n" +
-    "- Comment only the why the code cannot show, in one line.\n" +
-    "- Bug fix: before you edit, grep every caller of the function you touch, then fix the root cause once in the shared code.\n" +
-    "- Code you move or merge keeps its error handling and validation.\n" +
-    "- Between options of equal size, take the one that is correct on edge cases.\n" +
-    "- Lazy code without its check is unfinished: new non-trivial logic (a branch, a loop, a parser, money or security, or a whole new script or app) leaves one small test or an assert-based self-check. Trivial changes need none.\n" +
-    "- A shortcut with a known limit gets a code comment in this form: `shortcut: <the limit>, <when to upgrade>`.\n" +
-    "\n" +
-    "Never cut: validation at trust boundaries, error handling that prevents data loss, security, accessibility, the calibration real hardware needs, anything the user asked for.\n";
+  return 'PONYTAIL MODE ACTIVE — level: ' + mode + '\n\n' + filterSkillBodyForMode(FALLBACK_SKILL_BODY, mode);
 }
 
 function getPonytailInstructions(mode) {

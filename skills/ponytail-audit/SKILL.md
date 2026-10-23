@@ -1,5 +1,6 @@
 ---
 name: ponytail-audit
+disable-model-invocation: true
 description: >
   Quality audit of a whole repo: bugs, security holes, what breaks under real
   load, risky code without tests, slow paths, and what to delete, merge or
@@ -39,7 +40,7 @@ tested and fixed later. This is a report the user asked for, so give it in full.
    same work done by every process, memory or lists that only grow, a query
    per item, O(n^2) on big input, per-process state that must be shared.
 4. **Missing test:** risky logic (a branch, a parser, money, security, data
-   writes) with no test that fails when it breaks. One good test, not coverage.
+   writes) with no test that fails when it breaks. Require proportionate regression coverage and the project's defined checks; there is no one-test ceiling.
 5. **Speed:** big slowdowns are problems. Small wins (work repeated in a hot
    loop) are suggestions; some software counts every millisecond.
 6. **Lean:** code that should not exist or should be smaller.
@@ -68,6 +69,8 @@ tested and fixed later. This is a report the user asked for, so give it in full.
 
 ## 4. Output
 
+Follow the user's requested format and higher host instructions. The structure below is a default. Review and audit remain read-only; connected-code inspection expands evidence, not edit authority. Use subagents only within explicit user authorisation, including standing permission in the host instructions; retain its model, task and read-only limits.
+
 Very simple English: short sentences, everyday words. Explain a technical
 term the first time you use it. The reader may never have seen this code.
 
@@ -80,8 +83,7 @@ Then the findings in three groups, most important first, skip empty groups:
   function that mixes jobs, code that should not exist.
 - **Nice to have:** small speed-ups, shorter forms.
 
-Number findings across all groups, so the user can say "fix 2 and 5". At
-most 20 findings; if you left smaller ones out, say how many.
+Number findings across all groups, so the user can say "fix 2 and 5". Use the user's requested depth. A default concise report may group lower-priority findings and must disclose omitted coverage.
 Every finding has all four parts, each one or two short sentences:
 
 2. **Orders land on the wrong day** (`billing/close_day.py:L40-52`)
