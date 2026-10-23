@@ -1,32 +1,38 @@
 {
-  "name": "ponytail",
-  "version": "5.3.2",
-  "description": "Lazy senior dev mode. Forces the simplest, shortest solution that actually works: YAGNI, stdlib first, no unrequested abstractions.",
+  "name": "puritanical",
+  "version": "1.0.0",
+  "description": "Strict simplicity for coding agents. Correctness, safety and verification come first; then YAGNI, reuse, the standard library and the smallest change that meets every requirement.",
   "author": {
-    "name": "Dietrich Gebert",
-    "url": "https://github.com/DietrichGebert"
+    "name": "Ryan Duguid",
+    "url": "https://github.com/ryanduguid"
   },
-  "homepage": "https://github.com/DietrichGebert/ponytail",
-  "repository": "https://github.com/DietrichGebert/ponytail",
+  "homepage": "https://github.com/ryanduguid/Puritanical",
+  "repository": "https://github.com/ryanduguid/Puritanical",
   "license": "MIT",
-  "keywords": ["yagni", "minimalism", "code-review", "productivity"],
+  "keywords": [
+    "yagni",
+    "minimalism",
+    "code-review",
+    "productivity"
+  ],
   "skills": "./skills/",
   "hooks": "./hooks/claude-codex-hooks.json",
   "interface": {
-    "displayName": "Ponytail",
-    "shortDescription": "Lazy senior developer mode",
-    "longDescription": "Prefer YAGNI, the standard library, native platform features, and the smallest correct implementation.",
-    "developerName": "Dietrich Gebert",
+    "displayName": "Puritanical",
+    "shortDescription": "Strict simplicity, correctness first",
+    "longDescription": "After correctness, safety and verification, prefer reuse, the standard library, native platform features and the smallest correct implementation.",
+    "developerName": "Ryan Duguid",
     "category": "Productivity",
-    "capabilities": ["Instructions", "Lifecycle hooks"],
-    "websiteURL": "https://github.com/DietrichGebert/ponytail",
+    "capabilities": [
+      "Instructions",
+      "Lifecycle hooks"
+    ],
+    "websiteURL": "https://github.com/ryanduguid/Puritanical",
     "defaultPrompt": [
-      "Use Ponytail mode for this task.",
+      "Use Puritanical mode for this task.",
       "Review this diff for over-engineering.",
       "Find the smallest correct implementation."
     ],
-    "brandColor": "#111111",
-    "composerIcon": "./assets/codex-icon.png",
-    "logo": "./assets/logo.png"
+    "brandColor": "#111111"
   }
 }

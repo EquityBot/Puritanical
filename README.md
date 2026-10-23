@@ -1,225 +1,115 @@
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
-    <img src="assets/logo.png" width="220" alt="Ponytail, the lazy senior dev">
-  </picture>
-</p>
+# Puritanical: no accretions
 
-<h1 align="center">Ponytail</h1>
+<div align="center">
 
-<p align="center">
-  <em>He says nothing. He writes one line. It works.</em>
-</p>
+[![tests](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/test.yml?branch=main&label=tests&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/test.yml) [![CodeQL](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/codeql.yml?branch=main&label=CodeQL&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/codeql.yml)<br> [![licence: MIT](https://img.shields.io/badge/licence-MIT-66023C?labelColor=000000&style=flat&color=66023C)](LICENSE) [![fork of: Ponytail](https://img.shields.io/badge/fork%20of-Ponytail-990024?labelColor=000000&style=flat&color=990024)](https://github.com/DietrichGebert/ponytail)
 
-<p align="center">
-  <a href="https://trendshift.io/repositories/50668?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-50668" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/repositories/50668" alt="DietrichGebert%2Fponytail | Trendshift" width="250" height="55"/></a>
-</p>
+</div>
 
-<p align="center">
-  <img src="https://img.shields.io/github/stars/DietrichGebert/ponytail?style=flat-square&color=111111&label=stars" alt="Stars">
-  <img src="https://img.shields.io/github/v/release/DietrichGebert/ponytail?style=flat-square&color=111111&label=release" alt="Release">
-  <img src="https://img.shields.io/npm/v/@dietrichgebert/ponytail?style=flat-square&color=111111&label=npm" alt="npm">
-  <img src="https://img.shields.io/badge/works%20with-20%20agents-111111?style=flat-square" alt="Works with 20 agents">
-  <img src="https://img.shields.io/badge/license-MIT-111111?style=flat-square" alt="MIT license">
-</p>
+Puritanical is a skill and plugin for coding agents. Many Puritans sought to strip from worship whatever scripture did not warrant; Puritanical strips from each change whatever the request does not require. Correctness, safety, accessibility and verification are never stripped. It has adapters for 34 agent hosts, including Claude Code, Codex, Copilot CLI, Cursor, OpenCode and Gemini CLI.
 
-<p align="center">
-  <a href="https://ponytail.dev/stories"><img src="assets/stories-banner.png" alt="Using Ponytail at work? Tell us your story" width="760"></a>
-</p>
+**Input:** with Puritanical active, ask the agent to fix a bug where `transfer()` overdraws an account through a shared `_debit()` helper.
 
-<p align="center">
-  <a href="https://trendshift.io/repositories/50668" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/trendshift/repositories/50668/daily" alt="DietrichGebert/ponytail | Trendshift" width="250" height="55"/></a>
-  <a href="https://trendshift.io/repositories/50668" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/trendshift/repositories/50668/weekly" alt="DietrichGebert/ponytail | Trendshift" width="250" height="55"/></a>
-  <a href="https://trendshift.io/repositories/50668?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-50668" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/trendshift/repositories/50668/monthly?language=JavaScript" alt="DietrichGebert%2Fponytail | Trendshift monthly ranking" width="250" height="55"/></a>
-</p>
+**Expected behaviour:** the agent reads `_debit()` and its other callers, fixes the check in `_debit()` rather than guarding only `transfer()`, adds a test that fails without the fix, runs the suite, and reports which checks ran.
 
-<p align="center">
-  <img src="assets/v5/hero.jpg" width="880" alt="Ponytail 5, rebuilt from the ground up: -53% code, -41% time, -26% cost, -45% tokens. And yet 98% of risky logic ships with a test, without Ponytail 68%.">
-</p>
-
-<p align="center">
-  <strong>Ponytail 5: rebuilt from the ground up.</strong><br>
-  <strong>-53% code &middot; -41% time &middot; -26% cost &middot; -45% tokens</strong><br>
-  <strong>And yet: 98% of risky logic ships with a test.</strong> Without Ponytail: 68%.<br>
-  <sub>Benchmarked in Claude Code, the same agent with and without the skill: 39 tasks including a real FastAPI + React repo, Opus 5.5, 5 runs each. <a href="#numbers">Details</a>.</sub>
-</p>
-
-<p align="center">
-  <sub><a href="i18n/README.es.md">Español</a> &middot; <a href="i18n/README.ko.md">한국어</a> &middot; <a href="i18n/README.zh-CN.md">简体中文</a> &middot; <a href="i18n/README.ja.md">日本語</a></sub>
-</p>
-
----
-
-<p align="center">
-  <a href="https://ponytail.dev/soon"><img src="assets/waitlist-banner.png" alt="Something's coming, join the waitlist" width="760"></a>
-</p>
-
-## Already built with Ponytail
-
-<a href="https://theretriever.app">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/retriever-logo-dark.svg">
-    <img src="assets/retriever-logo-light.svg" height="128" alt="Retriever">
-  </picture>
-</a>
-
----
-
-You know him. Long ponytail. Oval glasses. Has been at the company longer than the version control. You show him fifty lines; he looks at them, says nothing, and replaces them with one.
-
-Ponytail puts him inside your AI agent.
-
-## Numbers
-
-<p align="center">
-  <img src="assets/v5/chart.png" width="880" alt="Share of the no-skill baseline. Lines of code: Ponytail v4.13 52%, Ponytail 5 47%. Output tokens: 57% and 55%. Cost: 84% and 74%. Time: 62% and 59%.">
-</p>
-
-<p align="center">
-  <img src="assets/v5/tests.png" width="880" alt="Half the code, and yet better: 98% of risky logic ships with a test (no skill 68%); the agent's own tests catch 66% of injected bugs (no skill 46%).">
-</p>
-
-Two things the chart does not show: in a blind comparison, Ponytail 5's replies beat the previous Ponytail's 110 to 67. And on the six security tasks (SQL injection, path traversal, forged tokens, rate limiting, malformed CSV rows, caching) it passed all 30 runs: less code, no less safe. Method, per-task tables and limits: [benchmarks/results/2026-10-07-agentic.md](benchmarks/results/2026-10-07-agentic.md).
-
-**The rule was never "fewest tokens."** It is: write only what the task needs, and never cut validation, error handling, security, or accessibility. The code ends up small because it is necessary, not golfed. Lower cost and latency are a side effect.
-
-## Before / after
-
-<p align="center">
-  <img src="assets/v5/beforeafter.png" width="880" alt="Add a date picker to the frontend. No skill: 335 lines, a calendar and a date picker built by hand. Ponytail 5: one 10-line file that reuses the repo's Input with type date, so the browser brings the calendar.">
-</p>
-
-You ask for a date picker. Without Ponytail, the agent installs a date picker library or builds a whole calendar by hand: 335 lines. Ponytail 5 first looks at what is already there: the repo has an `Input` component, and every browser has a date picker. It puts the two together. 10 lines.
-
-More survivors in [examples/](examples/).
-
-## The review, rebuilt
-
-<p align="center">
-  <img src="assets/v5/review.png" width="880" alt="The review, rebuilt. A real /ponytail-review finding from the benchmark: the change renamed a field, and an untouched file, src/routes/feed.js, now crashes. Must fix: the Atom feed now crashes on every request, with what this is, the problem, the fix, and what happens if we skip it. 100% of planted problems found, no skill 87%. 100% of problems outside the diff found, no skill 78%.">
-</p>
-
-`/ponytail-review` used to look only for code to cut. Now it reviews like the senior dev who gets paged when it breaks: it reads the code your change touches, not just the diff, and checks bugs, security, real load, missing tests, speed, and what to cut. Each finding says what the code does, what goes wrong, how to fix it, and what happens if you don't.
-
-## The audit, rebuilt
-
-<p align="center">
-  <img src="assets/v5/audit.png" width="880" alt="Your whole repo, ranked. Fix this first. A real /ponytail-audit from the benchmark on a warehouse stock repo: 1 must fix, office batches with 1,200 fail completely; 2 must fix, the import silently skips bad rows; 3 must fix, a mistyped SKU in an office batch is silently ignored; 4 should fix, the risky code paths have no tests; 5 nice to have, the API crashes on a body that isn't an object. Verdict: fix 1 first.">
-</p>
-
-`/ponytail-audit` runs the same checks on the whole repo. It maps the code first: entry points, how data moves, what load the project expects. Then it ranks what it finds and tells you what to fix first. The old audit only listed what to delete.
-
-## New in 5.3: the band
-
-<p align="center">
-  <img src="assets/band/band.png" width="880" alt="The ponytail band in Claude Code, above the prompt. Detail mode: cost $23.80, last turn $1.14, average $0.72 per turn; 56.7M tokens, 168k output, 33 turns; agent time 52m 14s; reuse 71%, 5 used, 2 new; tests passed after the last change. Compact mode shows the same in one line.">
-</p>
-
-In Claude Code, ponytail now shows a band above the prompt: what the current task costs, how many tokens and how much agent time it used, how often it reused existing code instead of writing new code, and whether the tests passed after the last change. Its buttons switch the level, run `/ponytail-review` or `/ponytail-audit`, copy the task as Markdown, and fold the band into one line. Don't want it? `/ponytail band` hides it, the same command brings it back. Needs Claude Code 2.1.290 or later, in the terminal or the desktop app. It does not show in the VS Code chat panel, cloud sessions or `claude -p`.
-
-<p align="center">
-  <img src="assets/band/board.png" width="880" alt="The ponytail board, a local page: 61 sessions, 20h 13m agent time, $285.30 and 492.5M tokens in the last 30 days; agent time per project over time; the latest sessions with their tests; active days and streak.">
-</p>
-
-**Board** opens a local page with every task across your projects: cost, agent time and tokens over time, every session with its tests, and the days you worked. By default, everything stays on your machine, in `~/.config/ponytail/band/`. `/ponytail band import` adds your past Claude Code sessions to it, with their cost, agent time and tokens.
-
-## How it works
-
-<p align="center">
-  <img src="assets/v5/ladder.png" width="880" alt="Before writing code, stop at the first rung that holds: 1 does this need to exist, 2 already in this codebase, 3 does the standard library do it, 4 a native platform feature, 5 an installed dependency, 6 can it be one line, 7 only then the minimum that works, plus one small test if it has logic.">
-</p>
-
-The ladder runs *after* it understands the problem, not instead of it: it reads the code the change touches and traces the real flow before picking a rung. Lazy about the solution, never about reading.
-
-Lazy, not negligent: trust-boundary validation, data-loss handling, security, and accessibility are never on the chopping block.
-
-Logic with a branch, a loop, a parser, money or security leaves one small test behind. Every reply ends with what was skipped or not checked and any risk you should know.
-
-## The prompt
-
-Ponytail is one prompt: [`skills/ponytail/SKILL.md`](skills/ponytail/SKILL.md). The compact version, for agents that read a rules file, is [`AGENTS.md`](AGENTS.md). Everything else in this repo loads that prompt into different agents.
+**Your decision:** review the diff. Puritanical guides the agent; it does not prove the change correct.
 
 ## Install
 
-**Claude Code**, as two separate prompts:
+Claude Code, as 2 separate prompts:
 
-```
-/plugin marketplace add DietrichGebert/ponytail
-```
-```
-/plugin install ponytail@ponytail
+```text
+/plugin marketplace add ryanduguid/Puritanical
 ```
 
-**Codex:**
+```text
+/plugin install puritanical@puritanical
+```
+
+Codex:
 
 ```bash
-codex plugin marketplace add DietrichGebert/ponytail
-codex plugin add ponytail@ponytail
+codex plugin marketplace add ryanduguid/Puritanical
+codex plugin add puritanical@puritanical
 ```
 
-Then open `/hooks` in Codex, trust its two lifecycle hooks, and start a new thread.
+Then open `/hooks` in Codex, trust its 2 lifecycle hooks and start a new thread.
 
-**Any other agent:** copy [`AGENTS.md`](AGENTS.md) into your project, or ask your agent to install [`skills/ponytail/SKILL.md`](skills/ponytail/SKILL.md) as a skill. Step by step for Copilot, Cursor, OpenCode, Gemini and the rest: **[INSTALL.md](INSTALL.md)**.
+For any other agent, copy [`AGENTS.md`](AGENTS.md) into your project, or follow [INSTALL.md](INSTALL.md) for your host. The Claude Code, Codex and Cursor integrations run small Node.js hooks, so `node` must be on your PATH.
 
-That was it. He'd be proud. He won't say it.
+Install only from `ryanduguid/Puritanical` on GitHub. This repository ships no executables; the Rust code in `tools/` is maintainer tooling that you build yourself.
 
-Active every session, with a handful of commands (see [Commands](#commands)). `/ponytail ultra` exists for when the codebase has wronged you personally. Startup and mode-change text shows the current mode.
+## Use
 
-Only install ponytail from `DietrichGebert/ponytail` on GitHub or `@dietrichgebert/ponytail` on npm. It never ships `.exe` or `.dll` files; a copy that does is not mine.
-
-## Commands
+Puritanical is on for every session at the `full` level. Change the level for the session with a command:
 
 | Command | What it does |
-|---------|--------------|
-| `/ponytail [lite \| full \| ultra \| off]` | Set the intensity, or turn it off. No argument switches ponytail on at the default level if it is off, and otherwise reports the current level. |
-| `/ponytail band [on \| off]` | Claude Code only: hide or show the band above the prompt. No argument switches it. The level stays. |
-| `/ponytail band import` | Claude Code only: add your past Claude Code sessions to the board, with their cost, agent time and tokens. |
-| `/ponytail-review` | Review the current diff like the senior dev who gets paged when it breaks: bugs, security, real load, risky code without a test, slow paths, and what to cut. Each finding says what the code does, what goes wrong, how to fix it, and what happens if you don't. Name a target in plain words to narrow or widen it: `uncommitted`, `staged`, `branch`, or a PR link. |
-| `/ponytail-audit` | The same check for the whole repo, most important first. |
-| `/ponytail-debt` | Harvest the `shortcut:` comments you've deferred into a ledger, so "later" doesn't become "never". |
-| `/ponytail-gain` | Show the measured impact scoreboard (less code, less cost, more speed) from the benchmark. |
-| `/ponytail-help` | Quick reference for the commands above. |
+| --- | --- |
+| `/puritanical [lite \| full \| ultra \| off]` | Sets the level, or turns it off. With no argument it switches on at the default level, or reports the current level. |
+| `/puritanical default <level>` | Sets the level new sessions start at. |
+| `/puritanical-review` | Reviews the current diff for bugs, security, behaviour under load, untested risky code, slow paths and code to delete. Name a target such as `staged`, `branch` or a PR link. |
+| `/puritanical-audit` | Runs the same review over the whole repository, most important first. |
+| `/puritanical-debt` | Lists every `shortcut:` comment, and older `ponytail:` ones, as a debt ledger. |
+| `/puritanical-help` | Shows these commands and levels. |
 
-Commands need a skill-capable host (Claude Code, Codex, Devin CLI, OpenCode, Gemini, Antigravity CLI, pi, Hermes Agent, Qoder, Grok Build). In Codex CLI and the IDE extension they're skills under the plugin's namespace; invoke with `$ponytail:ponytail-review`. Cursor with the [hooks](INSTALL.md#cursor) gets `/ponytail` level switching only, typed as a plain message. The instruction-only adapters (Cursor's rule file, Windsurf, Cline, Copilot, Kiro, Antigravity's `AGENTS.md` fallback) load the always-on ruleset without the commands.
+The review, audit, debt and help skills run only when you call them. In Codex, call them as `$puritanical:puritanical-review`. Rule-file hosts such as Windsurf, Cline and Kiro load the rules without commands. To set the default without a command, use `PURITANICAL_DEFAULT_MODE` or `defaultMode` in `~/.config/puritanical/config.json`.
 
-## FAQ
+## The rules
 
-**Does it need a config file?**
-No. An optional `~/.config/ponytail/config.json` or `PONYTAIL_DEFAULT_MODE` env var can set the default level, but nothing is required.
+The whole ruleset is [`skills/puritanical/SKILL.md`](skills/puritanical/SKILL.md). Before writing code the agent reads the affected code and its callers, then takes the first option that meets the complete requirements:
 
-**Why does it write `shortcut:` comments?**
-They mark a deliberate shortcut and when to revisit it, and `/ponytail-debt` collects them into a ledger. Want another word, or none? Say so in your project's `CLAUDE.md` or `AGENTS.md`, then run `/ponytail-debt <your word>`.
+1. Leave out what is not required now.
+2. Reuse what the codebase already has.
+3. Use the standard library.
+4. Use a native platform feature.
+5. Use an installed dependency.
+6. Write a direct expression.
+7. Write the smallest cohesive implementation.
 
-**What if I really need the 120-line cache class?**
-You don't. Insist anyway and he'll build it. Slowly. Correctly. While looking at you.
+The ladder never removes input validation at trust boundaries, security, accessibility, error handling that prevents data loss or required hardware calibration. A deliberate corner cut gets a `shortcut:` comment naming its limit and when to revisit it.
 
-**Does it scale?**
-The code you never wrote scales infinitely. Zero bugs, zero CVEs, 100% uptime since forever.
+## Changes from Ponytail
 
-**Why "ponytail"?**
-You know exactly why.
+Puritanical is a fork of [Ponytail](https://github.com/DietrichGebert/ponytail) by Dietrich Gebert, taken at upstream `main` after v5.3.2 (commit `09c434a`).
 
-## Sponsors
+The ruleset:
 
-<p align="center">
-  <a href="https://greenpt.com/">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="assets/logo-greenpt-dark.svg">
-      <img src="assets/logo-greenpt.svg" width="260" alt="GreenPT">
-    </picture>
-  </a>
-</p>
+- puts correctness, safety, accessibility, maintainability and required performance ahead of fewer lines, files or tokens;
+- states its chosen reading of an ambiguous request, or asks when the choice is costly to reverse;
+- checks that an API, flag or symbol exists in the installed version before relying on it;
+- stops patching after 2 failed fix attempts and rechecks the evidence and design;
+- requires a regression test that fails without the fix, with no one-test ceiling;
+- rejects malformed input in data, money and security paths, or reports what was skipped;
+- keeps every changed line traceable to the request and reports other dead code instead of deleting it;
+- claims only checked results, names each check and marks the rest as not run;
+- drops the lazy-developer persona and the per-reply 'skipped' footer.
 
-## License
+The plugin:
 
-[MIT](LICENSE). The shortest license that works.
+- does not inject the ruleset into Claude Code or Codex subagents, or again into a resumed session that already has it;
+- removes the Band status board, which wrapped every Bash, Edit and Write call and logged prompt text to a local file;
+- removes the gain scoreboard, which reported upstream benchmark figures;
+- makes the session-start codebase map opt-in with `PURITANICAL_MAP=1`;
+- refuses to follow a planted symlink when writing mode and config files on macOS and Linux;
+- fixes subagent injection and host detection in Qoder, CommonJS exports in the codebase map and rule loading in Pi when another extension forces the system prompt;
+- generates `AGENTS.md`, 7 host rule files, the command prompts, the OpenClaw skills and both fallback strings from `skills/`, with a Rust tool that CI runs to catch drift.
 
-## Star History
+The 4 fixes came from community forks: [duofuwang](https://github.com/duofuwang/ponytail), [vincntlaw](https://github.com/vincntlaw/ponytail), [leiyangyou](https://github.com/leiyangyou/ponytail) and [Eugene3dotdev](https://github.com/Eugene3dotdev/ponytail). Issue numbers in code comments and the host verification notes in [docs/](docs/) refer to upstream Ponytail.
 
-<a href="https://www.star-history.com/dietrichgebert/ponytail#history">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=DietrichGebert/ponytail&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=DietrichGebert/ponytail&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=DietrichGebert/ponytail&type=Date" />
- </picture>
-</a>
+## Benchmarks
+
+Puritanical has not been benchmarked yet. The harness in [benchmarks/](benchmarks/) comes from upstream; its published results measure the upstream rulesets.
+
+## Development
+
+```bash
+npm test
+cargo run --manifest-path tools/Cargo.toml -- sync --check
+cargo run --manifest-path tools/Cargo.toml -- check-versions
+```
+
+Edit `skills/*/SKILL.md`, then run `cargo run --manifest-path tools/Cargo.toml -- sync` to regenerate the copies. [CONTRIBUTING.md](.github/CONTRIBUTING.md) covers the checks and the evidence a ruleset change needs.
+
+## Licence
+
+MIT. Puritanical keeps Dietrich Gebert's Ponytail copyright notice alongside Ryan Duguid's in [LICENSE](LICENSE).

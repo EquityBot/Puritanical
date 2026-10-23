@@ -25,14 +25,14 @@ the job properly, so any difference is the skill's effect, not the model being c
 
 ## Arms
 
-`baseline` (no skill) · `ponytail` · `caveman` · `yagni` ("Follow YAGNI principles.") ·
+`baseline` (no skill) · `puritanical` · `caveman` · `yagni` ("Follow YAGNI principles.") ·
 `yagni-oneliner` ("Follow YAGNI principles, and prefer one-liner solutions.")
 
-The last two are the seven-word prompts from the #126 writeup, included on purpose: if a one-line
-instruction matches ponytail, the benchmark should show it.
+The last two are the seven-word prompts from the upstream #126 writeup, included on purpose: if a one-line
+instruction matches puritanical, the benchmark should show it.
 
-`ponytail2` loads a candidate plugin from `PONYTAIL2_PLUGIN_DIR`, next to the released `ponytail`. That is how
-Ponytail 5 was measured against the previous Ponytail (v4.13) and no skill in one run.
+`puritanical2` loads a candidate plugin from `PURITANICAL2_PLUGIN_DIR`, next to the released `puritanical`. Upstream used it to
+measure Ponytail 5 against Ponytail 4.13 and no skill in one run.
 
 ## Tasks
 
@@ -73,7 +73,7 @@ path, unsafe on the adversarial input. That is exactly the code a binary correct
 - **correct** (gate): produced code runs and returns the right answer on normal input.
 - **safe** (gate): produced code survives the adversarial input. Deterministic, stdlib-only.
 - **src_loc / src_files**: over-engineering proxy. **Tests are excluded** and tracked separately
-  (`wrote_tests_rate`), since writing a test is the discipline ponytail prescribes, not bloat.
+  (`wrote_tests_rate`), since writing a test is the discipline puritanical prescribes, not bloat.
 - **cost / duration / turns**: straight from the Claude Code CLI JSON.
 
 Every instrument ships a `good` and a `bad` reference and is verified by `--selftest` (the good
@@ -109,7 +109,7 @@ less, not less-bloated.
 
 It judges only the tasks scored on size alone (`vibe-*`, `open-*`, `tmpl-*`). On the repo tasks the
 judge sees the agent's diff, not the whole seeded repo; an answer given only in chat is judged from
-the chat; `ponytail:` markers are neutralized so the judge stays blind; runs killed at the timeout are
+the chat; `puritanical:` markers are neutralized so the judge stays blind; runs killed at the timeout are
 counted apart instead of scored 0. Without an API key it runs through the `claude` CLI login (no
 temperature setting there; the self-test gates it the same way).
 
@@ -121,13 +121,13 @@ the gate logic with no API call (no key needed).
 python complete.py --selftest-offline  # validate the gate logic, no API
 python complete.py --selftest          # validate the judge (small spend)
 python complete.py --run runs/<stamp>  # completeness-score every workspace
-python complete.py --run runs/<stamp> --model claude-opus-5-5 --arms baseline,ponytail2 --workers 6
+python complete.py --run runs/<stamp> --model claude-opus-5-5 --arms baseline,puritanical2 --workers 6
 ```
 
 ## Reproduce
 
 Needs the `claude` CLI (this is the harness, no SDK), Python 3, an authenticated Claude Code, and a
-clone of the template at the pinned commit (set `PONYTAIL_TMPL` to its path, or drop it at
+clone of the template at the pinned commit (set `PURITANICAL_TMPL` to its path, or drop it at
 `fixtures/full-stack-fastapi-template`):
 
 ```bash
@@ -139,10 +139,10 @@ cd full-stack-fastapi-template && git checkout cd83fc1
 python run.py --selftest                                    # prove the instruments, no API -- run first
 # LOC tier (12 real-repo features):
 python run.py --task tmpl-fe-datepicker,tmpl-fe-colorpicker,tmpl-fe-command,tmpl-fe-dropzone,tmpl-fe-wizard,tmpl-fe-rating,tmpl-be-duplicate,tmpl-be-search,tmpl-be-count,tmpl-be-archive,tmpl-be-bulkdelete,tmpl-be-csv \
-  --arms baseline,caveman,ponytail,yagni-oneliner --models haiku --runs 4 --workers 6
+  --arms baseline,caveman,puritanical,yagni-oneliner --models haiku --runs 4 --workers 6
 # safety tier (7 surgical tasks):
 python run.py --task safe-path,critic-email,rate-limit,sql-user,auth-token,csv-sum,cache \
-  --arms baseline,caveman,ponytail,yagni-oneliner --models haiku --runs 4 --workers 6
+  --arms baseline,caveman,puritanical,yagni-oneliner --models haiku --runs 4 --workers 6
 python run.py --rescore runs/<stamp>                        # recompute metrics offline, no API
 ```
 
@@ -167,35 +167,11 @@ re-applied offline with `--rescore`, you never pay the API twice for a measureme
 
 ## Results
 
-**2026-10-07, Ponytail 5, Opus 5.5, 5 runs, all 39 tasks** (`--arms baseline,ponytail,ponytail2 --models opus --runs 5`):
+Puritanical has not been benchmarked yet. The harness is inherited from [Ponytail](https://github.com/DietrichGebert/ponytail); its published results measure the upstream rulesets, so they are in [upstream `benchmarks/results/`](https://github.com/DietrichGebert/ponytail/tree/main/benchmarks/results) and are not repeated here.
 
-| vs no skill | lines of code | output tokens | cost | time | hidden checks passed |
-|---|--:|--:|--:|--:|--:|
-| **Ponytail 5** | **-53%** | **-45%** | **-26%** | **-41%** | **97%** |
-| Ponytail (v4.13) | -48% | -43% | -16% | -38% | 96% |
-| no skill | | | | | 96% |
-
-98% of risky logic ships with a test (no skill: 68%). Every cell ran in a fresh temp folder outside any git
-repo and was moved to `runs/<stamp>/` afterwards; inside a repo, Claude Code shows the model recent commit
-messages. Full writeup: [results/2026-10-07-agentic.md](../results/2026-10-07-agentic.md).
-
-**Earlier: 2026-06-18, Haiku 4.5, `n=4`, previous Ponytail.** Two tiers:
-
-- **12 real-repo features** (LOC via `git diff`): ponytail cuts **60–94%** on features with an
-  over-build trap (date picker 404→23, color picker 287→23, dropzone 251→95) and is a wash on
-  irreducible code (backend CRUD). It never writes more. Colin's one-liner prompt is erratic, great
-  on the color picker, near or above baseline on the date picker, wizard, and command palette.
-- **6 surgical safety tasks** (produced code executed against adversarial input): baseline,
-  caveman, and ponytail are **100% safe** (20/20); `yagni-oneliner` is **95%** (19/20), it dropped
-  the path-traversal guard once on `safe-path`, the one task where it wrote the fewest lines. The
-  lines it cut were the guard.
-
-Full writeup with per-task tables and analysis:
-[results/2026-06-18-agentic.md](../results/2026-06-18-agentic.md).
-
-> The earlier `results/2026-06-17-agentic-safety.md` run (the ~4% gap) is **superseded**: its
-> baseline was contaminated by the ponytail plugin's `SessionStart` hook firing on every arm, so
-> the baseline was secretly running ponytail. Isolation is now enforced with `--setting-sources
+> An upstream run (`results/2026-06-17-agentic-safety.md`) was **superseded** because its
+> baseline was contaminated by the puritanical plugin's `SessionStart` hook firing on every arm, so
+> the baseline was secretly running puritanical. Isolation is now enforced with `--setting-sources
 > project,local` plus a per-arm `--plugin-dir`, and every cell runs with
 > `CLAUDE_CODE_DISABLE_CLAUDE_MDS=1 CLAUDE_CODE_DISABLE_AUTO_MEMORY=1`, because cells live inside
-> this repo and would otherwise all load its `AGENTS.md` (the ponytail ruleset) and your memory.
+> this repo and would otherwise all load its `AGENTS.md` (the puritanical ruleset) and your memory.

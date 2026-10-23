@@ -1,14 +1,14 @@
 {
-  "name": "ponytail",
+  "name": "puritanical",
   "interface": {
-    "displayName": "Ponytail"
+    "displayName": "Puritanical"
   },
   "plugins": [
     {
-      "name": "ponytail",
+      "name": "puritanical",
       "source": {
         "source": "url",
-        "url": "https://github.com/DietrichGebert/ponytail.git",
+        "url": "https://github.com/ryanduguid/Puritanical.git",
         "ref": "main"
       },
       "policy": {
