@@ -1,36 +1,33 @@
 # Contributing
 
-Thanks for helping. Here is what gets merged, and what needs to come with it.
+Open an issue before a pull request for a new skill or a ruleset change. Bug fixes in hooks, installers, adapters and docs can go straight to a pull request.
 
-## New skills come from me
+## Edit the source, then regenerate the copies
 
-I add new skills myself, so please open an issue with the idea instead of a PR.
+`skills/*/SKILL.md` is the only source of the rules. `AGENTS.md`, the host rule files (`.cursor/`, `.windsurf/`, `.clinerules/`, `.agents/`, `.qoder/`, `.kiro/`, `.github/copilot-instructions.md`), the command prompts in `commands/` and `.opencode/command/`, `.openclaw/skills/` and the fallback strings in `hooks/puritanical-instructions.js` and `__init__.py` are generated from it. After editing a skill, run:
 
-## Changes to the ruleset need a benchmark
+```bash
+cargo run --manifest-path tools/Cargo.toml -- sync
+```
 
-The ruleset is what every puritanical user loads in every session. That means `skills/`, `AGENTS.md`,
-the rule copies (`.cursor/`, `.windsurf/`, `.clinerules/`, `.agents/`, `.qoder/`, `.kiro/`,
-`.github/copilot-instructions.md`), `.openclaw/skills/`, and anything else that changes what the
-agent is told.
+CI fails when a copy is stale or when the core skill loses one of the rule invariants listed in `tools/src/rules.rs`.
 
-I only merge a change there if the PR shows a benchmark with three arms, same task, same model:
+## Checks before a pull request
 
-1. `baseline` (no puritanical)
-2. current puritanical (`main`)
-3. puritanical with your change
+```bash
+npm test
+cargo run --manifest-path tools/Cargo.toml -- sync --check
+cargo run --manifest-path tools/Cargo.toml -- check-versions
+cd tools && cargo fmt --check && cargo clippy --all-targets -- -D warnings && cargo test
+```
 
-The PR should show:
+`npm test` needs Python with `pandas` for the CSV correctness checks; `python3` is tried before `python`. Keep each pull request to one change and link the issue it fixes.
 
-- a task where your change should make a difference, and the numbers showing it does,
-- at least one existing task it could break, and the numbers showing it doesn't (a new rule
-  often fights an old one),
-- at least 6 runs per arm on a current model, and which model you used.
+## Ruleset changes need evidence
 
-Without that, the PR gets closed, however good the idea is.
+The ruleset reaches every session, so a change to what the agent is told needs a benchmark with 3 arms on the same task and model: no skill, current `main` and your branch. Show a task the change should improve, at least one existing task it could break and at least 6 runs per arm, naming the model.
 
-[`benchmarks/agentic/run.py`](../benchmarks/agentic/run.py) does the work (setup in
-[its README](../benchmarks/agentic/README.md#reproduce)). The `puritanical` arm loads the plugin from
-`PURITANICAL_PLUGIN_DIR`, so run it once against a checkout of `main` and once against your branch:
+[`benchmarks/agentic/run.py`](../benchmarks/agentic/run.py) runs the arms ([setup](../benchmarks/agentic/README.md#reproduce)). The `puritanical` arm loads the plugin from `PURITANICAL_PLUGIN_DIR`:
 
 ```bash
 cd benchmarks/agentic
@@ -39,34 +36,8 @@ PURITANICAL_PLUGIN_DIR=/abs/path/to/puritanical-main python run.py --task <task>
 PURITANICAL_PLUGIN_DIR=/abs/path/to/your-branch python run.py --task <task> --arms puritanical --models opus --runs 6
 ```
 
-If your task isn't in `tasks.py` yet, add it with a `good` and a `bad` reference, so `--selftest`
-proves the scorer catches the difference.
+A new task needs a `good` and a `bad` reference in `tasks.py`, so `--selftest` proves the scorer tells them apart.
 
-Rule text lives in `AGENTS.md` and `skills/puritanical/SKILL.md`. Keep the copies in sync
-(`node scripts/check-rule-copies.js`) and regenerate `.openclaw/` with
-`node scripts/build-openclaw-skills.js`.
+## Releases
 
-## Everything else
-
-Bug fixes in hooks, installers, adapters, and docs don't need a benchmark. Before you open the PR:
-
-```bash
-npm test
-node scripts/check-rule-copies.js
-node scripts/check-versions.js
-```
-
-Keep the PR to one change and link the issue it fixes.
-
-## Development
-
-When changing the compact rule text, keep the agent copies aligned:
-
-```bash
-node scripts/check-rule-copies.js
-npm test
-```
-
-The OpenClaw skill package (`.openclaw/skills/`) is generated from `skills/`; rerun `node scripts/build-openclaw-skills.js` after changing a skill, the test suite fails if it is stale. To publish the skills to ClawHub, run `clawhub login` once, then `node scripts/publish-openclaw-skills.js` (it publishes all six at the `package.json` version; pass `--dry-run` to preview).
-
-The correctness benchmark spawns Python for email and CSV checks; `python3` is tried before `python`. CSV checks need `pandas` installed locally.
+Bump every version file together; `check-versions` lists them and, on a tag build, checks the tag matches. `puritanical-tools publish-openclaw` pushes `.openclaw/skills/` to ClawHub after `clawhub login`; nothing is published there yet.

@@ -9,7 +9,12 @@
   "homepage": "https://github.com/ryanduguid/Puritanical",
   "repository": "https://github.com/ryanduguid/Puritanical",
   "license": "MIT",
-  "keywords": ["yagni", "minimalism", "code-review", "productivity"],
+  "keywords": [
+    "yagni",
+    "minimalism",
+    "code-review",
+    "productivity"
+  ],
   "skills": "./skills/",
   "hooks": "./hooks/claude-codex-hooks.json",
   "interface": {
@@ -18,15 +23,16 @@
     "longDescription": "After correctness, safety and verification, prefer reuse, the standard library, native platform features and the smallest correct implementation.",
     "developerName": "Ryan Duguid",
     "category": "Productivity",
-    "capabilities": ["Instructions", "Lifecycle hooks"],
+    "capabilities": [
+      "Instructions",
+      "Lifecycle hooks"
+    ],
     "websiteURL": "https://github.com/ryanduguid/Puritanical",
     "defaultPrompt": [
       "Use Puritanical mode for this task.",
       "Review this diff for over-engineering.",
       "Find the smallest correct implementation."
     ],
-    "brandColor": "#111111",
-    "composerIcon": "./assets/codex-icon.png",
-    "logo": "./assets/logo.png"
+    "brandColor": "#111111"
   }
 }

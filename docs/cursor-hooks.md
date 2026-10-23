@@ -4,6 +4,8 @@ Native Cursor support through `hooks.json` (issue #817). The adapter reuses the
 shared hook scripts; the only Cursor-specific pieces are the hooks template, the
 install script and a small output branch in `hooks/puritanical-runtime.js`.
 
+Issue numbers and host verification notes in this document come from upstream [Ponytail](https://github.com/DietrichGebert/ponytail) and were not repeated for Puritanical.
+
 | File | Role |
 |------|------|
 | `hooks/cursor-hooks.json` | Template: `sessionStart` and `beforeSubmitPrompt` entries with a `PURITANICAL_DIR` placeholder. |

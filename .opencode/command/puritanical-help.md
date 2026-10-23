@@ -29,7 +29,7 @@ Level sticks until changed or session end.
 
 In Codex CLI and the IDE extension, invoke skills with `$puritanical:puritanical`,
 `$puritanical:puritanical-review`, or `$puritanical:puritanical-help`. Claude Code and OpenCode use the
-slash-command forms above (OpenCode ships all six as slash commands).
+slash-command forms above (OpenCode ships all five as slash commands).
 
 ## Deactivate
 

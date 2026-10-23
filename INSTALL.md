@@ -58,7 +58,7 @@ pi install git:github.com/ryanduguid/Puritanical
 
 ## Kimi Code
 
-In Kimi Code, run `/plugins install https://github.com/ryanduguid/Puritanical`, then `/reload` or start a new session. The plugin puts [`AGENTS.md`](AGENTS.md) into the system prompt every turn and adds the six skills, which Kimi also offers as `/puritanical`, `/puritanical-review`, `/puritanical-audit`, `/puritanical-debt`, `/puritanical-gain` and `/puritanical-help`. Level switching (`/puritanical lite`) loads the skill for that turn; there is no persistent mode flag in Kimi.
+In Kimi Code, run `/plugins install https://github.com/ryanduguid/Puritanical`, then `/reload` or start a new session. The plugin puts [`AGENTS.md`](AGENTS.md) into the system prompt every turn and adds the five skills, which Kimi also offers as `/puritanical`, `/puritanical-review`, `/puritanical-audit`, `/puritanical-debt` and `/puritanical-help`. Level switching (`/puritanical lite`) loads the skill for that turn; there is no persistent mode flag in Kimi.
 
 ## Oh My Pi (omp)
 
@@ -71,17 +71,7 @@ omp runs puritanical's Pi extension unchanged, so the ruleset is injected every 
 
 ## OpenCode
 
-```bash
-opencode plugin add @ryanduguid/puritanical
-```
-
-Or add it to a project's `opencode.json`:
-
-```json
-{ "plugins": ["@ryanduguid/puritanical"] }
-```
-
-Run from a checkout instead (the plugin reuses `hooks/` and `skills/`):
+Puritanical is not published to npm. Clone this repository, then point a project's `opencode.json` at the checkout (the plugin reuses `hooks/` and `skills/`):
 
 ```json
 { "plugins": ["./.opencode/plugins"] }
@@ -91,9 +81,9 @@ Injects the ruleset every turn at the active level; adds the `/puritanical` comm
 
 The `./` path resolves against your project's `opencode.json`; to share one checkout across projects, point it at the absolute path of the checkout's `.opencode/plugins` directory. A `plugins` entry must name a **directory**, not a file: OpenCode 2 rejects a path to `puritanical.mjs` with `configured plugin path must be a directory`. Opening this repo in OpenCode 2 needs no entry at all: it loads `.opencode/plugins/index.js` on its own.
 
-Kilo Code is built on OpenCode and runs the same plugin through its `plugin` key: add `{ "plugin": ["@ryanduguid/puritanical"] }` to `kilo.jsonc` (or `~/.config/kilo/kilo.jsonc` for every project).
+Kilo Code is built on OpenCode and runs the same plugin through its `plugin` key: add `{ "plugin": ["<checkout>/.opencode/plugins/puritanical.mjs"] }` to `kilo.jsonc` (or `~/.config/kilo/kilo.jsonc` for every project).
 
-OpenCode 1 has no `plugin add` and uses the older `plugin` key: `{ "plugin": ["@ryanduguid/puritanical"] }`, or from a checkout the file path: `{ "plugin": ["./.opencode/plugins/puritanical.mjs"] }`.
+OpenCode 1 uses the older `plugin` key with the file path: `{ "plugin": ["./.opencode/plugins/puritanical.mjs"] }`.
 
 ## Gemini CLI
 
@@ -108,7 +98,7 @@ Qwen Code installs the same extension: `qwen extensions install ryanduguid/Purit
 
 ## Qoder
 
-Qoder auto-loads `AGENTS.md` from the repo root as always-on context, so running puritanical from a checkout works with zero setup. For per-project rules, copy [`.qoder/rules/puritanical.md`](.qoder/rules/puritanical.md) into your project's `.qoder/rules/`. The six puritanical skills (`/puritanical`, `/puritanical-review`, `/puritanical-audit`, `/puritanical-debt`, `/puritanical-gain`, `/puritanical-help`) are available via Qoder's Skill system; the plugin manifest at [`.qoder-plugin/plugin.json`](.qoder-plugin/plugin.json) points at the `skills/` directory.
+Qoder auto-loads `AGENTS.md` from the repo root as always-on context, so running puritanical from a checkout works with zero setup. For per-project rules, copy [`.qoder/rules/puritanical.md`](.qoder/rules/puritanical.md) into your project's `.qoder/rules/`. The five puritanical skills (`/puritanical`, `/puritanical-review`, `/puritanical-audit`, `/puritanical-debt`, `/puritanical-help`) are available via Qoder's Skill system; the plugin manifest at [`.qoder-plugin/plugin.json`](.qoder-plugin/plugin.json) points at the `skills/` directory.
 
 For full plugin-tier support (automatic mode activation + ruleset injection on every prompt), install puritanical as a Qoder plugin (`qodercli plugins install <path-to-puritanical>`): the manifest loads [`hooks/qoder-hooks.json`](hooks/qoder-hooks.json) and Qoder fills in `${QODER_PLUGIN_ROOT}`. Without the plugin, copy those hooks into your `.qoder/settings.json` and replace `${QODER_PLUGIN_ROOT}` with the path to your puritanical checkout. Qoder's `UserPromptSubmit` hook activates the default mode on first prompt and injects the ruleset every turn; `SubagentStart` injects the ruleset into every subagent. Level switches (`/puritanical lite|full|ultra|off`) work automatically.
 
@@ -118,7 +108,7 @@ For full plugin-tier support (automatic mode activation + ruleset injection on e
 agy plugin install https://github.com/ryanduguid/Puritanical
 ```
 
-Installs the six skills, and Antigravity turns the `/puritanical` commands into skills as well, so you [call them as slash commands](https://www.antigravity.google/docs/skills#slash-command-conversion) such as `/puritanical-review`. No lifecycle hooks, so levels don't persist. For the always-on ruleset, copy [`AGENTS.md`](AGENTS.md) into your project; Antigravity [reads it as workspace rules](https://www.antigravity.google/docs/rules). Install verified with Antigravity CLI 1.3.3.
+Installs the five skills, and Antigravity turns the `/puritanical` commands into skills as well, so you [call them as slash commands](https://www.antigravity.google/docs/skills#slash-command-conversion) such as `/puritanical-review`. No lifecycle hooks, so levels don't persist. For the always-on ruleset, copy [`AGENTS.md`](AGENTS.md) into your project; Antigravity [reads it as workspace rules](https://www.antigravity.google/docs/rules). Install verified with Antigravity CLI 1.3.3.
 
 ## Hermes Agent
 
@@ -133,7 +123,7 @@ git clone https://github.com/ryanduguid/Puritanical.git ~/.hermes/plugins/purita
 hermes plugins enable puritanical
 ```
 
-Restart Hermes after installing. The plugin injects the active Puritanical mode before each LLM turn, registers the bundled skills as `puritanical:<skill>`, and adds `/puritanical`, `/puritanical-review`, `/puritanical-audit`, `/puritanical-debt`, `/puritanical-gain`, and `/puritanical-help`. In shared gateways, restrict `/puritanical` to trusted users with Hermes slash-command access controls; runtime mode is process-local.
+Restart Hermes after installing. The plugin injects the active Puritanical mode before each LLM turn, registers the bundled skills as `puritanical:<skill>`, and adds `/puritanical`, `/puritanical-review`, `/puritanical-audit`, `/puritanical-debt`, and `/puritanical-help`. In shared gateways, restrict `/puritanical` to trusted users with Hermes slash-command access controls; runtime mode is process-local.
 
 ## CodeWhale
 
@@ -149,11 +139,7 @@ Installs puritanical as a Devin plugin; skills are available as `/puritanical:pu
 
 ## OpenClaw
 
-```bash
-clawhub install puritanical
-```
-
-Installs puritanical as an OpenClaw skill from ClawHub; the review, audit, debt, gain, and help skills install the same way (`clawhub install puritanical-review`, and so on). OpenClaw applies it on coding tasks and also exposes it as a `/puritanical` command. Without ClawHub, copy [`.openclaw/skills/puritanical`](.openclaw/skills/) into `~/.openclaw/skills/`.
+Puritanical is not published to ClawHub. Copy the skill folders in [`.openclaw/skills/`](.openclaw/skills/) into `~/.openclaw/skills/`. OpenClaw applies the core skill on coding tasks and also exposes it as a `/puritanical` command.
 
 ## Grok Build
 
@@ -168,7 +154,7 @@ Enable the plugin (off by default): `/plugins` → Plugins → Space on `puritan
 enabled = ["puritanical"]
 ```
 
-Start a new session (or reload plugins). Skills show as `/puritanical`, `/puritanical-review`, `/puritanical-audit`, `/puritanical-debt`, `/puritanical-gain`, `/puritanical-help`. Verify with `grok inspect`. Grok can auto-invoke puritanical for coding tasks from its skill description; use `/puritanical` (or `/puritanical lite`, `/puritanical full`, `/puritanical ultra`) when activation needs to be explicit. Grok lifecycle hooks are not used because their SessionStart output cannot inject instructions.
+Start a new session (or reload plugins). Skills show as `/puritanical`, `/puritanical-review`, `/puritanical-audit`, `/puritanical-debt`, `/puritanical-help`. Verify with `grok inspect`. Grok can auto-invoke puritanical for coding tasks from its skill description; use `/puritanical` (or `/puritanical lite`, `/puritanical full`, `/puritanical ultra`) when activation needs to be explicit. Grok lifecycle hooks are not used because their SessionStart output cannot inject instructions.
 
 `AGENTS.md` still works instruction-only from a checkout without the plugin.
 
@@ -178,7 +164,7 @@ Start a new session (or reload plugins). Skills show as `/puritanical`, `/purita
 goose plugin install https://github.com/ryanduguid/Puritanical.git
 ```
 
-That imports the six skills as `puritanical:puritanical`, `puritanical:puritanical-review` and so on. For the always-on rules, copy [`AGENTS.md`](AGENTS.md) to `~/.agents/AGENTS.md` (or into your project; `~/.config/goose/.goosehints` works too). Goose has no lifecycle hooks, so the levels don't persist.
+That imports the five skills as `puritanical:puritanical`, `puritanical:puritanical-review` and so on. For the always-on rules, copy [`AGENTS.md`](AGENTS.md) to `~/.agents/AGENTS.md` (or into your project; `~/.config/goose/.goosehints` works too). Goose has no lifecycle hooks, so the levels don't persist.
 
 ## Cursor
 
@@ -193,17 +179,17 @@ Merges two native hooks into `~/.cursor/hooks.json` (add `--project` to write `<
 
 Set the level for every new session with the `PURITANICAL_DEFAULT_MODE` env var (`lite`/`full`/`ultra`/`off`), or a `defaultMode` field in `~/.config/puritanical/config.json` (`%APPDATA%\puritanical\config.json` on Windows). The default is `full`.
 
-While active, the ruleset is also injected into every subagent spawned via the Agent tool. To scope that to specific agent types (say, keep it off read-only search agents), set the `PURITANICAL_SUBAGENT_MATCHER` env var to a regex tested against the subagent's `agent_type`. It is unanchored and case-insensitive: `explore|general` matches either, `^general$` is exact, and plugin agent types look like `plugin:name`. Unset means inject into every subagent (the default); an invalid regex, or a subagent whose type the platform doesn't report, also falls back to injecting.
+The Claude Code and Codex plugins do not inject the ruleset into subagents, which saves about 1,400 tokens per subagent; brief a subagent yourself when it should follow the rules. The Qoder plugin injects the ruleset into every subagent it starts. To scope that to specific agent types (say, keep it off read-only search agents), set the `PURITANICAL_SUBAGENT_MATCHER` env var to a regex tested against the subagent's `agent_type`. It is unanchored and case-insensitive: `explore|general` matches either, `^general$` is exact, and plugin agent types look like `plugin:name`. Unset means inject into every subagent (the default); an invalid regex, or a subagent whose type the platform doesn't report, also falls back to injecting.
 
 ## Skills CLI
 
-The [skills CLI](https://skills.sh) copies the six puritanical skills into the skills folder of many agents:
+The [skills CLI](https://skills.sh) copies the five puritanical skills into the skills folder of many agents:
 
 ```bash
 npx skills add ryanduguid/Puritanical
 ```
 
-Pick the agent with `--agent` (for IBM Bob: `--agent bob`), take all six without asking with `--skill '*'`, and add `--global` to install for your user instead of the project. This installs the skills only; for the always-on ruleset, also add [`AGENTS.md`](AGENTS.md) or use one of the plugins above.
+Pick the agent with `--agent` (for IBM Bob: `--agent bob`), take all five without asking with `--skill '*'`, and add `--global` to install for your user instead of the project. This installs the skills only; for the always-on ruleset, also add [`AGENTS.md`](AGENTS.md) or use one of the plugins above.
 
 ## Other agents (rules file only)
 
@@ -231,9 +217,9 @@ Jules (Google) reads `AGENTS.md` from the repository root, which this repo ships
 | Grok Build | `grok plugin uninstall puritanical` |
 | Pi agent | `pi uninstall puritanical` |
 | Kimi Code | `/plugins` in Kimi Code, then remove puritanical |
-| Skills CLI | `npx skills remove puritanical puritanical-audit puritanical-debt puritanical-gain puritanical-help puritanical-review` (same `--agent` / `--global` flags as the install) |
+| Skills CLI | `npx skills remove puritanical puritanical-audit puritanical-debt puritanical-help puritanical-review` (same `--agent` / `--global` flags as the install) |
 | Oh My Pi (omp) | `omp plugin uninstall puritanical@puritanical`, then `omp plugin marketplace remove puritanical` |
-| OpenCode | `opencode plugin remove @ryanduguid/puritanical` |
+| OpenCode | Remove the `.opencode/plugins` entry from `opencode.json` |
 | Cursor hooks | `node scripts/cursor-hooks.js uninstall` (add `--project` for a project-level install); removes only puritanical's entries from `hooks.json` |
 | Cursor rule / Windsurf / Cline / Qoder / etc. | Delete the copied rule file |
 

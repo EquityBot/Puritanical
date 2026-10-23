@@ -7,7 +7,7 @@
 // all read one source of truth.
 //
 // OpenCode loads this as a server plugin — add it to your opencode.json:
-//   { "plugins": ["@ryanduguid/puritanical"] }
+//   { "plugins": ["<checkout>/.opencode/plugins"] }
 //
 // One default export serves both plugin APIs: V2 reads `id` + `setup`, V1 calls
 // `server()`.

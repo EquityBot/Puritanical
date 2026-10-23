@@ -1,7 +1,7 @@
 # Agentic benchmark
 
 The single-shot benchmark (`../promptfooconfig.yaml`) measures one prompt, one completion.
-A fair critique ([#126](https://github.com/ryanduguid/Puritanical/issues/126)) is that this
+A fair critique ([#126](https://github.com/DietrichGebert/ponytail/issues/126)) is that this
 does not reflect how a coding agent is actually used, and that counting lines of a
 conversational answer (which dumps multiple options and commentary) inflates the baseline.
 
@@ -28,11 +28,11 @@ the job properly, so any difference is the skill's effect, not the model being c
 `baseline` (no skill) · `puritanical` · `caveman` · `yagni` ("Follow YAGNI principles.") ·
 `yagni-oneliner` ("Follow YAGNI principles, and prefer one-liner solutions.")
 
-The last two are the seven-word prompts from the #126 writeup, included on purpose: if a one-line
+The last two are the seven-word prompts from the upstream #126 writeup, included on purpose: if a one-line
 instruction matches puritanical, the benchmark should show it.
 
-`puritanical2` loads a candidate plugin from `PURITANICAL2_PLUGIN_DIR`, next to the released `puritanical`. That is how
-Puritanical 5 was measured against the previous Puritanical (v4.13) and no skill in one run.
+`puritanical2` loads a candidate plugin from `PURITANICAL2_PLUGIN_DIR`, next to the released `puritanical`. Upstream used it to
+measure Ponytail 5 against Ponytail 4.13 and no skill in one run.
 
 ## Tasks
 
@@ -167,33 +167,9 @@ re-applied offline with `--rescore`, you never pay the API twice for a measureme
 
 ## Results
 
-**2026-10-07, Puritanical 5, Opus 5.5, 5 runs, all 39 tasks** (`--arms baseline,puritanical,puritanical2 --models opus --runs 5`):
+Puritanical has not been benchmarked yet. The harness is inherited from [Ponytail](https://github.com/DietrichGebert/ponytail); its published results measure the upstream rulesets, so they are in [upstream `benchmarks/results/`](https://github.com/DietrichGebert/ponytail/tree/main/benchmarks/results) and are not repeated here.
 
-| vs no skill | lines of code | output tokens | cost | time | hidden checks passed |
-|---|--:|--:|--:|--:|--:|
-| **Puritanical 5** | **-53%** | **-45%** | **-26%** | **-41%** | **97%** |
-| Puritanical (v4.13) | -48% | -43% | -16% | -38% | 96% |
-| no skill | | | | | 96% |
-
-98% of risky logic ships with a test (no skill: 68%). Every cell ran in a fresh temp folder outside any git
-repo and was moved to `runs/<stamp>/` afterwards; inside a repo, Claude Code shows the model recent commit
-messages. Full writeup: [results/2026-10-07-agentic.md](../results/2026-10-07-agentic.md).
-
-**Earlier: 2026-06-18, Haiku 4.5, `n=4`, previous Puritanical.** Two tiers:
-
-- **12 real-repo features** (LOC via `git diff`): puritanical cuts **60–94%** on features with an
-  over-build trap (date picker 404→23, color picker 287→23, dropzone 251→95) and is a wash on
-  irreducible code (backend CRUD). It never writes more. Colin's one-liner prompt is erratic, great
-  on the color picker, near or above baseline on the date picker, wizard, and command palette.
-- **6 surgical safety tasks** (produced code executed against adversarial input): baseline,
-  caveman, and puritanical are **100% safe** (20/20); `yagni-oneliner` is **95%** (19/20), it dropped
-  the path-traversal guard once on `safe-path`, the one task where it wrote the fewest lines. The
-  lines it cut were the guard.
-
-Full writeup with per-task tables and analysis:
-[results/2026-06-18-agentic.md](../results/2026-06-18-agentic.md).
-
-> The earlier `results/2026-06-17-agentic-safety.md` run (the ~4% gap) is **superseded**: its
+> An upstream run (`results/2026-06-17-agentic-safety.md`) was **superseded** because its
 > baseline was contaminated by the puritanical plugin's `SessionStart` hook firing on every arm, so
 > the baseline was secretly running puritanical. Isolation is now enforced with `--setting-sources
 > project,local` plus a per-arm `--plugin-dir`, and every cell runs with

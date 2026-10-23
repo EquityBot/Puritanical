@@ -16,7 +16,6 @@ Commands:
 - `/puritanical-review [target]`
 - `/puritanical-audit [target]`
 - `/puritanical-debt`
-- `/puritanical-gain`
 - `/puritanical-help`
 
-Bundled skills are available as `puritanical:puritanical`, `puritanical:puritanical-review`, `puritanical:puritanical-audit`, `puritanical:puritanical-debt`, `puritanical:puritanical-gain`, and `puritanical:puritanical-help`.
+Bundled skills are available as `puritanical:puritanical`, `puritanical:puritanical-review`, `puritanical:puritanical-audit`, `puritanical:puritanical-debt`, and `puritanical:puritanical-help`.
