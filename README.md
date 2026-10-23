@@ -6,7 +6,7 @@
 
 </div>
 
-Puritanical is a skill and plugin for coding agents. The Puritans stripped from worship whatever scripture did not warrant; Puritanical strips from each change whatever the request does not require. Correctness, safety, accessibility and verification are never stripped. It has adapters for 34 agent hosts, including Claude Code, Codex, Copilot CLI, Cursor, OpenCode and Gemini CLI.
+Puritanical is a skill and plugin for coding agents. Many Puritans sought to strip from worship whatever scripture did not warrant; Puritanical strips from each change whatever the request does not require. Correctness, safety, accessibility and verification are never stripped. It has adapters for 34 agent hosts, including Claude Code, Codex, Copilot CLI, Cursor, OpenCode and Gemini CLI.
 
 **Input:** with Puritanical active, ask the agent to fix a bug where `transfer()` overdraws an account through a shared `_debit()` helper.
 
