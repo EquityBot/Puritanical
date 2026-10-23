@@ -25,3 +25,6 @@ puritanical-*.gif
 benchmarks/agentic/runs/
 benchmarks/agentic/fixtures/
 
+
+# Rust tooling build output
+tools/target/

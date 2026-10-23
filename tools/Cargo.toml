@@ -1,0 +1,18 @@
+[package]
+name = "puritanical-tools"
+version = "1.0.0"
+edition = "2024"
+rust-version = "1.85"
+description = "Maintainer tooling for Puritanical: rule-copy generation, version checks and ClawHub publishing."
+license = "MIT"
+repository = "https://github.com/ryanduguid/Puritanical"
+publish = false
+
+[dependencies]
+serde_json = "1"
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }

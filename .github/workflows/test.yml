@@ -26,11 +26,18 @@ jobs:
       - name: Install Python deps for correctness checks
         run: pip install pandas
 
+      - name: Check Rust tooling
+        working-directory: tools
+        run: |
+          cargo fmt --check
+          cargo clippy --locked --all-targets -- -D warnings
+          cargo test --locked
+
       - name: Check rule copies
-        run: node scripts/check-rule-copies.js
+        run: cargo run --locked --quiet --manifest-path tools/Cargo.toml -- sync --check
 
       - name: Check version consistency
-        run: node scripts/check-versions.js
+        run: cargo run --locked --quiet --manifest-path tools/Cargo.toml -- check-versions
 
       - name: Run tests
         run: npm test
