@@ -91,7 +91,6 @@ print(json.dumps({'skills': ctx.skills, 'hooks': ctx.hooks, 'commands': ctx.comm
     'puritanical',
     'puritanical-audit',
     'puritanical-debt',
-   
     'puritanical-help',
     'puritanical-review',
   ]);
