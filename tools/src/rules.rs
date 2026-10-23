@@ -230,6 +230,29 @@ fn missing_invariants(root: &Path) -> Result<Vec<&'static str>, String> {
         .collect())
 }
 
+/// Refuse a generated path that passes through a symlink (or a Windows
+/// junction), so a link planted in the checkout cannot redirect a write.
+/// shortcut: checked before writing, not atomically; enough for a committed
+/// link, not for a process racing the sync.
+fn no_links(root: &Path, rel: &str) -> Result<(), String> {
+    let mut path = root.to_path_buf();
+    for part in Path::new(rel).components() {
+        path.push(part);
+        match fs::symlink_metadata(&path) {
+            Ok(meta) if meta.file_type().is_symlink() => {
+                return Err(format!(
+                    "{rel}: refusing to follow the link at {}",
+                    path.display()
+                ));
+            }
+            Ok(_) => {}
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => break,
+            Err(e) => return Err(format!("{rel}: {e}")),
+        }
+    }
+    Ok(())
+}
+
 /// Write the copies, or with `check` report stale copies and missing invariants.
 pub fn sync(root: &Path, check: bool) -> Result<String, String> {
     let missing = missing_invariants(root)?;
@@ -240,6 +263,7 @@ pub fn sync(root: &Path, check: bool) -> Result<String, String> {
     }
     let mut stale = Vec::new();
     for (rel, text) in render(root)? {
+        no_links(root, &rel)?;
         let file = root.join(&rel);
         let current = fs::read_to_string(&file)
             .ok()
@@ -321,8 +345,8 @@ mod tests {
         }
     }
 
-    #[test]
-    fn a_stale_copy_fails_the_check_and_sync_repairs_it() {
+    /// A temporary copy of the skills and every generated file.
+    fn copy_repo() -> tempfile::TempDir {
         let dir = tempfile::tempdir().unwrap();
         for (rel, _) in render(&repo()).unwrap() {
             let dest = dir.path().join(&rel);
@@ -334,11 +358,40 @@ mod tests {
             fs::create_dir_all(dir.path().join(format!("skills/{name}"))).unwrap();
             fs::copy(repo().join(&rel), dir.path().join(&rel)).unwrap();
         }
+        dir
+    }
+
+    #[test]
+    fn a_stale_copy_fails_the_check_and_sync_repairs_it() {
+        let dir = copy_repo();
         fs::write(dir.path().join("AGENTS.md"), "drifted\n").unwrap();
         let err = sync(dir.path(), true).unwrap_err();
         assert!(err.contains("AGENTS.md"), "{err}");
         assert_eq!(sync(dir.path(), false).unwrap(), "Rewrote 1 rule copies.");
         sync(dir.path(), true).unwrap();
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn sync_refuses_to_write_through_a_planted_link() {
+        let dir = copy_repo();
+        let outside = tempfile::tempdir().unwrap();
+        let sentinel = outside.path().join("sentinel");
+        fs::write(&sentinel, "keep\n").unwrap();
+        fs::remove_file(dir.path().join("AGENTS.md")).unwrap();
+        std::os::unix::fs::symlink(&sentinel, dir.path().join("AGENTS.md")).unwrap();
+        for check in [true, false] {
+            let err = sync(dir.path(), check).unwrap_err();
+            assert!(err.contains("refusing to follow"), "{err}");
+        }
+        let ruleset = dir.path().join(".cursor/rules");
+        fs::rename(&ruleset, outside.path().join("rules")).unwrap();
+        std::os::unix::fs::symlink(outside.path().join("rules"), &ruleset).unwrap();
+        fs::remove_file(dir.path().join("AGENTS.md")).unwrap();
+        fs::copy(repo().join("AGENTS.md"), dir.path().join("AGENTS.md")).unwrap();
+        let err = sync(dir.path(), false).unwrap_err();
+        assert!(err.contains(".cursor/rules"), "{err}");
+        assert_eq!(fs::read_to_string(&sentinel).unwrap(), "keep\n");
     }
 
     #[test]

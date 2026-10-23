@@ -21,15 +21,35 @@ fn package_version(root: &Path) -> Result<String, String> {
 
 /// Every generated skill directory with a SKILL.md, sorted.
 fn slugs(root: &Path) -> Result<Vec<String>, String> {
-    let dir = root.join(".openclaw/skills");
-    let mut out: Vec<String> = std::fs::read_dir(&dir)
+    let mut out = Vec::new();
+    for entry in std::fs::read_dir(root.join(".openclaw/skills"))
         .map_err(|e| format!(".openclaw/skills: {e}"))?
-        .filter_map(Result::ok)
-        .filter(|e| e.path().join("SKILL.md").is_file())
-        .filter_map(|e| e.file_name().into_string().ok())
-        .collect();
+    {
+        let entry = entry.map_err(|e| format!(".openclaw/skills: {e}"))?;
+        if entry.path().join("SKILL.md").is_file() {
+            out.push(
+                entry
+                    .file_name()
+                    .into_string()
+                    .map_err(|n| format!(".openclaw/skills: non-UTF-8 name {n:?}"))?,
+            );
+        }
+    }
     out.sort();
     Ok(out)
+}
+
+/// Publish only the complete set, so a partial tree cannot pass as a release.
+fn expected_slugs(found: &[String]) -> Result<(), String> {
+    let mut expected: Vec<String> = crate::rules::SKILLS.map(String::from).to_vec();
+    expected.sort();
+    if found == expected {
+        Ok(())
+    } else {
+        Err(format!(
+            ".openclaw/skills has {found:?}, expected {expected:?}; run puritanical-tools sync first."
+        ))
+    }
 }
 
 /// "puritanical-review" becomes "Puritanical Review".
@@ -69,9 +89,7 @@ fn publish_args(slug: &str, version: &str, passthrough: &[String]) -> Vec<String
 pub fn run(root: &Path, passthrough: &[String]) -> Result<String, String> {
     let version = package_version(root)?;
     let slugs = slugs(root)?;
-    if slugs.is_empty() {
-        return Err("No skills under .openclaw/skills; run puritanical-tools sync first.".into());
-    }
+    expected_slugs(&slugs)?;
     // npm installs a .cmd shim on Windows; std escapes batch arguments safely.
     let program = if cfg!(windows) {
         "clawhub.cmd"
@@ -126,7 +144,18 @@ mod tests {
     #[test]
     fn the_repository_has_publishable_skills() {
         let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
-        assert_eq!(slugs(&root).unwrap().len(), crate::rules::SKILLS.len());
+        expected_slugs(&slugs(&root).unwrap()).unwrap();
         assert!(package_version(&root).is_ok());
+    }
+
+    #[test]
+    fn a_partial_skill_tree_is_refused_before_publishing() {
+        let dir = tempfile::tempdir().unwrap();
+        let skill = dir.path().join(".openclaw/skills/puritanical");
+        std::fs::create_dir_all(&skill).unwrap();
+        std::fs::write(skill.join("SKILL.md"), "x").unwrap();
+        std::fs::write(dir.path().join("package.json"), r#"{"version":"1.0.0"}"#).unwrap();
+        let err = run(dir.path(), &[]).unwrap_err();
+        assert!(err.contains("expected"), "{err}");
     }
 }
