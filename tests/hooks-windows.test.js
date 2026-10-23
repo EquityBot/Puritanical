@@ -133,7 +133,6 @@ for (const script of ['ponytail-mode-tracker.js', 'ponytail-activate.js']) {
 }
 
 test('Claude and Codex manifests point at the shared host-specific hook config', () => {
-  // House overlay: Claude Code does not load the band module.
   const expected = {
     '.claude-plugin/plugin.json': `./${HOOKS_JSON}`,
     '.codex-plugin/plugin.json': `./${HOOKS_JSON}`,

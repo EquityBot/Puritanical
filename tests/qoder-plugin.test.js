@@ -13,7 +13,6 @@ const SKILL_DIRS = [
   'ponytail-review',
   'ponytail-audit',
   'ponytail-debt',
-  'ponytail-gain',
   'ponytail-help',
 ];
 
