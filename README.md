@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![tests](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/test.yml?branch=main&label=tests&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/test.yml) [![CodeQL](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/codeql.yml?branch=main&label=CodeQL&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/codeql.yml)<br> [![licence: MIT](https://img.shields.io/badge/licence-MIT-66023C?labelColor=000000&style=flat&color=66023C)](LICENSE) [![fork of: Ponytail](https://img.shields.io/badge/fork%20of-Ponytail-990024?labelColor=000000&style=flat&color=990024)](https://github.com/DietrichGebert/ponytail)
+[![tests](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/test.yml?branch=main&label=tests&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/test.yml) [![CodeQL](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/codeql.yml?branch=main&label=CodeQL&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/codeql.yml)<br> [![licence: MIT](https://img.shields.io/badge/licence-MIT-66023C?labelColor=000000&style=flat&color=66023C)](LICENSE) [![fork of: Ponytail](https://img.shields.io/badge/fork%20of-Ponytail-66023C?labelColor=000000&style=flat&color=66023C)](https://github.com/DietrichGebert/ponytail)
 
 </div>
 
