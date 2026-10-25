@@ -88,6 +88,42 @@ function writeFlag(c, mode) {
   fs.writeFileSync(c.flag, mode);
 }
 
+test('Cursor uninstall preserves a symlink containing only Puritanical hooks', (t) => {
+  const c = cursorEnv('symlink-only');
+  const file = path.join(c.home, '.cursor', 'hooks.json');
+  const target = path.join(c.home, 'dotfile.json');
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(target, JSON.stringify({ version: 1, hooks: {
+    sessionStart: [{ command: 'node /opt/p/hooks/puritanical-activate.js' }],
+  } }));
+  try { fs.symlinkSync(target, file); } catch (e) {
+    if (e.code !== 'EPERM') throw e;
+    t.skip('symlink creation is not permitted');
+    return;
+  }
+  const result = cli(['uninstall'], c.env);
+  assert.equal(result.status, 0, result.stderr);
+  assert.ok(fs.lstatSync(file).isSymbolicLink());
+  assert.deepEqual(JSON.parse(fs.readFileSync(target, 'utf8')), { version: 1, hooks: {} });
+});
+
+test('Cursor install reports a dangling symlink without replacing it', (t) => {
+  const c = cursorEnv('symlink-dangling');
+  const file = path.join(c.home, '.cursor', 'hooks.json');
+  const target = path.join(c.home, 'missing.json');
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  try { fs.symlinkSync(target, file); } catch (e) {
+    if (e.code !== 'EPERM') throw e;
+    t.skip('symlink creation is not permitted');
+    return;
+  }
+  const result = cli(['install'], c.env);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /dangling symlink/);
+  assert.ok(fs.lstatSync(file).isSymbolicLink());
+  assert.equal(fs.existsSync(target), false);
+});
+
 test('cursor hooks template is a valid hooks.json with the two events that can inject context', () => {
   const config = JSON.parse(fs.readFileSync(path.join(root, TEMPLATE), 'utf8'));
   assert.equal(config.version, 1);

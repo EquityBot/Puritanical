@@ -104,7 +104,7 @@ function uninstall(scope) {
   stripPuritanical(config);
   if (JSON.stringify(config) === before) return null;
   const otherKeys = Object.keys(config).filter((k) => k !== 'version' && k !== 'hooks');
-  if (Object.keys(config.hooks).length === 0 && otherKeys.length === 0) {
+  if (Object.keys(config.hooks).length === 0 && otherKeys.length === 0 && !fs.lstatSync(file).isSymbolicLink()) {
     // Only puritanical lived here: drop the file rather than leave an empty husk.
     fs.unlinkSync(file);
   } else {

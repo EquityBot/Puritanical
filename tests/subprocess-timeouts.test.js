@@ -26,7 +26,7 @@ test('every synchronous child process in the tests has a timeout', () => {
     const source = fs.readFileSync(path.join(__dirname, name), 'utf8');
     for (const match of source.matchAll(SYNC_CALL)) {
       const args = callArgs(source, match.index + match[0].length - 1);
-      if (!/\btimeout\b/.test(args)) {
+      if (!/\btimeout\s*:\s*[1-9]\d*\b/.test(args)) {
         const line = source.slice(0, match.index).split('\n').length;
         missing.push(`${name}:${line} ${match[1]}`);
       }

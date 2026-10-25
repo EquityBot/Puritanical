@@ -39,9 +39,14 @@ function replaceFile(file, text) {
   try {
     target = fs.realpathSync(file);
     mode = fs.statSync(target).mode & 0o777;
+    fs.accessSync(target, fs.constants.W_OK);
     if (fs.readFileSync(target, 'utf8').startsWith('\uFEFF')) bom = '\uFEFF';
   } catch (e) {
     if (e.code !== 'ENOENT') throw e;
+    const entry = fs.lstatSync(file, { throwIfNoEntry: false });
+    if (entry && entry.isSymbolicLink()) {
+      throw new Error(file + ' is a dangling symlink; nothing was changed');
+    }
   }
   fs.mkdirSync(path.dirname(target), { recursive: true });
   const tmp = target + '.' + process.pid + '.tmp';
