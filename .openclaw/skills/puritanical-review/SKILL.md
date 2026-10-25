@@ -3,7 +3,7 @@ name: puritanical-review
 disable-model-invocation: true
 description: "Quality review of a diff: bugs, security, real load, missing tests, speed, and what to delete. Each finding says what goes wrong and how to fix it."
 homepage: https://github.com/ryanduguid/Puritanical
-license: MIT
+license: Apache-2.0
 ---
 
 Review a change like the senior developer who will be paged when it breaks.

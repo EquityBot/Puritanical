@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![tests](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/test.yml?branch=main&label=tests&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/test.yml) [![CodeQL](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/codeql.yml?branch=main&label=CodeQL&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/codeql.yml)<br> [![licence: MIT](https://img.shields.io/badge/licence-MIT-66023C?labelColor=000000&style=flat&color=66023C)](LICENSE) [![fork of: Ponytail](https://img.shields.io/badge/fork%20of-Ponytail-66023C?labelColor=000000&style=flat&color=66023C)](https://github.com/DietrichGebert/ponytail)
+[![tests](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/test.yml?branch=main&label=tests&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/test.yml) [![CodeQL](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/codeql.yml?branch=main&label=CodeQL&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/codeql.yml)<br> [![licence: Apache-2.0](https://img.shields.io/badge/licence-Apache--2.0-66023C?labelColor=000000&style=flat&color=66023C)](LICENSE) [![fork of: Ponytail](https://img.shields.io/badge/fork%20of-Ponytail-66023C?labelColor=000000&style=flat&color=66023C)](https://github.com/DietrichGebert/ponytail)
 
 </div>
 
@@ -112,4 +112,4 @@ Edit `skills/*/SKILL.md`, then run `cargo run --manifest-path tools/Cargo.toml -
 
 ## Licence
 
-MIT. Puritanical keeps Dietrich Gebert's Ponytail copyright notice alongside Ryan Duguid's in [LICENSE](LICENSE).
+Apache-2.0; see [LICENSE](LICENSE). Portions derived from Dietrich Gebert's Ponytail remain under the MIT License, whose notice is kept in [NOTICE](NOTICE).

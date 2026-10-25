@@ -127,7 +127,7 @@ fn openclaw_render(root: &Path, name: &str) -> Result<String, String> {
         "disable-model-invocation: true\n"
     };
     Ok(format!(
-        "---\nname: {name}\n{manual}description: \"{desc}\"\nhomepage: {HOMEPAGE}\nlicense: MIT\n---\n{}",
+        "---\nname: {name}\n{manual}description: \"{desc}\"\nhomepage: {HOMEPAGE}\nlicense: Apache-2.0\n---\n{}",
         openclaw_source_body(root, name)?
     ))
 }
