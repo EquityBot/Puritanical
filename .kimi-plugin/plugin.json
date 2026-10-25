@@ -6,7 +6,7 @@
     "url": "https://github.com/ryanduguid"
   },
   "homepage": "https://github.com/ryanduguid/Puritanical",
-  "license": "MIT",
+  "license": "Apache-2.0 AND MIT",
   "interface": {
     "displayName": "Puritanical",
     "shortDescription": "Strict simplicity: correctness first, then the least code that meets every requirement."

@@ -4,7 +4,7 @@ version = "1.0.0"
 edition = "2024"
 rust-version = "1.85"
 description = "Maintainer tooling for Puritanical: rule-copy generation, version checks and ClawHub publishing."
-license = "MIT"
+license = "Apache-2.0"
 repository = "https://github.com/ryanduguid/Puritanical"
 publish = false
 
