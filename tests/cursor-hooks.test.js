@@ -40,6 +40,7 @@ function run(script, env, input = '', cwd = undefined) {
     input,
     cwd,
     encoding: 'utf8',
+    timeout: 30000,
   });
 }
 
@@ -48,6 +49,7 @@ function cli(args, env, cwd = undefined) {
     env: { ...process.env, ...env },
     cwd,
     encoding: 'utf8',
+    timeout: 30000,
   });
 }
 

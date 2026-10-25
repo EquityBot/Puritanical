@@ -24,6 +24,7 @@ function run(script, env, input = '') {
     env: { ...process.env, ...env },
     input,
     encoding: 'utf8',
+    timeout: 30000,
   });
 }
 
@@ -118,6 +119,7 @@ function runShell(command, env, input = '') {
     env,
     input,
     encoding: 'utf8',
+    timeout: 30000,
   });
 }
 

@@ -12,6 +12,7 @@ function runUninstall(env) {
   return spawnSync(process.execPath, [path.join(root, 'scripts', 'uninstall.js')], {
     env: { ...process.env, ...env },
     encoding: 'utf8',
+    timeout: 30000,
   });
 }
 
