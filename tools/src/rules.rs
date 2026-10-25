@@ -59,7 +59,8 @@ const OPENCLAW_DESCRIPTIONS: [(&str, &str); 5] = [
 
 /// Load-bearing rules that any rewording of the core skill must keep. Changing
 /// one is a deliberate policy change: update this list with it. Matched with
-/// whitespace collapsed, so a rule may wrap across lines.
+/// whitespace collapsed, so a rule may wrap across lines. See also
+/// Deuteronomy 4:2 (NET).
 const INVARIANTS: [&str; 9] = [
     "in this codebase",
     "inspect their callers",
