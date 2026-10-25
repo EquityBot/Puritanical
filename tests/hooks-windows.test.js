@@ -190,11 +190,12 @@ test('a hostile plugin root cannot inject shell commands via host-side textual s
       .replace(/\$\{PLUGIN_ROOT\}/g, hostileRoot);
     try {
       if (isWindows) {
-        execFileSync('powershell', ['-NoProfile', '-Command', substituted], { stdio: 'ignore' });
+        execFileSync('powershell', ['-NoProfile', '-Command', substituted], { stdio: 'ignore', timeout: 30000 });
       } else {
-        execFileSync('bash', ['-c', substituted], { stdio: 'ignore' });
+        execFileSync('bash', ['-c', substituted], { stdio: 'ignore', timeout: 30000 });
       }
     } catch (e) {
+      if (e.code === 'ETIMEDOUT') throw e;
       // Expected to fail (resolves to a bogus module path) — only whether
       // MARKER was created matters.
     }

@@ -28,6 +28,44 @@ function writeFileNoFollow(file, data) {
   fs.writeFileSync(file, data, { encoding: 'utf8', flag: NO_FOLLOW_WRITE });
 }
 
+// Rewrites a user-owned file (settings.json, hooks.json) without leaving it
+// half-written: the text goes to a temp file beside the real target, then one
+// rename replaces it. A symlink is followed so a dotfiles link survives, and the
+// old file's UTF-8 BOM and mode carry over.
+function replaceFile(file, text) {
+  let target = file;
+  let mode = null;
+  let bom = '';
+  try {
+    target = fs.realpathSync(file);
+    mode = fs.statSync(target).mode & 0o777;
+    fs.accessSync(target, fs.constants.W_OK);
+    if (fs.readFileSync(target, 'utf8').startsWith('\uFEFF')) bom = '\uFEFF';
+  } catch (e) {
+    if (e.code !== 'ENOENT') throw e;
+    const entry = fs.lstatSync(file, { throwIfNoEntry: false });
+    if (entry && entry.isSymbolicLink()) {
+      throw new Error(file + ' is a dangling symlink; nothing was changed');
+    }
+  }
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  const tmp = target + '.' + process.pid + '.tmp';
+  let owned = false;
+  try {
+    const fd = fs.openSync(tmp, 'wx', mode === null ? 0o666 : mode);
+    owned = true;
+    try {
+      fs.writeFileSync(fd, bom + text, 'utf8');
+      if (mode !== null) fs.fchmodSync(fd, mode); // the umask may have narrowed it
+    } finally {
+      fs.closeSync(fd);
+    }
+    fs.renameSync(tmp, target);
+  } finally {
+    if (owned) try { fs.unlinkSync(tmp); } catch (e) { /* renamed */ }
+  }
+}
+
 function normalizeMode(mode) {
   if (typeof mode !== 'string') return null;
   const normalized = mode.trim().toLowerCase();
@@ -189,4 +227,5 @@ module.exports = {
   isDeactivationCommand,
   writeDefaultMode,
   writeFileNoFollow,
+  replaceFile,
 };

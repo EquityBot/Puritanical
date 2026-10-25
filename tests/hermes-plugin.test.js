@@ -22,7 +22,9 @@ let pythonCmd;
 function pythonExe() {
   if (pythonCmd) return pythonCmd;
   for (const cmd of ['python3', 'python']) {
-    if (spawnSync(cmd, ['-c', 'import sys'], { encoding: 'utf8' }).status === 0) {
+    const probe = spawnSync(cmd, ['-c', 'import sys'], { encoding: 'utf8', timeout: 30000 });
+    if (probe.error && probe.error.code !== 'ENOENT') throw probe.error;
+    if (probe.status === 0) {
       return (pythonCmd = cmd);
     }
   }
@@ -40,7 +42,9 @@ function python(script, env = {}) {
       ...env,
     },
     encoding: 'utf8',
+    timeout: 30000,
   });
+  if (result.error) throw result.error;
   if (result.status !== 0) {
     throw new Error(`python failed\nSTDOUT:\n${result.stdout}\nSTDERR:\n${result.stderr}`);
   }

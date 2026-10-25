@@ -9,7 +9,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { getConfigPath, getClaudeDir, getQoderDir } = require('../hooks/puritanical-config');
+const { getConfigPath, getClaudeDir, getQoderDir, replaceFile } = require('../hooks/puritanical-config');
 const cursorHooks = require('./cursor-hooks');
 
 const STATUSLINE_SCRIPT = /(?:^|[\s"'\\/])puritanical-statusline\.(?:sh|ps1)(?=$|[\s"'])/;
@@ -72,11 +72,11 @@ try {
     const others = parts.filter((s) => !STATUSLINE_SCRIPT.test(s));
     if (others.length === 0) {
       delete settings.statusLine;
-      fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), 'utf8');
+      replaceFile(settingsPath, JSON.stringify(settings, null, 2));
       console.log(`Removed puritanical statusLine entry from ${settingsPath}`);
     } else {
       settings.statusLine.command = others.join(' && ');
-      fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), 'utf8');
+      replaceFile(settingsPath, JSON.stringify(settings, null, 2));
       console.log(`Removed puritanical statusLine segment from ${settingsPath}`);
     }
   }

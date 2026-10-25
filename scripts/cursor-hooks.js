@@ -11,7 +11,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { isShellSafe } = require('../hooks/puritanical-config');
+const { isShellSafe, replaceFile } = require('../hooks/puritanical-config');
 
 const ROOT = path.join(__dirname, '..');
 const TEMPLATE = path.join(ROOT, 'hooks', 'cursor-hooks.json');
@@ -52,8 +52,7 @@ function readConfig(file) {
 }
 
 function writeConfig(file, config) {
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, JSON.stringify(config, null, 2) + '\n', 'utf8');
+  replaceFile(file, JSON.stringify(config, null, 2) + '\n');
 }
 
 // The template's PURITANICAL_DIR placeholder becomes this checkout's absolute
@@ -105,7 +104,7 @@ function uninstall(scope) {
   stripPuritanical(config);
   if (JSON.stringify(config) === before) return null;
   const otherKeys = Object.keys(config).filter((k) => k !== 'version' && k !== 'hooks');
-  if (Object.keys(config.hooks).length === 0 && otherKeys.length === 0) {
+  if (Object.keys(config.hooks).length === 0 && otherKeys.length === 0 && !fs.lstatSync(file).isSymbolicLink()) {
     // Only puritanical lived here: drop the file rather than leave an empty husk.
     fs.unlinkSync(file);
   } else {
