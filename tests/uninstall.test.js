@@ -195,6 +195,49 @@ assert.equal(
   'malformed hooks.json must be left unchanged',
 );
 
+// Rewrites replace the file in one rename and keep what the user's editor wrote:
+// a UTF-8 BOM, the file mode, and a symlink to a dotfiles checkout.
+const BOM = '\uFEFF';
+fs.writeFileSync(settingsPath, BOM + JSON.stringify({
+  model: 'opus',
+  statusLine: { type: 'command', command: 'bash /p/puritanical-statusline.sh' },
+}));
+fs.writeFileSync(cursorHooksPath, BOM + JSON.stringify({
+  version: 1,
+  hooks: { stop: [{ command: './mine.sh' }, { command: 'node "/p/puritanical/hooks/puritanical-activate.js"' }] },
+}));
+if (process.platform !== 'win32') fs.chmodSync(settingsPath, 0o600);
+result = runUninstall(env);
+assert.equal(result.status, 0, result.stderr);
+for (const [file, expected] of [
+  [settingsPath, { model: 'opus' }],
+  [cursorHooksPath, { version: 1, hooks: { stop: [{ command: './mine.sh' }] } }],
+]) {
+  const text = fs.readFileSync(file, 'utf8');
+  assert.ok(text.startsWith(BOM), `${path.basename(file)} must keep its BOM`);
+  assert.deepEqual(JSON.parse(text.slice(1)), expected);
+}
+if (process.platform !== 'win32') {
+  assert.equal(fs.statSync(settingsPath).mode & 0o777, 0o600, 'settings.json must keep its mode');
+}
+for (const dir of [claudeDir, cursorDir]) {
+  assert.deepEqual(fs.readdirSync(dir).filter((n) => n.endsWith('.tmp')), [], `no temp file may be left in ${dir}`);
+}
+
+const dotfiles = path.join(temp, 'dotfiles');
+fs.mkdirSync(dotfiles);
+const realSettings = path.join(dotfiles, 'settings.json');
+fs.writeFileSync(realSettings, JSON.stringify({ statusLine: { type: 'command', command: 'bash /p/puritanical-statusline.sh' } }));
+fs.rmSync(settingsPath);
+let linked = true;
+try { fs.symlinkSync(realSettings, settingsPath); } catch (e) { linked = false; } // Windows without symlink rights
+if (linked) {
+  result = runUninstall(env);
+  assert.equal(result.status, 0, result.stderr);
+  assert.ok(fs.lstatSync(settingsPath).isSymbolicLink(), 'a symlinked settings.json must stay a symlink');
+  assert.deepEqual(JSON.parse(fs.readFileSync(realSettings, 'utf8')), {}, 'the link target must be updated');
+}
+
 // Running on an already-clean machine must not throw.
 result = runUninstall({ HOME: path.join(temp, 'home-empty'), USERPROFILE: path.join(temp, 'home-empty') });
 assert.equal(result.status, 0, result.stderr);
