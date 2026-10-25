@@ -8,17 +8,39 @@ const { spawnSync } = require('child_process');
 
 const root = path.join(__dirname, '..');
 
+// Variables that move a config location; each run names its own or gets the default.
+const CONFIG_LOCATION_VARS = ['APPDATA', 'XDG_CONFIG_HOME', 'CLAUDE_CONFIG_DIR', 'QODER_CONFIG_DIR', 'CODEBUDDY_CONFIG_DIR'];
+
 function runUninstall(env) {
+  const base = { ...process.env };
+  for (const name of CONFIG_LOCATION_VARS) delete base[name];
   return spawnSync(process.execPath, [path.join(root, 'scripts', 'uninstall.js')], {
-    env: { ...process.env, ...env },
+    env: { ...base, ...env },
     encoding: 'utf8',
   });
 }
 
-delete process.env.CLAUDE_CONFIG_DIR;
-
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'puritanical-uninstall-'));
 process.on('exit', () => fs.rmSync(temp, { recursive: true, force: true }));
+
+// Stand-ins for the developer's real config locations. A run that inherits
+// one of these variables would uninstall from the developer's machine, as the
+// home-empty run below once did with APPDATA on Windows.
+const inherited = path.join(temp, 'inherited');
+const inheritedFiles = [];
+for (const [name, file] of [
+  ['APPDATA', path.join('puritanical', 'config.json')],
+  ['XDG_CONFIG_HOME', path.join('puritanical', 'config.json')],
+  ['CLAUDE_CONFIG_DIR', '.puritanical-active'],
+  ['QODER_CONFIG_DIR', '.puritanical-active'],
+  ['CODEBUDDY_CONFIG_DIR', '.puritanical-active'],
+]) {
+  process.env[name] = path.join(inherited, name);
+  const filePath = path.join(process.env[name], file);
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, 'keep');
+  inheritedFiles.push(filePath);
+}
 
 const home = path.join(temp, 'home');
 const claudeDir = path.join(home, '.claude');
@@ -198,5 +220,9 @@ assert.equal(
 // Running on an already-clean machine must not throw.
 result = runUninstall({ HOME: path.join(temp, 'home-empty'), USERPROFILE: path.join(temp, 'home-empty') });
 assert.equal(result.status, 0, result.stderr);
+
+for (const filePath of inheritedFiles) {
+  assert.equal(fs.existsSync(filePath), true, `uninstall must not touch inherited config: ${filePath}`);
+}
 
 console.log('uninstall script checks passed');

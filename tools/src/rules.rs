@@ -58,18 +58,19 @@ const OPENCLAW_DESCRIPTIONS: [(&str, &str); 5] = [
 ];
 
 /// Load-bearing rules that any rewording of the core skill must keep. Changing
-/// one is a deliberate policy change: update this list with it.
-const INVARIANTS: [&str; 12] = [
+/// one is a deliberate policy change: update this list with it. Matched with
+/// whitespace collapsed, so a rule may wrap across lines.
+const INVARIANTS: [&str; 9] = [
     "in this codebase",
     "inspect their callers",
     "Complete explicit requirements",
     "with a `shortcut:` comment",
     "semantics, failure modes",
     "There is no one-test ceiling",
-    "validation at trust boundaries",
-    "prevents data loss",
-    "security",
-    "accessibility",
+    // The never-cut sentence is pinned whole: its words also appear elsewhere
+    // in the skill, so checking them one by one passed when one was dropped here.
+    "Preserve input validation at trust boundaries, security, accessibility, \
+     error handling that prevents data loss, and required hardware calibration.",
     "fails without the fix",
     "not run",
 ];
@@ -224,6 +225,7 @@ pub fn render(root: &Path) -> Result<Vec<(String, String)>, String> {
 
 fn missing_invariants(root: &Path) -> Result<Vec<&'static str>, String> {
     let skill = read(root, "skills/puritanical/SKILL.md")?;
+    let skill = skill.split_whitespace().collect::<Vec<_>>().join(" ");
     Ok(INVARIANTS
         .into_iter()
         .filter(|p| !skill.contains(p))
@@ -392,6 +394,46 @@ mod tests {
         let err = sync(dir.path(), false).unwrap_err();
         assert!(err.contains(".cursor/rules"), "{err}");
         assert_eq!(fs::read_to_string(&sentinel).unwrap(), "keep\n");
+    }
+
+    /// Each protection dropped from the never-cut sentence must fail the check,
+    /// even where the same word survives elsewhere in the skill.
+    #[test]
+    fn dropping_a_protection_from_the_never_cut_sentence_fails_the_check() {
+        let skill = read(&repo(), "skills/puritanical/SKILL.md").unwrap();
+        for (from, to, survivor) in [
+            (
+                "boundaries, security, accessibility,",
+                "boundaries, accessibility,",
+                "security",
+            ),
+            (
+                "boundaries, security, accessibility,",
+                "boundaries, security,",
+                "accessibility",
+            ),
+            (
+                "data loss, and required hardware",
+                "data loss, and",
+                "hardware",
+            ),
+            (
+                "validation at trust boundaries, security",
+                "validation, security",
+                "trust boundaries",
+            ),
+        ] {
+            let mutated = skill.replacen(from, to, 1);
+            assert_ne!(mutated, skill, "mutation {from:?} must apply");
+            let dir = tempfile::tempdir().unwrap();
+            fs::create_dir_all(dir.path().join("skills/puritanical")).unwrap();
+            fs::write(dir.path().join("skills/puritanical/SKILL.md"), &mutated).unwrap();
+            let missing = missing_invariants(dir.path()).unwrap();
+            assert!(
+                !missing.is_empty(),
+                "dropping {survivor:?} passed the check"
+            );
+        }
     }
 
     #[test]

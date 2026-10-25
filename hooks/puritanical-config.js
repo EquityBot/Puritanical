@@ -155,11 +155,17 @@ function writeDefaultMode(mode) {
   if (!normalized) return null;
 
   const configPath = getConfigPath();
+  // "Prove all things; hold fast that which is good." (1 Thessalonians 5:21)
   let config = {};
   try {
     config = JSON.parse(fs.readFileSync(configPath, 'utf8').replace(/^\uFEFF/, ''));
-    if (!config || typeof config !== 'object' || Array.isArray(config)) config = {};
-  } catch (_) {}
+  } catch (e) {
+    // Only a missing file starts empty; anything else would overwrite the user's other keys.
+    if (e.code !== 'ENOENT') throw new Error(configPath + ' could not be read as JSON: ' + e.message);
+  }
+  if (!config || typeof config !== 'object' || Array.isArray(config)) {
+    throw new Error(configPath + ' must contain a JSON object.');
+  }
   config.defaultMode = normalized;
   writeFileNoFollow(configPath, JSON.stringify(config, null, 2));
   return normalized;
