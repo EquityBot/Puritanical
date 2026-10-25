@@ -5,7 +5,7 @@ description: >
   design and dependency choices, and to explicit Puritanical, YAGNI or
   over-engineering requests. Not for non-coding prose or general knowledge.
 argument-hint: "[lite|full|ultra]"
-license: Apache-2.0
+license: Apache-2.0 AND MIT
 ---
 
 # Puritanical

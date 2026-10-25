@@ -26,7 +26,7 @@ test('qoder plugin manifest exists and has required fields', () => {
   assert.ok(manifest.version, 'manifest must declare a version');
   assert.ok(manifest.description, 'manifest must declare a description');
   assert.ok(manifest.author, 'manifest must declare an author');
-  assert.equal(manifest.license, 'Apache-2.0');
+  assert.equal(manifest.license, 'Apache-2.0 AND MIT');
   assert.equal(manifest.skills, './skills/');
   assert.equal(manifest.rules, './.qoder/rules/');
   assert.equal(manifest.hooks, './hooks/qoder-hooks.json');

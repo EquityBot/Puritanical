@@ -3,7 +3,7 @@ name: puritanical-debt
 disable-model-invocation: true
 description: "Harvest every shortcut: comment into one debt ledger, so deferrals get tracked instead of forgotten. One-shot report."
 homepage: https://github.com/ryanduguid/Puritanical
-license: Apache-2.0
+license: Apache-2.0 AND MIT
 ---
 
 Every deliberate puritanical shortcut is marked with a `shortcut:` comment naming

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Strict simplicity for coding agents: the smallest correct change, verified.",
   "keywords": ["opencode-plugin", "opencode", "puritanical", "pi-package", "pi", "skills", "qoder"],
-  "license": "Apache-2.0",
+  "license": "Apache-2.0 AND MIT",
   "author": {
     "name": "Ryan Duguid",
     "url": "https://github.com/ryanduguid"

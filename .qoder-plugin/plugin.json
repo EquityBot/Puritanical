@@ -8,7 +8,7 @@
   },
   "homepage": "https://github.com/ryanduguid/Puritanical",
   "repository": "https://github.com/ryanduguid/Puritanical",
-  "license": "Apache-2.0",
+  "license": "Apache-2.0 AND MIT",
   "keywords": ["yagni", "minimalism", "code-review", "productivity"],
   "skills": "./skills/",
   "rules": "./.qoder/rules/",
