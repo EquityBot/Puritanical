@@ -8,7 +8,7 @@
   },
   "homepage": "https://github.com/ryanduguid/Puritanical",
   "repository": "https://github.com/ryanduguid/Puritanical",
-  "license": "MIT",
+  "license": "Apache-2.0 AND MIT",
   "keywords": [
     "yagni",
     "minimalism",
