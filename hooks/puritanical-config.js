@@ -45,12 +45,19 @@ function replaceFile(file, text) {
   }
   fs.mkdirSync(path.dirname(target), { recursive: true });
   const tmp = target + '.' + process.pid + '.tmp';
+  let owned = false;
   try {
-    fs.writeFileSync(tmp, bom + text, { encoding: 'utf8', flag: 'wx', mode: mode === null ? 0o666 : mode });
-    if (mode !== null) fs.chmodSync(tmp, mode); // the umask may have narrowed it
+    const fd = fs.openSync(tmp, 'wx', mode === null ? 0o666 : mode);
+    owned = true;
+    try {
+      fs.writeFileSync(fd, bom + text, 'utf8');
+      if (mode !== null) fs.fchmodSync(fd, mode); // the umask may have narrowed it
+    } finally {
+      fs.closeSync(fd);
+    }
     fs.renameSync(tmp, target);
   } finally {
-    try { fs.unlinkSync(tmp); } catch (e) { /* renamed */ }
+    if (owned) try { fs.unlinkSync(tmp); } catch (e) { /* renamed */ }
   }
 }
 
