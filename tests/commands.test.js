@@ -58,10 +58,17 @@ const debtSamples = [
   ['/*shortcut: block marker, no space */', true],
   ['/* shortcut: block opener, closed some lines below', true],
   ['// ponytail: legacy upstream marker', true],
+  [' * shortcut: JSDoc or block comment continuation line', true],
+  ['-- shortcut: SQL or Lua marker', true],
+  ['SELECT 1 -- shortcut: trailing SQL marker', true],
+  [';; shortcut: Lisp marker', true],
+  ['(setq x 1) ; shortcut: trailing Lisp marker', true],
   ['prose that merely mentions shortcut: markers stays out of the ledger', false],
+  ['a clause; shortcut: in prose stays out', false],
+  ['the cost * shortcut: weight in prose stays out', false],
 ];
 
-test('every puritanical-debt copy greps #, // and /* markers but not prose', (t) => {
+test('every puritanical-debt copy greps comment markers but not prose', (t) => {
   const input = debtSamples.map(([line]) => line).join('\n') + '\n';
   const expected = debtSamples.flatMap(([line, hit], i) => (hit ? [`${i + 1}:${line}`] : []));
 
