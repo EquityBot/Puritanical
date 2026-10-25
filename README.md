@@ -1,8 +1,15 @@
-# Puritanical: no accretions
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset=".github/assets/banner-light.svg">
+    <img src=".github/assets/banner.svg" width="100%" alt="Puritanical: no accretions: the smallest correct change, verified. Pixel art of a Puritan hat with a buckle beside the PURITANICAL wordmark in block letters.">
+  </picture>
+</p>
 
 <div align="center">
 
-[![tests](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/test.yml?branch=main&label=tests&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/test.yml) [![CodeQL](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/codeql.yml?branch=main&label=CodeQL&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/codeql.yml)<br> [![licence: MIT](https://img.shields.io/badge/licence-MIT-66023C?labelColor=000000&style=flat&color=66023C)](LICENSE) [![fork of: Ponytail](https://img.shields.io/badge/fork%20of-Ponytail-66023C?labelColor=000000&style=flat&color=66023C)](https://github.com/DietrichGebert/ponytail)
+[![tests](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/test.yml?branch=main&label=tests&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/test.yml) [![CodeQL](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/codeql.yml?branch=main&label=CodeQL&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/codeql.yml) [![licence: MIT](https://img.shields.io/badge/licence-MIT-66023C?labelColor=000000&style=flat&color=66023C)](LICENSE) [![fork of: Ponytail](https://img.shields.io/badge/fork%20of-Ponytail-66023C?labelColor=000000&style=flat&color=66023C)](https://github.com/DietrichGebert/ponytail)
+
+[Install](#install) · [Use](#use) · [The rules](#the-rules) · [Changes from Ponytail](#changes-from-ponytail) · [Development](#development)
 
 </div>
 
@@ -113,3 +120,11 @@ Edit `skills/*/SKILL.md`, then run `cargo run --manifest-path tools/Cargo.toml -
 ## Licence
 
 MIT. Puritanical keeps Dietrich Gebert's Ponytail copyright notice alongside Ryan Duguid's in [LICENSE](LICENSE).
+
+The banner's lettering and emblem are drawn from Cascadia Mono glyphs (SIL OFL 1.1).
+
+The MIT licence does not cover the scripture quotation in the footer. Scripture quoted by permission. Quotations designated (NET) are from the NET Bible® copyright ©1996, 2019 by Biblical Studies Press, L.L.C. [netbible.com](http://netbible.com) All rights reserved.
+
+---
+
+<p align="center"><sub><i>'Do not add a thing to what I command you nor subtract from it.'</i> Deuteronomy 4:2 (<a href="https://netbible.org/">NET</a>)<br>Made in Newcastle, Australia by <a href="https://duguid.com.au/">Ryan Duguid</a>.</sub></p>
