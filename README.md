@@ -1,7 +1,9 @@
 <p align="center">
   <picture>
+    <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset=".github/assets/banner-phone-light.svg">
+    <source media="(max-width: 600px)" srcset=".github/assets/banner-phone.svg">
     <source media="(prefers-color-scheme: light)" srcset=".github/assets/banner-light.svg">
-    <img src=".github/assets/banner.svg" width="100%" alt="Puritanical: no accretions: the smallest correct change, verified. Pixel art of a Puritan hat with a buckle beside the PURITANICAL wordmark in block letters.">
+    <img src=".github/assets/banner.svg" width="100%" alt="Puritanical. No accretions: the smallest correct change, verified. Pixel art of a Puritan hat with a buckle beside the Puritanical wordmark in slab-serif block letters.">
   </picture>
 </p>
 
