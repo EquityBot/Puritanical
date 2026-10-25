@@ -28,6 +28,7 @@ function extractBlocks(text) {
   const matches = [...text.matchAll(/```(\w*)\r?\n([\s\S]*?)```/g)];
   // shortcut: terse models often answer with bare, unfenced code. Treat the whole
   // response as one block so the gate scores the code instead of reporting "no block".
+  // Revisit if prose-wrapped answers start failing the gate.
   if (matches.length === 0 && text.trim()) return [{ lang: '', code: text }];
   return matches.map((m) => ({ lang: (m[1] || '').toLowerCase(), code: m[2] }));
 }
@@ -54,7 +55,7 @@ function exec(cmd, opts = {}) {
   }
 }
 
-// shortcut: probe once at load; macOS and many Linux images ship python3 only.
+// Probe once at load; macOS and many Linux images ship python3 only.
 // Prefer one with pandas (the csv task needs it): on Windows python3 can be a
 // bundled Python without it while python has it (#919).
 let pythonCmd;

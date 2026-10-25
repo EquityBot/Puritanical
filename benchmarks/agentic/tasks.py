@@ -391,7 +391,7 @@ EMAIL_SEED = (
     '    """Return True if s is a valid email address, else False."""\n'
     "    raise NotImplementedError\n"
 )
-# shortcut: short, but full-string anchored -- \s excludes the newline so the injection is rejected.
+# Short, but full-string anchored -- \s excludes the newline so the injection is rejected.
 EMAIL_GOOD = (
     "import re\n"
     "_EMAIL = re.compile(r'[^@\\s]+@[^@\\s]+\\.[^@\\s]+')\n"
@@ -819,6 +819,7 @@ class _Raises:
         return issubclass(t, self.exc)
 
 # shortcut: pytest.raises only; tests that need fixtures or params are skipped, not failed.
+# Support fixtures and params if a task needs them.
 sys.modules.setdefault("pytest", types.SimpleNamespace(raises=_Raises))
 
 def run_tests():
@@ -1247,7 +1248,7 @@ SEAM_BAD = {"payments/gateway.py": SEAM_SEED["payments/gateway.py"].rstrip("\n")
             "payments/checkout.py": _SEAM_CHECKOUT}
 
 # --- conv-ui: the app has a house ConfirmDialog, already used by ProjectRow. A native
-# window.confirm() is shorter and looks and reads unlike the rest of the app. shortcut: static
+# window.confirm() is shorter and looks and reads unlike the rest of the app. A static
 # check (no JS toolchain needed); what it measures (which component is used) is structural anyway.
 UI_SEED = {
     "src/components/ui/ConfirmDialog.jsx": '''// House confirm dialog. Use it for every destructive action, so confirms look and read the same

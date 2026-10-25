@@ -108,7 +108,7 @@ function finish() {
       } else if (mode && mode !== 'off') {
         setMode(mode);
         modeSwitched = true;
-        // shortcut: Qoder needs the full ruleset every turn, so when a mode
+        // Qoder needs the full ruleset every turn, so when a mode
         // switch happens we fold the confirmation into the ruleset output
         // below (one JSON on stdout) instead of emitting two separate writes.
         if (!isQoder) {
@@ -156,7 +156,7 @@ function finish() {
         }
       }
       if (currentMode && currentMode !== 'off') {
-        // shortcut: one JSON per invocation — mode-switch confirmation is
+        // One JSON per invocation: mode-switch confirmation is
         // folded into the ruleset header so Qoder gets both in one write.
         const header = (defaultNotice ? defaultNotice + '\n\n' : '') + (modeSwitched
           ? 'PURITANICAL MODE CHANGED — level: ' + currentMode + '\n\n'

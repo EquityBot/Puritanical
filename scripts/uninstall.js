@@ -48,7 +48,7 @@ try {
   if (hooksFile) console.log(`Removed puritanical hooks from ${hooksFile}`);
 } catch (e) {
   if (e instanceof SyntaxError) {
-    // shortcut: malformed hooks.json — can't safely edit it; leave intact, warn
+    // Malformed hooks.json: can't safely edit it; leave intact, warn
     console.warn(`~/.cursor/hooks.json is malformed — could not remove the puritanical hook entries. Remove them manually from: ${cursorHooks.hooksPath('user')} (${e.message})`);
   } else {
     throw e;
@@ -64,6 +64,7 @@ try {
   // (e.g. caveman && puritanical), keep the other plugin's command intact.
   // shortcut: splits on && / ; to detect other segments — good enough; a user
   // piping statuslines together is on their own.
+  // Parse the command if a user reports a mangled statusline.
   if (typeof cmd === 'string' && STATUSLINE_SCRIPT.test(cmd)) {
     const parts = cmd
       .split(/&&|;/)
@@ -84,7 +85,7 @@ try {
   if (e.code === 'ENOENT') {
     // no settings.json — nothing to clean
   } else if (e instanceof SyntaxError) {
-    // shortcut: malformed settings.json — can't safely edit it; leave intact, warn
+    // Malformed settings.json: can't safely edit it; leave intact, warn
     console.warn(`settings.json is malformed — could not remove the puritanical statusLine entry. Remove it manually from: ${settingsPath} (${e.message})`);
   } else {
     throw e;

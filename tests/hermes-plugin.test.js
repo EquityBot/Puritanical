@@ -16,7 +16,7 @@ const skillCommands = commands.filter((name) => name !== 'puritanical');
 
 const root = path.join(__dirname, '..');
 
-// shortcut: probe once; on Windows `python3` is the Store-alias stub that fails
+// Probe once; on Windows `python3` is the Store-alias stub that fails
 // even when Python is installed, so fall back to `python` (mirrors benchmarks/correctness.js).
 let pythonCmd;
 function pythonExe() {

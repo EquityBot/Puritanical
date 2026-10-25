@@ -6,7 +6,7 @@ const { getClaudeDir, getQoderDir, writeFileNoFollow } = require('./puritanical-
 
 const STATE_FILE = '.puritanical-active';
 
-// shortcut: VS Code Copilot never sets COPILOT_PLUGIN_DATA — it only injects
+// VS Code Copilot never sets COPILOT_PLUGIN_DATA; it only injects
 // CLAUDE_PLUGIN_ROOT, pointed at an install path under .vscode/agent-plugins/
 // (#528). Without this fallback isCopilot was false, so puritanical assumed
 // native Claude Code and emitted the statusline nudge, which VS Code Copilot
@@ -92,6 +92,7 @@ function readMode() {
 // root as CURSOR_PROJECT_DIR; project hooks also run from that directory.
 // shortcut: first workspace root only, a rule in a secondary folder of a
 // multi-root workspace goes undetected.
+// Scan every root if a multi-root workspace misses a rule.
 function cursorRulePath() {
   const root = process.env.CURSOR_PROJECT_DIR || process.cwd();
   const rule = path.join(root, '.cursor', 'rules', 'puritanical.mdc');
