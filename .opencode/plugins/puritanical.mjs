@@ -56,8 +56,12 @@ function persistMode(args) {
   // `/puritanical default <level>` saves the default for new sessions, like the Claude hook.
   const [first, second] = wanted.toLowerCase().split(/\s+/);
   if (first === 'default') {
-    const saved = writeDefaultMode(second);
-    if (saved) console.log('puritanical default ' + saved);
+    try {
+      const saved = writeDefaultMode(second);
+      if (saved) console.log('puritanical default ' + saved);
+    } catch (e) {
+      console.error('puritanical default not saved: ' + e.message);
+    }
     return;
   }
   // Bare /puritanical switches puritanical on, or keeps the level when it already is (#639).

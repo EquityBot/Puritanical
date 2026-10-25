@@ -804,6 +804,18 @@ assert.equal(result.status, 0, result.stderr);
 assert.equal(result.stdout, '');
 assert.equal(fs.readFileSync(defFlag, 'utf8'), 'ultra', 'invalid mode must preserve the active session mode');
 
+// A config.json that is not a JSON object must survive `/puritanical default`,
+// and the hook must say the default was not saved.
+for (const badRaw of ['{\n  "hideStatus": true,\n}\n', '[]\n']) {
+  fs.writeFileSync(defConfig, badRaw);
+  result = run('puritanical-mode-tracker.js', defEnv, JSON.stringify({ prompt: '/puritanical default full' }));
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(fs.readFileSync(defConfig, 'utf8'), badRaw, '/puritanical default must not overwrite a config it cannot read as an object');
+  assert.match(result.stdout, /DEFAULT NOT SAVED/);
+  assert.doesNotMatch(result.stdout, /DEFAULT SET/);
+}
+fs.writeFileSync(defConfig, JSON.stringify({ defaultMode: 'lite' }, null, 2));
+
 // review is not a valid default (#377) — the command is ignored, config unchanged.
 result = run('puritanical-mode-tracker.js', defEnv, JSON.stringify({ prompt: '/puritanical default review' }));
 assert.equal(result.status, 0, result.stderr);
