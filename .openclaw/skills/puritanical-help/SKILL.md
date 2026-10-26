@@ -3,7 +3,7 @@ name: puritanical-help
 disable-model-invocation: true
 description: "Quick reference for puritanical's modes, skills, and commands. One-shot display."
 homepage: https://github.com/ryanduguid/Puritanical
-license: Apache-2.0 AND MIT
+license: FSL-1.1-ALv2 AND MIT
 ---
 
 # Puritanical Help
