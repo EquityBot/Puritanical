@@ -236,6 +236,7 @@ fn missing_invariants(root: &Path) -> Result<Vec<&'static str>, String> {
 /// junction), so a link planted in the checkout cannot redirect a write.
 /// shortcut: checked before writing, not atomically; enough for a committed
 /// link, not for a process racing the sync.
+/// Use handle-relative, no-follow writes if another writer comes into scope.
 fn no_links(root: &Path, rel: &str) -> Result<(), String> {
     let mut path = root.to_path_buf();
     for part in Path::new(rel).components() {

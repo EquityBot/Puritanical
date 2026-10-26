@@ -59,7 +59,7 @@ export function parsePuritanicalCommand(text, defaultMode = DEFAULT_MODE, curren
   if (primary === "status") return { type: "status" };
 
   if (primary === "default") {
-    // shortcut: a default must be a runtime level; review is session-only (#377).
+    // A default must be a runtime level; review is session-only (#377).
     const mode = normalizeMode(secondary);
     return mode ? { type: "set-default", mode } : { type: "invalid", reason: "invalid-default-mode" };
   }
@@ -81,10 +81,10 @@ export default function puritanicalExtension(pi) {
   function syncStatus(ctx) {
     if (ctx) lastCtx = ctx;
     const c = ctx || lastCtx;
-    // shortcut: hide the indicator but keep the ruleset active (#324).
+    // Hide the indicator but keep the ruleset active (#324).
     if (hideStatus) return;
     if (!c?.ui?.setStatus) return;
-    // shortcut: try/catch guards against pi-web theme proxy throwing before initTheme
+    // Try/catch guards against pi-web theme proxy throwing before initTheme
     let theme;
     try { theme = c.ui.theme; if (!theme?.fg) return; } catch { return; }
     if (currentMode === "off") {

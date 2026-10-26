@@ -118,7 +118,7 @@ function getConfigPath() {
 }
 
 function getClaudeDir() {
-  // shortcut: CLAUDE_CONFIG_DIR overrides ~/.claude, matching Claude Code.
+  // CLAUDE_CONFIG_DIR overrides ~/.claude, matching Claude Code.
   return process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude');
 }
 
@@ -128,7 +128,7 @@ function getQoderDir() {
 
 function getDefaultMode() {
   // 1. Environment variable (highest priority)
-  // shortcut: a default must be a runtime level (off/lite/full/ultra); review is
+  // A default must be a runtime level (off/lite/full/ultra); review is
   // a session-only mode, never a valid default (#377). Normalize here so values
   // with whitespace or mixed casing still resolve correctly.
   const envMode = normalizeMode(process.env.PURITANICAL_DEFAULT_MODE);
@@ -188,7 +188,7 @@ function getHideStatus() {
 }
 
 function writeDefaultMode(mode) {
-  // shortcut: only a runtime level can be a default; review is session-only (#377).
+  // Only a runtime level can be a default; review is session-only (#377).
   const normalized = normalizeMode(mode);
   if (!normalized) return null;
 

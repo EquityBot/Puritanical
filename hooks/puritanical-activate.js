@@ -155,6 +155,7 @@ function activate(mode) {
       } else {
         // shortcut: config dir path has shell metacharacters; don't embed it in a
         // command snippet; have the agent wire it up by hand instead.
+        // Escape per shell if users report manual wiring for such paths.
         output += "\n\n" +
           "STATUSLINE SETUP NEEDED: The puritanical plugin includes a statusline badge showing active mode. " +
           "Its path contains characters unsafe to embed in a shell command, so configure it manually: " +
