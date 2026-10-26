@@ -2,7 +2,7 @@
 name: puritanical
 description: "Strict simplicity for coding tasks: correctness, safety and verification first, then the smallest change that meets every requirement."
 homepage: https://github.com/ryanduguid/Puritanical
-license: Apache-2.0 AND MIT
+license: FSL-1.1-ALv2 AND MIT
 ---
 
 # Puritanical
