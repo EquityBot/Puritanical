@@ -69,6 +69,30 @@ test('Hermes plugin manifest matches runtime skills, hooks, commands, and packag
   assert.match(manifest, /pre_gateway_dispatch/);
 });
 
+// Hermes parses plugin.yaml with PyYAML and skips a plugin whose manifest fails to
+// parse, so line checks alone miss a broken manifest. CI installs PyYAML, so this
+// runs there either way; elsewhere it skips rather than fails when PyYAML is missing.
+const hasPyYaml = spawnSync(pythonExe(), ['-c', 'import yaml'], { stdio: 'ignore', timeout: 30000 }).status === 0;
+
+test('Hermes plugin manifest parses as YAML with the declared fields', { skip: !hasPyYaml && !process.env.CI && 'no Python with PyYAML' }, () => {
+  const manifest = JSON.parse(python(String.raw`
+import json, yaml
+print(json.dumps(yaml.safe_load(open('plugin.yaml', encoding='utf-8'))))
+`));
+  const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+  const skillDirs = fs.readdirSync(path.join(root, 'skills'))
+    .filter((name) => fs.existsSync(path.join(root, 'skills', name, 'SKILL.md')))
+    .sort();
+
+  assert.equal(manifest.name, 'puritanical');
+  assert.equal(manifest.version, packageJson.version);
+  assert.equal(manifest.author, packageJson.author.name);
+  assert.equal(typeof manifest.description, 'string');
+  assert.deepEqual(manifest.provides_hooks, ['pre_llm_call', 'pre_gateway_dispatch']);
+  assert.deepEqual(manifest.provides_commands, commands);
+  assert.deepEqual([...manifest.provides_skills].sort(), skillDirs);
+});
+
 test('Hermes plugin registers every shipped skill under the puritanical namespace', () => {
   const output = python(String.raw`
 import importlib.util, json, pathlib
