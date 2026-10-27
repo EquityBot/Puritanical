@@ -1,6 +1,6 @@
 name: puritanical
 version: 1.0.0
-description: Strict simplicity for Hermes Agent: always-on context, bundled skills and slash commands.
+description: "Strict simplicity for Hermes Agent: always-on context, bundled skills and slash commands."
 author: Ryan Duguid
 provides_hooks:
   - pre_llm_call
