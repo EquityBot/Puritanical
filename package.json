@@ -1,5 +1,5 @@
 {
-  "name": "@ryanduguid/puritanical",
+  "name": "@equitybot/puritanical",
   "version": "1.0.0",
   "description": "Strict simplicity for coding agents: the smallest correct change, verified.",
   "keywords": ["opencode-plugin", "opencode", "puritanical", "pi-package", "pi", "skills", "qoder"],
