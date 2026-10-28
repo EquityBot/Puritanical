@@ -17,7 +17,7 @@ Issue numbers and host verification notes in this document come from upstream [P
 ## Install and uninstall
 
 ```bash
-git clone https://github.com/ryanduguid/Puritanical
+git clone https://github.com/EquityBot/Puritanical
 node puritanical/scripts/cursor-hooks.js install            # ~/.cursor/hooks.json, every project
 node puritanical/scripts/cursor-hooks.js install --project  # <cwd>/.cursor/hooks.json, this project only
 node puritanical/scripts/cursor-hooks.js uninstall          # add --project for the project file

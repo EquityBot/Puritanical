@@ -7,7 +7,7 @@ The Claude Code and Codex plugins (and the Cursor hooks) run two tiny Node.js li
 ## Claude Code
 
 ```
-/plugin marketplace add ryanduguid/Puritanical
+/plugin marketplace add EquityBot/Puritanical
 ```
 ```
 /plugin install puritanical@puritanical
@@ -21,7 +21,7 @@ CodeBuddy installs the same plugin with the same two `/plugin` commands and swit
 ## Codex
 
 ```bash
-codex plugin marketplace add ryanduguid/Puritanical
+codex plugin marketplace add EquityBot/Puritanical
 codex plugin add puritanical@puritanical
 ```
 
@@ -32,14 +32,14 @@ This same install also covers the Codex desktop app: restart the app after insta
 ## GitHub Copilot CLI
 
 ```bash
-copilot plugin marketplace add ryanduguid/Puritanical
+copilot plugin marketplace add EquityBot/Puritanical
 copilot plugin install puritanical@puritanical
 ```
 
 In an interactive Copilot CLI session, use the slash equivalents:
 
 ```
-/plugin marketplace add ryanduguid/Puritanical
+/plugin marketplace add EquityBot/Puritanical
 /plugin install puritanical@puritanical
 ```
 
@@ -53,17 +53,17 @@ Copilot CLI namespaces plugin commands by plugin name. For example:
 ## Pi agent harness
 
 ```
-pi install git:github.com/ryanduguid/Puritanical
+pi install git:github.com/EquityBot/Puritanical
 ```
 
 ## Kimi Code
 
-In Kimi Code, run `/plugins install https://github.com/ryanduguid/Puritanical`, then `/reload` or start a new session. The plugin puts [`AGENTS.md`](AGENTS.md) into the system prompt every turn and adds the five skills, which Kimi also offers as `/puritanical`, `/puritanical-review`, `/puritanical-audit`, `/puritanical-debt` and `/puritanical-help`. Level switching (`/puritanical lite`) loads the skill for that turn; there is no persistent mode flag in Kimi.
+In Kimi Code, run `/plugins install https://github.com/EquityBot/Puritanical`, then `/reload` or start a new session. The plugin puts [`AGENTS.md`](AGENTS.md) into the system prompt every turn and adds the five skills, which Kimi also offers as `/puritanical`, `/puritanical-review`, `/puritanical-audit`, `/puritanical-debt` and `/puritanical-help`. Level switching (`/puritanical lite`) loads the skill for that turn; there is no persistent mode flag in Kimi.
 
 ## Oh My Pi (omp)
 
 ```bash
-omp plugin marketplace add ryanduguid/Puritanical
+omp plugin marketplace add EquityBot/Puritanical
 omp plugin install puritanical@puritanical
 ```
 
@@ -88,13 +88,13 @@ OpenCode 1 uses the older `plugin` key with the file path: `{ "plugin": ["./.ope
 ## Gemini CLI
 
 ```bash
-gemini extensions install https://github.com/ryanduguid/Puritanical
+gemini extensions install https://github.com/EquityBot/Puritanical
 ```
 
 Loads the ruleset as always-on context every session and registers the `/puritanical` commands; the `skills/` ship too, activated when a task needs them.
 The Gemini adapter intentionally does not ship a root `hooks/hooks.json`: Gemini auto-loads that path, while Puritanical's lifecycle hooks use Claude/Codex event names.
 
-Qwen Code installs the same extension: `qwen extensions install ryanduguid/Puritanical:puritanical`. It loads `AGENTS.md` as always-on context and registers the `/puritanical` commands and the skills; levels don't persist across sessions, since the lifecycle hooks are not used.
+Qwen Code installs the same extension: `qwen extensions install EquityBot/Puritanical:puritanical`. It loads `AGENTS.md` as always-on context and registers the `/puritanical` commands and the skills; levels don't persist across sessions, since the lifecycle hooks are not used.
 
 ## Qoder
 
@@ -105,7 +105,7 @@ For full plugin-tier support (automatic mode activation + ruleset injection on e
 ## Antigravity CLI
 
 ```bash
-agy plugin install https://github.com/ryanduguid/Puritanical
+agy plugin install https://github.com/EquityBot/Puritanical
 ```
 
 Installs the five skills, and Antigravity turns the `/puritanical` commands into skills as well, so you [call them as slash commands](https://www.antigravity.google/docs/skills#slash-command-conversion) such as `/puritanical-review`. No lifecycle hooks, so levels don't persist. For the always-on ruleset, copy [`AGENTS.md`](AGENTS.md) into your project; Antigravity [reads it as workspace rules](https://www.antigravity.google/docs/rules). Install verified with Antigravity CLI 1.3.3.
@@ -113,13 +113,13 @@ Installs the five skills, and Antigravity turns the `/puritanical` commands into
 ## Hermes Agent
 
 ```bash
-hermes plugins install ryanduguid/Puritanical --enable
+hermes plugins install EquityBot/Puritanical --enable
 ```
 
 If that stops with `plugin.json declares an unsupported or missing Agent Plugins schema`, it is Hermes' install check (fix pending in [NousResearch/hermes-agent#125937](https://github.com/NousResearch/hermes-agent/pull/125937)). Until it lands, clone the plugin in by hand; Hermes loads it from `plugin.yaml` as usual (verified with Hermes Agent v0.21.7):
 
 ```bash
-git clone https://github.com/ryanduguid/Puritanical.git ~/.hermes/plugins/puritanical
+git clone https://github.com/EquityBot/Puritanical.git ~/.hermes/plugins/puritanical
 hermes plugins enable puritanical
 ```
 
@@ -132,7 +132,7 @@ Reads `AGENTS.md` from the project root, zero setup. Copy [`AGENTS.md`](AGENTS.m
 ## Devin CLI
 
 ```bash
-devin plugins install ryanduguid/Puritanical
+devin plugins install EquityBot/Puritanical
 ```
 
 Installs puritanical as a Devin plugin; skills are available as `/puritanical:puritanical`, `/puritanical:puritanical-review`, and so on.
@@ -144,7 +144,7 @@ Puritanical is not published to ClawHub. Copy the skill folders in [`.openclaw/s
 ## Grok Build
 
 ```bash
-grok plugin install ryanduguid/Puritanical --trust
+grok plugin install EquityBot/Puritanical --trust
 ```
 
 Enable the plugin (off by default): `/plugins` → Plugins → Space on `puritanical`, or in `~/.grok/config.toml`:
@@ -161,7 +161,7 @@ Start a new session (or reload plugins). Skills show as `/puritanical`, `/purita
 ## Goose
 
 ```bash
-goose plugin install https://github.com/ryanduguid/Puritanical.git
+goose plugin install https://github.com/EquityBot/Puritanical.git
 ```
 
 That imports the five skills as `puritanical:puritanical`, `puritanical:puritanical-review` and so on. For the always-on rules, copy [`AGENTS.md`](AGENTS.md) to `~/.agents/AGENTS.md` (or into your project; `~/.config/goose/.goosehints` works too). Goose has no lifecycle hooks, so the levels don't persist.
@@ -169,7 +169,7 @@ That imports the five skills as `puritanical:puritanical`, `puritanical:puritani
 ## Cursor
 
 ```bash
-git clone https://github.com/ryanduguid/Puritanical
+git clone https://github.com/EquityBot/Puritanical
 node puritanical/scripts/cursor-hooks.js install
 ```
 
@@ -186,7 +186,7 @@ The Claude Code and Codex plugins do not inject the ruleset into subagents, whic
 The [skills CLI](https://skills.sh) copies the five puritanical skills into the skills folder of many agents:
 
 ```bash
-npx skills add ryanduguid/Puritanical
+npx skills add EquityBot/Puritanical
 ```
 
 Pick the agent with `--agent` (for IBM Bob: `--agent bob`), take all five without asking with `--skill '*'`, and add `--global` to install for your user instead of the project. This installs the skills only; for the always-on ruleset, also add [`AGENTS.md`](AGENTS.md) or use one of the plugins above.

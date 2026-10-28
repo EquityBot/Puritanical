@@ -6,8 +6,8 @@
     "name": "Ryan Duguid",
     "url": "https://github.com/ryanduguid"
   },
-  "homepage": "https://github.com/ryanduguid/Puritanical",
-  "repository": "https://github.com/ryanduguid/Puritanical",
+  "homepage": "https://github.com/EquityBot/Puritanical",
+  "repository": "https://github.com/EquityBot/Puritanical",
   "license": "FSL-1.1-ALv2 AND MIT",
   "keywords": [
     "yagni",
@@ -27,7 +27,7 @@
       "Instructions",
       "Lifecycle hooks"
     ],
-    "websiteURL": "https://github.com/ryanduguid/Puritanical",
+    "websiteURL": "https://github.com/EquityBot/Puritanical",
     "defaultPrompt": [
       "Use Puritanical mode for this task.",
       "Review this diff for over-engineering.",
