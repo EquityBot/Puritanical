@@ -2,8 +2,8 @@
   "name": "puritanical",
   "description": "Strict simplicity for coding agents: the smallest correct change, verified.",
   "owner": {
-    "name": "Ryan Duguid",
-    "url": "https://github.com/ryanduguid"
+    "name": "EquityBot",
+    "url": "https://github.com/EquityBot"
   },
   "plugins": [
     {
