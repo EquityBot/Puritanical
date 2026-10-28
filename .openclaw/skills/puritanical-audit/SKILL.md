@@ -2,7 +2,7 @@
 name: puritanical-audit
 disable-model-invocation: true
 description: "Quality audit of the whole repo: bugs, security, real load, missing tests, speed, and what to delete. Most important first."
-homepage: https://github.com/ryanduguid/Puritanical
+homepage: https://github.com/EquityBot/Puritanical
 license: FSL-1.1-ALv2 AND MIT
 ---
 

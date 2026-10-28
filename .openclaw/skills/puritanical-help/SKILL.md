@@ -2,7 +2,7 @@
 name: puritanical-help
 disable-model-invocation: true
 description: "Quick reference for puritanical's modes, skills, and commands. One-shot display."
-homepage: https://github.com/ryanduguid/Puritanical
+homepage: https://github.com/EquityBot/Puritanical
 license: FSL-1.1-ALv2 AND MIT
 ---
 
@@ -67,4 +67,4 @@ If `/plugin` is not recognized, your Claude Code is out of date. Update it (`npm
 
 ## More
 
-Full docs + examples: https://github.com/ryanduguid/Puritanical
+Full docs + examples: https://github.com/EquityBot/Puritanical

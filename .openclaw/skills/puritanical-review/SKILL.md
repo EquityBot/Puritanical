@@ -2,7 +2,7 @@
 name: puritanical-review
 disable-model-invocation: true
 description: "Quality review of a diff: bugs, security, real load, missing tests, speed, and what to delete. Each finding says what goes wrong and how to fix it."
-homepage: https://github.com/ryanduguid/Puritanical
+homepage: https://github.com/EquityBot/Puritanical
 license: FSL-1.1-ALv2 AND MIT
 ---
 

@@ -8,13 +8,13 @@
     "name": "Ryan Duguid",
     "url": "https://github.com/ryanduguid"
   },
-  "homepage": "https://github.com/ryanduguid/Puritanical",
+  "homepage": "https://github.com/EquityBot/Puritanical",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ryanduguid/Puritanical.git"
+    "url": "git+https://github.com/EquityBot/Puritanical.git"
   },
   "bugs": {
-    "url": "https://github.com/ryanduguid/Puritanical/issues"
+    "url": "https://github.com/EquityBot/Puritanical/issues"
   },
   "main": "./.opencode/plugins/puritanical.mjs",
   "exports": {

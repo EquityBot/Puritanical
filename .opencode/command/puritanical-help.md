@@ -63,4 +63,4 @@ If `/plugin` is not recognized, your Claude Code is out of date. Update it (`npm
 
 ## More
 
-Full docs + examples: https://github.com/ryanduguid/Puritanical
+Full docs + examples: https://github.com/EquityBot/Puritanical

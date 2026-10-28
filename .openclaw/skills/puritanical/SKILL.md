@@ -1,7 +1,7 @@
 ---
 name: puritanical
 description: "Strict simplicity for coding tasks: correctness, safety and verification first, then the smallest change that meets every requirement."
-homepage: https://github.com/ryanduguid/Puritanical
+homepage: https://github.com/EquityBot/Puritanical
 license: FSL-1.1-ALv2 AND MIT
 ---
 

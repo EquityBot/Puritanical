@@ -5,7 +5,7 @@ edition = "2024"
 rust-version = "1.85"
 description = "Maintainer tooling for Puritanical: rule-copy generation, version checks and ClawHub publishing."
 license = "FSL-1.1-ALv2"
-repository = "https://github.com/ryanduguid/Puritanical"
+repository = "https://github.com/EquityBot/Puritanical"
 publish = false
 
 [dependencies]

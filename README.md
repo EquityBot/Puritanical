@@ -9,7 +9,7 @@
 
 <div align="center">
 
-[![tests](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/test.yml?branch=main&label=tests&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/test.yml) [![CodeQL](https://img.shields.io/github/actions/workflow/status/ryanduguid/Puritanical/codeql.yml?branch=main&label=CodeQL&labelColor=000000&style=flat)](https://github.com/ryanduguid/Puritanical/actions/workflows/codeql.yml) [![licence: FSL-1.1-ALv2](https://img.shields.io/badge/licence-FSL--1.1--ALv2-66023C?labelColor=000000&style=flat&color=66023C)](LICENSE) [![fork of: Ponytail](https://img.shields.io/badge/fork%20of-Ponytail-66023C?labelColor=000000&style=flat&color=66023C)](https://github.com/DietrichGebert/ponytail)
+[![tests](https://img.shields.io/github/actions/workflow/status/EquityBot/Puritanical/test.yml?branch=main&label=tests&labelColor=000000&style=flat)](https://github.com/EquityBot/Puritanical/actions/workflows/test.yml) [![CodeQL](https://img.shields.io/github/actions/workflow/status/EquityBot/Puritanical/codeql.yml?branch=main&label=CodeQL&labelColor=000000&style=flat)](https://github.com/EquityBot/Puritanical/actions/workflows/codeql.yml) [![licence: FSL-1.1-ALv2](https://img.shields.io/badge/licence-FSL--1.1--ALv2-66023C?labelColor=000000&style=flat&color=66023C)](LICENSE) [![fork of: Ponytail](https://img.shields.io/badge/fork%20of-Ponytail-66023C?labelColor=000000&style=flat&color=66023C)](https://github.com/DietrichGebert/ponytail)
 
 [Install](#install) · [Use](#use) · [The rules](#the-rules) · [Changes from Ponytail](#changes-from-ponytail) · [Development](#development)
 
@@ -28,7 +28,7 @@ Puritanical is a skill and plugin for coding agents. Many Puritans sought to str
 Claude Code, as 2 separate prompts:
 
 ```text
-/plugin marketplace add ryanduguid/Puritanical
+/plugin marketplace add EquityBot/Puritanical
 ```
 
 ```text
@@ -38,7 +38,7 @@ Claude Code, as 2 separate prompts:
 Codex:
 
 ```bash
-codex plugin marketplace add ryanduguid/Puritanical
+codex plugin marketplace add EquityBot/Puritanical
 codex plugin add puritanical@puritanical
 ```
 
@@ -46,7 +46,7 @@ Then open `/hooks` in Codex, trust its 2 lifecycle hooks and start a new thread.
 
 For any other agent, copy [`AGENTS.md`](AGENTS.md) into your project, or follow [INSTALL.md](INSTALL.md) for your host. The Claude Code, Codex and Cursor integrations run small Node.js hooks, so `node` must be on your PATH.
 
-Install only from `ryanduguid/Puritanical` on GitHub. This repository ships no executables; the Rust code in `tools/` is maintainer tooling that you build yourself.
+Install only from `EquityBot/Puritanical` on GitHub. This repository ships no executables; the Rust code in `tools/` is maintainer tooling that you build yourself.
 
 ## Use
 

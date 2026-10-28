@@ -30,7 +30,7 @@ const SWITCH_TOML: &str =
 const SWITCH_OPENCODE: &str =
     "\nSwitch to puritanical $ARGUMENTS mode. Keep the current level when no level is named.\n\n";
 
-const HOMEPAGE: &str = "https://github.com/ryanduguid/Puritanical";
+const HOMEPAGE: &str = "https://github.com/EquityBot/Puritanical";
 
 /// `OpenClaw` needs a one-line description under 160 characters, shorter than
 /// the skill pickers' descriptions in `skills/`.
