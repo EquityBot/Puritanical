@@ -3,8 +3,8 @@
   "description": "Strict simplicity for coding agents. Correctness, safety and verification come first; then YAGNI, reuse, the standard library and the smallest change that meets every requirement.",
   "version": "1.0.0",
   "author": {
-    "name": "Ryan Duguid",
-    "url": "https://github.com/ryanduguid"
+    "name": "EquityBot",
+    "url": "https://github.com/EquityBot"
   },
   "homepage": "https://github.com/EquityBot/Puritanical",
   "repository": "https://github.com/EquityBot/Puritanical",
