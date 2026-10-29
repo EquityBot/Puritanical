@@ -61,7 +61,7 @@ const OPENCLAW_DESCRIPTIONS: [(&str, &str); 5] = [
 /// one is a deliberate policy change: update this list with it. Matched with
 /// whitespace collapsed, so a rule may wrap across lines. See also
 /// Deuteronomy 4:2 (NET).
-const INVARIANTS: [&str; 9] = [
+const INVARIANTS: [&str; 10] = [
     "in this codebase",
     "inspect their callers",
     "Complete explicit requirements",
@@ -74,6 +74,7 @@ const INVARIANTS: [&str; 9] = [
      error handling that prevents data loss, and required hardware calibration.",
     "fails without the fix",
     "not run",
+    "say so and change nothing",
 ];
 
 fn read(root: &Path, rel: &str) -> Result<String, String> {
