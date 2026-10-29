@@ -9,7 +9,9 @@
 
 <div align="center">
 
-[![tests](https://img.shields.io/github/actions/workflow/status/EquityBot/Puritanical/test.yml?branch=main&label=tests&labelColor=000000&style=flat)](https://github.com/EquityBot/Puritanical/actions/workflows/test.yml) [![CodeQL](https://img.shields.io/github/actions/workflow/status/EquityBot/Puritanical/codeql.yml?branch=main&label=CodeQL&labelColor=000000&style=flat)](https://github.com/EquityBot/Puritanical/actions/workflows/codeql.yml) [![licence: FSL-1.1-ALv2](https://img.shields.io/badge/licence-FSL--1.1--ALv2-66023C?labelColor=000000&style=flat&color=66023C)](LICENSE) [![fork of: Ponytail](https://img.shields.io/badge/fork%20of-Ponytail-66023C?labelColor=000000&style=flat&color=66023C)](https://github.com/DietrichGebert/ponytail)
+[![tests](https://img.shields.io/github/actions/workflow/status/EquityBot/Puritanical/test.yml?branch=main&label=tests&labelColor=000000&style=flat)](https://github.com/EquityBot/Puritanical/actions/workflows/test.yml) [![CodeQL](https://img.shields.io/github/actions/workflow/status/EquityBot/Puritanical/codeql.yml?branch=main&label=CodeQL&labelColor=000000&style=flat)](https://github.com/EquityBot/Puritanical/actions/workflows/codeql.yml) [![SonarCloud](https://img.shields.io/sonar/quality_gate/EquityBot_Puritanical?server=https%3A%2F%2Fsonarcloud.io&label=SonarCloud&labelColor=000000&style=flat)](https://sonarcloud.io/summary/new_code?id=EquityBot_Puritanical)<br>
+[![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/EquityBot/Puritanical?label=Scorecard&labelColor=000000&style=flat)](https://scorecard.dev/viewer/?uri=github.com/EquityBot/Puritanical)<br>
+[![licence: FSL-1.1-ALv2](https://img.shields.io/badge/licence-FSL--1.1--ALv2-66023C?labelColor=000000&style=flat&color=66023C)](LICENSE) [![fork of: Ponytail](https://img.shields.io/badge/fork%20of-Ponytail-66023C?labelColor=000000&style=flat&color=66023C)](https://github.com/DietrichGebert/ponytail)
 
 [Install](#install) · [Use](#use) · [The rules](#the-rules) · [Changes from Ponytail](#changes-from-ponytail) · [Development](#development)
 
