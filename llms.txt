@@ -1,0 +1,28 @@
+# Puritanical
+
+> A skill and plugin for coding agents that strips from each change whatever the
+> request does not require, without stripping correctness, safety, accessibility or
+> verification. It guides the agent; it does not prove the change correct.
+
+Version 1.0.0, a fork of Ponytail, with adapters for 34 agent hosts. It has not been
+benchmarked yet. Install in Claude Code with `/plugin marketplace add EquityBot/Puritanical`,
+then `/plugin install puritanical@puritanical` as a separate prompt.
+
+## Start
+
+- [README](https://github.com/EquityBot/Puritanical#readme): install, commands, the rules and changes from Ponytail.
+- [INSTALL.md](https://github.com/EquityBot/Puritanical/blob/main/INSTALL.md): install steps for each agent host.
+- [SKILL.md](https://github.com/EquityBot/Puritanical/blob/main/skills/puritanical/SKILL.md): the ruleset's single source.
+
+## Docs
+
+- [AGENTS.md](https://github.com/EquityBot/Puritanical/blob/main/AGENTS.md): the ruleset for agents that read AGENTS.md.
+- [Agent portability](https://github.com/EquityBot/Puritanical/blob/main/docs/agent-portability.md): which files each host loads.
+- [Cursor hooks](https://github.com/EquityBot/Puritanical/blob/main/docs/cursor-hooks.md): the native Cursor hook adapter.
+- [Benchmarks](https://github.com/EquityBot/Puritanical/blob/main/benchmarks/README.md): the harness inherited from Ponytail.
+- [Contributing](https://github.com/EquityBot/Puritanical/blob/main/.github/CONTRIBUTING.md): checks and the evidence a ruleset change needs.
+
+## Related
+
+- [EquityBot](https://github.com/EquityBot): other EquityBot tools.
+- [Ponytail](https://github.com/DietrichGebert/ponytail): the upstream project.

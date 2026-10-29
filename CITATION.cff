@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this work, cite it with this metadata and the release tag or commit you used."
+title: "Puritanical"
+type: software
+authors:
+  - name: "EquityBot"
+abstract: "No accretions: the smallest correct change, verified. A skill for Claude Code, Codex and other coding agents, forked from Ponytail."
+repository-code: "https://github.com/EquityBot/Puritanical"
+license-url: "https://github.com/EquityBot/Puritanical/blob/main/LICENSE"
+keywords:
+  - agent-skills
+  - claude-code
+  - code-quality
+  - codex
+  - coding-agents
+  - rust
+  - yagni
+references:
+  - type: software
+    title: "Ponytail"
+    authors:
+      - name: "DietrichGebert"
+    repository-code: "https://github.com/DietrichGebert/ponytail"
