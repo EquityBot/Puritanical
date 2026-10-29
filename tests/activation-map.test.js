@@ -54,6 +54,8 @@ for (const scenario of ['blocked', 'failed', 'oversized', 'successful', 'disable
     assert.equal(output.hookEventName, 'SessionStart');
     assert.match(output.additionalContext, /PURITANICAL MODE ACTIVE — level: full/);
     assert.match(output.additionalContext, /validation at trust boundaries/);
+    assert.match(output.additionalContext, /Subagents do not inherit these rules/);
+    assert.match(output.additionalContext, /Never weaken, skip or\s+delete a test/);
     // The map is opt-in: only PURITANICAL_MAP=1 with a working map adds it.
     if (scenario === 'successful') {
       assert.match(output.additionalContext, /Codebase map[^]*lib\/: usefulHelper/);
