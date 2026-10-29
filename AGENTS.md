@@ -21,7 +21,7 @@ when the choice is costly to reverse. Use subagents only within explicit user
 authorisation, including standing permission in the host instructions; retain
 its model, task and read-only limits. Subagents do not inherit these rules:
 when you delegate coding, design or review work, tell the subagent to apply
-Puritanical, for example by loading its skill.
+Puritanical at the current level, for example by loading its skill.
 
 ## Understand the change
 
@@ -81,8 +81,8 @@ Use the project's existing test tools and run its required checks. Add focused
 regression coverage for changed failure modes when existing coverage is
 insufficient. A regression test must be one that fails without the fix: run it
 against the unfixed code or say why you could not. Never weaken, skip or
-delete a test or check to make it pass; change one only when it tests the
-wrong contract, and say why. Test the contract, not the implementation. A
+delete a test or check to make it pass; change what it asserts only when it
+tests the wrong contract, and say why. Test the contract, not the implementation. A
 one-line money calculation or security check can need several cases; size
 alone does not determine risk. Existing sufficient coverage needs no duplicate
 self-check. There is no one-test ceiling or ban on existing frameworks and
