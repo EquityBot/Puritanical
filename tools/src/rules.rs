@@ -74,7 +74,7 @@ const INVARIANTS: [&str; 10] = [
      error handling that prevents data loss, and required hardware calibration.",
     "fails without the fix",
     "not run",
-    "say so and change nothing",
+    "say so and make no fix",
 ];
 
 fn read(root: &Path, rel: &str) -> Result<String, String> {
