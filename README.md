@@ -9,8 +9,8 @@
 
 <div align="center">
 
-[![tests](https://img.shields.io/github/actions/workflow/status/EquityBot/Puritanical/test.yml?branch=main&label=tests&labelColor=000000&style=flat)](https://github.com/EquityBot/Puritanical/actions/workflows/test.yml) [![CodeQL](https://img.shields.io/github/actions/workflow/status/EquityBot/Puritanical/codeql.yml?branch=main&label=CodeQL&labelColor=000000&style=flat)](https://github.com/EquityBot/Puritanical/actions/workflows/codeql.yml) [![SonarCloud](https://img.shields.io/sonar/quality_gate/EquityBot_Puritanical?server=https%3A%2F%2Fsonarcloud.io&label=SonarCloud&labelColor=000000&style=flat)](https://sonarcloud.io/summary/new_code?id=EquityBot_Puritanical)<br>
-[![licence: FSL-1.1-ALv2](https://img.shields.io/badge/licence-FSL--1.1--ALv2-66023C?labelColor=000000&style=flat&color=66023C)](LICENSE) [![fork of: Ponytail](https://img.shields.io/badge/fork%20of-Ponytail-66023C?labelColor=000000&style=flat&color=66023C)](https://github.com/DietrichGebert/ponytail)
+[![tests](https://github.com/EquityBot/Puritanical/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/EquityBot/Puritanical/actions/workflows/test.yml) [![CodeQL](https://github.com/EquityBot/Puritanical/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/EquityBot/Puritanical/actions/workflows/codeql.yml) [![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=EquityBot_Puritanical&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=EquityBot_Puritanical)<br>
+[![licence: FSL-1.1-ALv2](.github/assets/badges/licence.svg)](LICENSE) [![fork of: Ponytail](.github/assets/badges/fork-of.svg)](https://github.com/DietrichGebert/ponytail)
 
 [Install](#install) · [Use](#use) · [The rules](#the-rules) · [Changes from Ponytail](#changes-from-ponytail) · [Development](#development)
 
