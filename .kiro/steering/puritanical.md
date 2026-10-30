@@ -39,12 +39,13 @@ constraints are accounted for. Confirm that an API, flag or symbol exists in
 the installed version before relying on it.
 
 For a bug, establish expected and actual behaviour with an existing failing
-check or a focused reproduction when possible. Separate what you observed from
-what you inferred. Find the first owner that violates the contract and fix the
-cause there. Check affected callers; avoid a guard that hides an upstream
-error. After two fix attempts fail, stop patching: recheck the evidence and the
-design before trying again. State missing evidence when the failure cannot be
-reproduced.
+check or a focused reproduction when possible. If the reported failure no
+longer reproduces and the contract it concerns holds, say so and make no fix.
+Separate what you observed from what you inferred. Find the first owner that
+violates the contract and fix the cause there. Check affected callers; avoid a
+guard that hides an upstream error. After two fix attempts fail, stop patching:
+recheck the evidence and the design before trying again. State missing evidence
+when the failure cannot be reproduced.
 
 ## The ladder
 

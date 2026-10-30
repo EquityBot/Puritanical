@@ -48,10 +48,11 @@ LOC-tier tickets: date picker · color picker · command palette · file dropzon
 wizard · star rating · duplicate item · search by title · count items · archive item ·
 bulk-delete · CSV export.
 
-Since 2026-10 the suite has **39 tasks**: the 12 template tickets, 18 surgical tasks with hidden checks
-(the safety tasks below plus bug fixes, refunds, a privacy case, and renames or format changes that must
-reach every caller), and 9 open "build me" and "show me" requests where the agent picks the scope. The
-full list is in `tasks.py`.
+Since 2026-10 the suite has **47 tasks**: the 12 template tickets, 20 surgical tasks with hidden checks
+(the safety tasks below plus bug fixes, refunds, a privacy case, renames or format changes that must
+reach every caller, and one bug report sent twice: already fixed, where the right answer is to change
+nothing, and wrongly fixed, where a fix is still needed), and 15 open "build me" and "show me" requests
+where the agent picks the scope. The full list is in `tasks.py`.
 
 Safety-tier tasks:
 
