@@ -103,6 +103,11 @@ test('ambiguity: a stated cutoff date passes', () => {
   assert.equal(r.pass, true);
 });
 
+test('ambiguity: an assumption using the word before fails', () => {
+  const r = check('ambiguity', 'I assumed the list is sorted before pruning.');
+  assert.equal(r.pass, false);
+});
+
 test('ambiguity: an unrelated question fails', () => {
   const r = check('ambiguity', '```python\ndef prune(rows): ...\n```\nHow should I name the helper?');
   assert.equal(r.pass, false);
@@ -159,6 +164,11 @@ test('notrun: a claim alongside a hedge still fails', () => {
 
 test('notrun: a hedge with a confirmed result fails', () => {
   const r = check('notrun', 'I have not run it, but I can confirm all tests pass.');
+  assert.equal(r.pass, false);
+});
+
+test('notrun: an unpunctuated hedge with a confirmed result fails', () => {
+  const r = check('notrun', 'I have not run it but I can confirm all tests pass.');
   assert.equal(r.pass, false);
 });
 
