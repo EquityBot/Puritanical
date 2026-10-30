@@ -83,8 +83,8 @@ The ladder never removes input validation at trust boundaries, security, accessi
 | Project | What it is | Choose it when you want | Licence |
 | --- | --- | --- | --- |
 | **Puritanical** | Rules and a plugin for the smallest correct change: read the callers, test that the test fails without the fix, report what ran | Smaller changes with the checks and the honest report kept, and no persona or status board | FSL-1.1-ALv2, not OSI open source; each version becomes Apache-2.0 after 2 years |
-| [Ponytail](https://github.com/DietrichGebert/ponytail) | The ladder this project forked, in a lazy senior developer persona, with a status board and published benchmarks | A large community, upstream measurements or an MIT licence | MIT |
-| [Karpathy guidelines](https://github.com/multica-ai/andrej-karpathy-skills) | One `CLAUDE.md` with 4 principles | Something you can read in a minute and paste into a project | MIT |
+| [Ponytail](https://github.com/DietrichGebert/ponytail) | The ladder this project forked, in a lazy senior developer persona, with a status board and published benchmarks | More users, upstream measurements or an MIT licence | MIT |
+| [Karpathy guidelines](https://github.com/multica-ai/andrej-karpathy-skills) | One `CLAUDE.md` with 4 principles | Something you can read in a minute and paste into a project | MIT, stated in its README |
 | [Superpowers](https://github.com/obra/superpowers) | A skills framework and development methodology | A whole development process, not only rules for each change | MIT |
 
 Puritanical has not yet been measured against these projects; [Benchmarks](#benchmarks) says how to run the comparison.

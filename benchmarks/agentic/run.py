@@ -74,6 +74,24 @@ def _plugin_dir(name):
         sys.exit(f"{name} plugin dir not found under {base}; install the plugin or set {name.upper()}_PLUGIN_DIR")
     return str(versions[-1])                    # latest version dir; not pinned to one machine's hash
 
+RIVALS = {"ponytail": "PONYTAIL_PLUGIN_DIR", "superpowers": "SUPERPOWERS_PLUGIN_DIR", "karpathy": "KARPATHY_CLAUDE_MD"}
+
+def _rival_sources(arms):
+    """Record which remote and commit each rival arm runs, so a result can be traced and a wrong
+    path shows up. Stops before any spend when a rival is unset or not a git checkout."""
+    sources = {}
+    for arm in arms:
+        if arm not in RIVALS: continue
+        path = os.environ.get(RIVALS[arm])
+        if not path: sys.exit(f"set {RIVALS[arm]} for the {arm} arm (see Head to head in the README)")
+        checkout = Path(path) if Path(path).is_dir() else Path(path).parent
+        def git(*args):
+            r = subprocess.run(["git", "-C", str(checkout), *args], capture_output=True, text=True)
+            if r.returncode: sys.exit(f"{RIVALS[arm]}: {checkout} is not a git checkout with an origin")
+            return r.stdout.strip()
+        sources[arm] = {"path": path, "remote": git("remote", "get-url", "origin"), "commit": git("rev-parse", "HEAD")}
+    return sources
+
 CELL_TIMEOUT = 300  # seconds per cell; a hung agent is force-killed (process tree) so the pool can't freeze
 
 # Added to every arm's system prompt, identically. We measure code PRODUCTION, not execution: agents
@@ -259,7 +277,18 @@ def _selftest_plugin_dir():
     except SystemExit:
         ok_miss = True
     print(f"{'ok ' if ok_miss else 'XX '} plugin_dir   miss clear error (sys.exit)")
-    return fails + (0 if ok_miss else 1)
+    fails += 0 if ok_miss else 1
+    previous = os.environ.pop("PONYTAIL_PLUGIN_DIR", None)
+    try:
+        _rival_sources(["ponytail"]); ok_rival = False   # reached only if it did NOT exit -> broken
+    except SystemExit:
+        ok_rival = True
+    os.environ["PONYTAIL_PLUGIN_DIR"] = str(ROOT)
+    ok_rival = ok_rival and len(_rival_sources(["ponytail"])["ponytail"]["commit"]) == 40 and _rival_sources(["baseline"]) == {}
+    if previous is None: del os.environ["PONYTAIL_PLUGIN_DIR"]
+    else: os.environ["PONYTAIL_PLUGIN_DIR"] = previous
+    print(f"{'ok ' if ok_rival else 'XX '} rival_sources unset exits, checkout records its commit")
+    return fails + (0 if ok_rival else 1)
 
 def _tree_kill(proc):
     """Tree-kill one timed-out cell, never a blanket kill (that would also take down this
@@ -493,11 +522,13 @@ def main():
     if not task_ids: sys.exit("give --task <id> (comma list ok), --all, or --rescore <dir>")
     arms = [a.strip() for a in args.arms.split(",")]
     models = [m.strip() for m in (args.model or args.models).split(",")]
+    rivals = _rival_sources(arms)                       # before any spend: a bad checkout stops the run here
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     out_dir = RUNS_DIR / stamp
     out_dir.mkdir(parents=True, exist_ok=True)
+    if rivals: (out_dir / "rivals.json").write_text(json.dumps(rivals, indent=2), encoding="utf-8")
 
-    cells = [(tid, arm, model, r)
+    cells =[(tid, arm, model, r)
              for tid in task_ids for model in models for arm in arms for r in range(args.runs)]
     total = len(cells)
     results, done = [], 0

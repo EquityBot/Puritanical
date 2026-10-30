@@ -34,7 +34,7 @@ instruction matches puritanical, the benchmark should show it.
 `puritanical2` loads a candidate plugin from `PURITANICAL2_PLUGIN_DIR`, next to the released `puritanical`. Upstream used it to
 measure Ponytail 5 against Ponytail 4.13 and no skill in one run.
 
-`ponytail`, `superpowers` and `karpathy` run the most popular alternatives from pinned checkouts; see [Head to head](#head-to-head).
+`ponytail`, `superpowers` and `karpathy` run popular alternatives from pinned checkouts; see [Head to head](#head-to-head).
 
 ## Tasks
 
@@ -175,7 +175,7 @@ python run.py --selftest
 python run.py --arms baseline,puritanical,ponytail,superpowers,karpathy --models opus --runs 5 --workers 6
 ```
 
-`karpathy` is a `CLAUDE.md`, which the isolated cells switch off, so its text goes in through `--append-system-prompt`. Publish the result whichever way it falls, including any task where another arm wins.
+`karpathy` is a `CLAUDE.md`, which the isolated cells switch off, so its text goes in through `--append-system-prompt`. Each run records every rival's remote and commit in `rivals.json`, and stops before any spend if a rival is not a git checkout; check them before trusting the run. Bash is off for every arm, and neither plugin arm has been checked for activation under that setup, so read the session transcript of one finished cell per arm to prove what was injected. Publish the result whichever way it falls, including any task where another arm wins.
 
 ## What this can and cannot show
 
