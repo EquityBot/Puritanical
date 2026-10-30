@@ -840,9 +840,11 @@ def main():
         def attempt():
             shutil.rmtree(ws, ignore_errors=True)
             ws.mkdir(parents=True)
-            run_session(tid, arm, model, ws)
-            shutil.rmtree(out_dir / name, ignore_errors=True)   # a failed cell from an earlier attempt
-            shutil.move(str(ws), str(out_dir / name))           # kept before scoring: the session is paid for
+            try:
+                run_session(tid, arm, model, ws)
+            finally:                                            # kept whatever happens: the session is paid for
+                shutil.rmtree(out_dir / name, ignore_errors=True)   # a failed cell from an earlier attempt
+                shutil.move(str(ws), str(out_dir / name))
             return score_isolated(tid, arm, model, out_dir / name)
         return _with_retries(attempt)
 

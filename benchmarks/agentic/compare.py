@@ -82,7 +82,8 @@ def problems(by, arms, unmatched, runs):
     for arm in arms:
         for t in TASKS:
             cells = by[(t, arm)]
-            if len(cells) != runs: found.append(f"{arm} / {t}: {len(cells)} cells, expected {runs}")
+            if len({c.get("cell") for c in cells}) != runs or len(cells) != runs:   # a duplicate must not hide a missing cell
+                found.append(f"{arm} / {t}: {len(cells)} cells, expected {runs} different ones")
             if any(c.get("infra") for c in cells): found.append(f"{arm} / {t}: session errors left unresolved")
             if TASKS[t].get("open") and any(c.get("completeness") is None and not c.get("infra") and not c.get("timed_out") for c in cells):
                 found.append(f"{arm} / {t}: a cell has no completeness score")
@@ -167,11 +168,14 @@ def selftest():
     gaps[(t0, "x")] = []
     gaps[(open_task, "x")] = [{}]
     found = problems(gaps, ["x"], 1, 1)
+    pairs = defaultdict(list, {(t, "x"): [{"cell": f"{t}{r}", "completeness": 3} for r in (0, 1)] for t in TASKS})
     checks = [("a crash fails and a failed session is dropped", (passes["wins"], passes["losses"], passes["ties"]) == (0, 1, 1)),
               ("LOC counts only where the job was done", (gated["wins"], gated["losses"]) == (1, 1)),
               ("one tiny delivery out of five loses to five larger ones", (tiny["wins"], tiny["losses"]) == (0, 1)),
               ("complete results have no problems", problems(complete, ["x"], 0, 1) == []),
               ("a missing cell, a missing score and an unmatched score are problems", len(found) == 3),
+              ("a duplicate cell is a problem", problems(pairs, ["x"], 0, 2) == [] and
+               len(problems(defaultdict(list, {**pairs, (t0, "x"): [{"cell": "c", "completeness": 3}] * 2}), ["x"], 0, 2)) == 1),
               ("sign test", sign_p(9, 0) < 0.01 and sign_p(5, 5) == 1.0),
               ("primary metrics split the tasks", all(any(PRIMARY[m](t) for t in TASKS) for m in PRIMARY)
                and not any(PRIMARY["pass"](t) and PRIMARY["loc_gated"](t) for t in TASKS))]
