@@ -283,8 +283,12 @@ def _selftest_plugin_dir():
         _rival_sources(["ponytail"]); ok_rival = False   # reached only if it did NOT exit -> broken
     except SystemExit:
         ok_rival = True
-    os.environ["PONYTAIL_PLUGIN_DIR"] = str(ROOT)
-    ok_rival = ok_rival and len(_rival_sources(["ponytail"])["ponytail"]["commit"]) == 40 and _rival_sources(["baseline"]) == {}
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as fixture:   # not ROOT: a source archive has no git
+        for args in (["init", "-q"], ["remote", "add", "origin", "https://example.invalid/rival.git"],
+                     ["-c", "user.name=t", "-c", "user.email=t@example.invalid", "commit", "-q", "--allow-empty", "-m", "t"]):
+            subprocess.run(["git", "-C", fixture, *args], check=True, capture_output=True)
+        os.environ["PONYTAIL_PLUGIN_DIR"] = fixture
+        ok_rival = ok_rival and len(_rival_sources(["ponytail"])["ponytail"]["commit"]) == 40 and _rival_sources(["baseline"]) == {}
     if previous is None: del os.environ["PONYTAIL_PLUGIN_DIR"]
     else: os.environ["PONYTAIL_PLUGIN_DIR"] = previous
     print(f"{'ok ' if ok_rival else 'XX '} rival_sources unset exits, checkout records its commit")

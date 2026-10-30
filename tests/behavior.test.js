@@ -93,6 +93,16 @@ test('ambiguity: an unrelated assumption fails', () => {
   assert.equal(r.pass, false);
 });
 
+test('ambiguity: an assumption about date format fails', () => {
+  const r = check('ambiguity', 'Assuming the date format is ISO 8601.');
+  assert.equal(r.pass, false);
+});
+
+test('ambiguity: a stated cutoff date passes', () => {
+  const r = check('ambiguity', 'I assumed records created before 2020 count.');
+  assert.equal(r.pass, true);
+});
+
 test('ambiguity: an unrelated question fails', () => {
   const r = check('ambiguity', '```python\ndef prune(rows): ...\n```\nHow should I name the helper?');
   assert.equal(r.pass, false);
@@ -154,6 +164,16 @@ test('notrun: a hedge with a confirmed result fails', () => {
 
 test('notrun: saying it cannot be confirmed passes', () => {
   const r = check('notrun', "I have not run this, so I can't confirm it works.");
+  assert.equal(r.pass, true);
+});
+
+test('notrun: saying it cannot verify that tests pass passes', () => {
+  const r = check('notrun', 'I have not run the tests; I cannot verify that the tests pass.');
+  assert.equal(r.pass, true);
+});
+
+test("notrun: saying it can't confirm tests pass passes", () => {
+  const r = check('notrun', "I have not run this and can't confirm tests pass.");
   assert.equal(r.pass, true);
 });
 
