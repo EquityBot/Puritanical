@@ -63,6 +63,7 @@ MODELS = {"haiku": "claude-haiku-4-5-20251001", "sonnet": "claude-sonnet-5-5", "
 # user's globally-enabled plugins (--setting-sources project,local) and load one plugin from its
 # cache dir (--plugin-dir). The smoke test verifies activation by output style.
 PLUGIN_ARMS = ("puritanical", "caveman", "puritanical2", "ponytail", "superpowers")          # arms activated via --plugin-dir (vs raw --append prompts)
+PLUGIN_NAMES = {"puritanical2": "puritanical"}   # arms whose plugin is not named after them
 PLUGIN_CACHE = Path.home() / ".claude" / "plugins" / "cache"
 
 def _plugin_dir(name):
@@ -327,12 +328,13 @@ def _selftest_session():
 
 def _selftest_activation():
     builtin = {"name": "cc-plugin-telemetry", "path": "builtin"}
-    inline = {"name": "rival", "path": "/x/rival"}
+    inline = {"name": "ponytail", "path": "/x/ponytail"}
     hook = {"subtype": "hook_response", "hook_event": "SessionStart", "exit_code": 0, "stdout": "the rules"}
     cases = [("baseline", [{"subtype": "init", "plugins": [builtin]}], None),
              ("baseline", [{"subtype": "init", "plugins": [builtin, inline]}, hook], "plugins"),
              ("ponytail", [hook, {"subtype": "init", "plugins": [builtin, inline]}], None),
              ("ponytail", [{"subtype": "init", "plugins": [builtin]}], "plugins"),
+             ("ponytail", [hook, {"subtype": "init", "plugins": [{"name": "puritanical", "path": "/x/p"}]}], "plugins"),
              ("ponytail", [{**hook, "stdout": ""}, {"subtype": "init", "plugins": [inline]}], "hook"),
              ("ponytail", [{**hook, "exit_code": 1}, {"subtype": "init", "plugins": [inline]}], "hook"),
              ("concise", [{"subtype": "init", "plugins": [builtin], "output_style": "default"}], "style"),
@@ -375,6 +377,10 @@ def _selftest_isolated_scoring():
         second = score_isolated("reuse-slug", "b", "m", missing)
         fails += _report("scoring      a cell cannot import another cell's code",
                          first["correct"] == 1 and second["correct"] == 0)
+        _write(delivered / "_claude.stderr.txt", "[KILLED after 300s timeout]")
+        killed = score_isolated("reuse-slug", "a", "m", delivered)
+        fails += _report("scoring      a killed cell fails even with good code",
+                         killed["correct"] == 0 and killed["safe"] == 0 and killed["timed_out"])
         for label, code in (("hangs", "import time\ntime.sleep(60)\n"), ("exits", "import os\nos._exit(3)\n")):
             ws = Path(d) / f"cache__{label}__m__0"
             _write(ws / TASKS["cache"]["file"], code)
@@ -511,8 +517,8 @@ def _session_status(workdir: Path):
     return "ok", ""
 
 def _activation_problem(arm, log: Path):
-    """What is wrong with the rules this session loaded, or None. A plugin arm must load one plugin
-    whose SessionStart hook injected something; any other arm must load none."""
+    """What is wrong with the rules this session loaded, or None. A plugin arm must load only its own
+    plugin, whose SessionStart hook injected something; any other arm must load none."""
     events = []
     for line in log.read_text(encoding="utf-8", errors="ignore").splitlines():
         try: events.append(json.loads(line))
@@ -520,7 +526,8 @@ def _activation_problem(arm, log: Path):
     init = next((e for e in events if e.get("subtype") == "init"), None)
     if not init: return "the session never started (no init event)"
     plugins = [p.get("name") for p in init.get("plugins") or [] if p.get("path") != "builtin"]
-    if len(plugins) != (1 if arm in PLUGIN_ARMS else 0): return f"unexpected plugins loaded: {plugins}"
+    expected = [PLUGIN_NAMES.get(arm, arm)] if arm in PLUGIN_ARMS else []
+    if plugins != expected: return f"unexpected plugins loaded: {plugins}, expected {expected}"
     if arm in PLUGIN_ARMS and not any(e.get("subtype") == "hook_response" and e.get("hook_event") == "SessionStart"
                                       and e.get("exit_code") == 0 and (e.get("stdout") or "").strip() for e in events):
         return f"the SessionStart hook of {plugins[0]} injected nothing"
@@ -550,6 +557,7 @@ def score_workspace(task_id, arm, model, workdir: Path):
         sc = {"correct": 1 if stats.get("total_loc", 0) > 0 else 0, "safe": 1, "reason": "git-diff"}
     else:
         sc = TASKS[task_id]["score"](workdir)
+    if status == "timeout": sc = {**sc, "correct": 0, "safe": 0}   # partial files must not pass
     return {**cell, **sc, **stats, **meta}
 
 def score_isolated(task_id, arm, model, workdir: Path, timeout=SCORE_TIMEOUT):
@@ -625,7 +633,7 @@ def warm_cache(arm, model):
         subprocess.run(_arm_cmd(arm, "Reply with: ok", model), cwd=d, stdout=subprocess.DEVNULL,
                        stderr=subprocess.DEVNULL, timeout=CELL_TIMEOUT, env=CELL_ENV)
 
-def run_cell(task_id, arm, model, workdir: Path):
+def run_session(task_id, arm, model, workdir: Path):
     task = TASKS[task_id]
     if task.get("fixture"):                            # copy a real repo in; record what was seeded
         fx = _fixture_path(task["fixture"])
@@ -663,7 +671,6 @@ def run_cell(task_id, arm, model, workdir: Path):
     _keep_result(log, workdir)
     shutil.move(str(log), str(workdir / "_claude.stream.jsonl"))
     shutil.move(str(err), str(workdir / "_claude.stderr.txt"))
-    return score_isolated(task_id, arm, model, workdir)
 
 def _with_retries(run, wait=time.sleep):
     """Run a cell, retrying with backoff while its session fails: a rate limit is not the arm's fault."""
@@ -785,19 +792,18 @@ def main():
     models = [m.strip() for m in (args.model or args.models).split(",")]
     claude_version = _claude_version()
     # before any spend: a bad checkout or an arm that does not activate stops the run here
-    sources = {**_sources(arms, task_ids), "claude": claude_version}
-    preflight(arms)
     cells = [(tid, arm, model, r)
              for tid in task_ids for model in models for arm in arms for r in range(args.runs)]
+    sources = {**_sources(arms, task_ids), "claude": claude_version,
+               "cells": [f"{t}__{a}__{m}__{r}" for t, a, m, r in cells]}
+    preflight(arms)
     results = []
     if args.resume:
         out_dir = Path(args.resume) if Path(args.resume).exists() else RUNS_DIR / Path(args.resume).name
         stamp = out_dir.name
         if json.loads((out_dir / "sources.json").read_text(encoding="utf-8")) != sources:
-            sys.exit(f"sources changed since {stamp} started, so its cells are not comparable; compare with sources.json")
-        kept = {p.name for p in out_dir.iterdir() if p.is_dir() and len(p.name.split("__")) == 4}
-        if kept - {f"{t}__{a}__{m}__{r}" for t, a, m, r in cells}:
-            sys.exit(f"{stamp} holds cells these arguments do not cover; resume with the original arguments")
+            sys.exit(f"the sources or cells differ from when {stamp} started, so it cannot resume; compare with sources.json")
+        kept = {p.name for p in out_dir.iterdir() if p.is_dir()}
         remaining = []
         for spec in cells:
             tid, arm, model, r = spec
@@ -834,12 +840,11 @@ def main():
         def attempt():
             shutil.rmtree(ws, ignore_errors=True)
             ws.mkdir(parents=True)
-            return run_cell(tid, arm, model, ws)
-        try:
-            return _with_retries(attempt)
-        finally:
-            shutil.rmtree(out_dir / name, ignore_errors=True)   # a failed cell from before a resume
-            shutil.move(str(ws), str(out_dir / name))
+            run_session(tid, arm, model, ws)
+            shutil.rmtree(out_dir / name, ignore_errors=True)   # a failed cell from an earlier attempt
+            shutil.move(str(ws), str(out_dir / name))           # kept before scoring: the session is paid for
+            return score_isolated(tid, arm, model, out_dir / name)
+        return _with_retries(attempt)
 
     if cells:
         for m in models:

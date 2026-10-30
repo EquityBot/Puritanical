@@ -15,7 +15,7 @@ are raw and exploratory.
 
 shortcut: sign test over tasks, not a mixed model. Coarse, but honest with n=2-3 per cell.
 """
-import argparse, json, math, statistics
+import argparse, json, math, statistics, sys
 from collections import defaultdict
 from pathlib import Path
 
@@ -57,9 +57,9 @@ PRIMARY = {"pass": lambda t: not TASKS[t].get("open"),
            "loc_gated": lambda t: bool(TASKS[t].get("open"))}
 
 def load(dirs):
-    """Cells from results.json, with each judge's score joined to its cell. Answer rows only carry
-    the judge scores; per-task aggregation skips missing values."""
-    rows = []
+    """Cells from results.json, with each judge's score joined to its cell, and how many scores
+    matched no cell. Those stay as rows carrying only the scores; per-task aggregation skips missing values."""
+    rows, unmatched = [], 0
     for d in dirs:
         d = Path(d) if Path(d).exists() else RUNS_DIR / Path(d).name
         cells = [c for c in json.loads((d / "results.json").read_text(encoding="utf-8"))["results"]
@@ -70,8 +70,23 @@ def load(dirs):
             if not (d / name).exists(): continue
             for score in json.loads((d / name).read_text(encoding="utf-8"))["scores"]:
                 if score.get("cell") in by_cell: by_cell[score["cell"]].update({k: v for k, v in score.items() if k not in by_cell[score["cell"]]})
-                else: rows.append(score)
-    return rows
+                else:
+                    rows.append(score)
+                    unmatched += 1
+    return rows, unmatched
+
+def problems(by, arms, unmatched, runs):
+    """Why these results cannot support a published claim: missing cells or scores would otherwise
+    quietly change the primary metrics."""
+    found = [f"{unmatched} judge scores match no cell"] if unmatched else []
+    for arm in arms:
+        for t in TASKS:
+            cells = by[(t, arm)]
+            if len(cells) != runs: found.append(f"{arm} / {t}: {len(cells)} cells, expected {runs}")
+            if any(c.get("infra") for c in cells): found.append(f"{arm} / {t}: session errors left unresolved")
+            if TASKS[t].get("open") and any(c.get("completeness") is None and not c.get("infra") and not c.get("timed_out") for c in cells):
+                found.append(f"{arm} / {t}: a cell has no completeness score")
+    return found
 
 def sign_p(wins, losses):
     n = wins + losses
@@ -84,16 +99,25 @@ def agg(by, task, arm, metric):
     v = [x for x in (get(c) for c in by[(task, arm)]) if x is not None]
     return fn(v) if v else None
 
+def _gated(by, task, arm):
+    """The share of an arm's cells that did the job, then fewer lines in those cells. Compared in
+    that order, so one tiny delivery out of five cannot beat five larger ones."""
+    cells = [c for c in by[(task, arm)] if not c.get("infra")]
+    done = [v for v in map(_loc_gated, cells) if v is not None]
+    return (len(done) / len(cells), -statistics.median(done)) if done else (0, 0)
+
 def tally(by, tasks, a, b, metric):
     """B's wins, losses and ties on one metric, with the median B/A ratio."""
     higher = METRICS[metric][2]
     w = l = ties = 0; ratios = []
     for t in tasks:
-        x, y = agg(by, t, a, metric), agg(by, t, b, metric)
-        if x is None or y is None:
-            if metric == "loc_gated" and (x is None) != (y is None):     # no cell did the job: that arm loses the task
-                w += x is None; l += y is None
+        if metric == "loc_gated":
+            x, y = _gated(by, t, a), _gated(by, t, b)
+            if x[1] and y[1]: ratios.append(y[1] / x[1])
+            w += y > x; l += y < x; ties += y == x
             continue
+        x, y = agg(by, t, a, metric), agg(by, t, b, metric)
+        if x is None or y is None: continue
         if x: ratios.append(y / x)
         if higher is None or x == y: ties += 1; continue
         better = y > x if higher else y < x
@@ -124,16 +148,30 @@ def compare(by, a, b, tasks_filter, family):
 
 def selftest():
     """No API. The primary metrics must count a crash as a failure, drop a failed session, and give
-    a task to the arm whose code did the job when the other arm's did not."""
+    a task to the arm whose code did the job more often before counting lines."""
     by = defaultdict(list)
     def cell(t, arm, **kw): by[(t, arm)].append({"task": t, "arm": arm, **kw})
     cell("a", "x", correct=1, safe=1); cell("a", "y", error="boom")
     cell("b", "x", correct=1, safe=1); cell("b", "y", correct=1, safe=1); cell("b", "y", infra=True)
     cell("c", "x", total_loc=50, completeness=3); cell("c", "y", total_loc=5, completeness=0)
     cell("d", "x", total_loc=50, completeness=3); cell("d", "y", total_loc=40, completeness=2)
+    for _ in range(5): cell("e", "x", total_loc=40, completeness=3)
+    cell("e", "y", total_loc=2, completeness=3)
+    for _ in range(4): cell("e", "y", total_loc=1, completeness=0)
     passes, gated = tally(by, ["a", "b"], "x", "y", "pass"), tally(by, ["c", "d"], "x", "y", "loc_gated")
+    tiny = tally(by, ["e"], "x", "y", "loc_gated")
+    complete = defaultdict(list)
+    t0, open_task = next(iter(TASKS)), next(t for t in TASKS if TASKS[t].get("open"))
+    for t in TASKS: complete[(t, "x")] = [{"completeness": 3}]
+    gaps = defaultdict(list, complete)
+    gaps[(t0, "x")] = []
+    gaps[(open_task, "x")] = [{}]
+    found = problems(gaps, ["x"], 1, 1)
     checks = [("a crash fails and a failed session is dropped", (passes["wins"], passes["losses"], passes["ties"]) == (0, 1, 1)),
               ("LOC counts only where the job was done", (gated["wins"], gated["losses"]) == (1, 1)),
+              ("one tiny delivery out of five loses to five larger ones", (tiny["wins"], tiny["losses"]) == (0, 1)),
+              ("complete results have no problems", problems(complete, ["x"], 0, 1) == []),
+              ("a missing cell, a missing score and an unmatched score are problems", len(found) == 3),
               ("sign test", sign_p(9, 0) < 0.01 and sign_p(5, 5) == 1.0),
               ("primary metrics split the tasks", all(any(PRIMARY[m](t) for t in TASKS) for m in PRIMARY)
                and not any(PRIMARY["pass"](t) and PRIMARY["loc_gated"](t) for t in TASKS))]
@@ -146,10 +184,16 @@ def main():
     ap.add_argument("--a", default="puritanical")
     ap.add_argument("--b", default="puritanical2", help="comma list: A is compared with each")
     ap.add_argument("--tasks", help="comma list; default: every task both arms ran")
+    ap.add_argument("--strict", type=int, metavar="RUNS",
+                    help="exit unless every arm has all tasks at RUNS cells each, with every score joined")
     args = ap.parse_args()
     by = defaultdict(list)
-    for c in load(args.runs): by[(c["task"], c["arm"])].append(c)
+    rows, unmatched = load(args.runs)
+    for c in rows: by[(c["task"], c["arm"])].append(c)
     arms = args.b.split(",")
+    if args.strict:
+        found = problems(by, [args.a, *arms], unmatched, args.strict)
+        if found: sys.exit("not ready to publish:\n  " + "\n  ".join(found))
     for b in arms:
         compare(by, args.a, b, args.tasks and args.tasks.split(","), len(arms) * len(PRIMARY))
 
