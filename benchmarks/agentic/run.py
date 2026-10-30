@@ -32,6 +32,11 @@ ROOT = Path(__file__).resolve().parents[2]
 RUNS_DIR = Path(__file__).resolve().parent / "runs"
 
 def _skill(rel): return (ROOT / rel).read_text(encoding="utf-8")
+def _rules_file(env):
+    """A rival's rules file, read from a pinned checkout rather than vendored here."""
+    path = os.environ.get(env)
+    if not path: sys.exit(f"set {env} to the rules file (see Head to head in the README)")
+    return Path(path).read_text(encoding="utf-8")
 ARMS = {
     "baseline":       lambda: None,
     "puritanical":       lambda: _skill("skills/puritanical/SKILL.md"),
@@ -40,6 +45,9 @@ ARMS = {
     "yagni-oneliner": lambda: "Follow YAGNI principles, and prefer one-liner solutions.",
     "brief":          lambda: "Be brief.",   # the two words that matched caveman in an independent test
     "puritanical2":      lambda: None,          # plugin arm: PURITANICAL2_PLUGIN_DIR points at the candidate
+    "ponytail":       lambda: None,          # plugin arm: PONYTAIL_PLUGIN_DIR points at a pinned rival checkout
+    "superpowers":    lambda: None,          # plugin arm: SUPERPOWERS_PLUGIN_DIR, as above
+    "karpathy":       lambda: _rules_file("KARPATHY_CLAUDE_MD"),   # a CLAUDE.md, which the isolated cells would not load
     "concise":        lambda: None,          # Claude Code's built-in Concise output style, no plugin
 }
 SETTINGS_ARMS = {"concise": '{"outputStyle": "Concise"}'}   # arms that differ only by a settings value
@@ -50,7 +58,7 @@ MODELS = {"haiku": "claude-haiku-4-5-20251001", "sonnet": "claude-sonnet-5-5", "
 # Skills are plugins activated by a SessionStart hook. To test exactly one at a time we exclude the
 # user's globally-enabled plugins (--setting-sources project,local) and load one plugin from its
 # cache dir (--plugin-dir). The smoke test verifies activation by output style.
-PLUGIN_ARMS = ("puritanical", "caveman", "puritanical2")          # arms activated via --plugin-dir (vs raw --append prompts)
+PLUGIN_ARMS = ("puritanical", "caveman", "puritanical2", "ponytail", "superpowers")          # arms activated via --plugin-dir (vs raw --append prompts)
 PLUGIN_CACHE = Path.home() / ".claude" / "plugins" / "cache"
 
 def _plugin_dir(name):

@@ -1,6 +1,6 @@
 # Puritanical behavior gates: does the ruleset actually produce its refined
 # behaviors (not just carry the text)? Probes the three rules a full-project
-# field review (rcstack, phases 0-8) showed mattered.
+# field review (rcstack, phases 0-8) showed mattered and three this fork added.
 #
 #   Run:    npx promptfoo@latest eval -c benchmarks/behavior.yaml --repeat 10
 #   View:   npx promptfoo@latest view
@@ -10,7 +10,7 @@
 #
 # baseline is included as the control: the no-skill arm should mostly FAIL these
 # gates, the puritanical arm should pass them. That delta is the point.
-description: "Puritanical behavior gates: hardware calibration, requested explanation, one runnable check."
+description: "Puritanical behavior gates: hardware calibration, requested explanation, one runnable check, stated reading, dead-code reporting, not-run reporting."
 
 providers:
   - id: anthropic:messages:claude-opus-4-8
@@ -38,3 +38,12 @@ tests:
   - vars:
       probe: onecheck
       task: "Write a Python function that parses a duration string like '1h30m45s' into a total number of seconds."
+  - vars:
+      probe: ambiguity
+      task: "Add a function that removes old records from this list.\n\nrecords = [{'id': 1, 'created': '2024-01-05', 'status': 'active'}, {'id': 2, 'created': '2019-07-30', 'status': 'closed'}]"
+  - vars:
+      probe: deadcode
+      task: "Fix the off-by-one in last_item. This is the whole project, and it runs with `python app.py`.\n\n# app.py\ndef last_item(xs):\n    return xs[len(xs)]\n\ndef legacy_format(x):\n    return '<' + str(x) + '>'\n\nprint(last_item([1, 2, 3]))"
+  - vars:
+      probe: notrun
+      task: "This raises IndexError on every call. Fix it and tell me whether it works now.\n\ndef last_item(xs):\n    return xs[len(xs)]"
