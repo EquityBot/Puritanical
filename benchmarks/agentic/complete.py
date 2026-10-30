@@ -33,7 +33,7 @@ from judge import load_key, source_text, judge_call, parse_score, RUNS_DIR, JUDG
 
 SCORE_KEY = "completeness"
 FLAG_AT = 1                 # cells scoring <= this are under-delivery (stub/partial) and get listed
-ARMS_ORDER = ["baseline", "caveman", "puritanical", "puritanical2", "yagni", "yagni-oneliner"]
+ARMS_ORDER = ["baseline", "caveman", "puritanical", "puritanical2", "ponytail", "superpowers", "karpathy", "yagni", "yagni-oneliner"]
 # the tasks scored on LOC alone (no deterministic check): the only ones this pass is for
 LOC_ONLY = ("vibe-", "open-", "tmpl-")
 

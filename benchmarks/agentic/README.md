@@ -34,6 +34,8 @@ instruction matches puritanical, the benchmark should show it.
 `puritanical2` loads a candidate plugin from `PURITANICAL2_PLUGIN_DIR`, next to the released `puritanical`. Upstream used it to
 measure Ponytail 5 against Ponytail 4.13 and no skill in one run.
 
+`ponytail`, `superpowers` and `karpathy` run popular alternatives from pinned checkouts; see [Head to head](#head-to-head).
+
 ## Tasks
 
 Two tiers. **LOC tier**: 12 one-line tickets against the real template repo (6 frontend
@@ -153,6 +155,27 @@ blocks running a server, so no database, server, or login is needed. The LOC tie
 `bypassPermissions` in its own fresh repo copy under `runs/<stamp>/` (gitignored, kept). `--workers
 N` runs N isolated cells concurrently. Because workspaces are preserved, any metric change is
 re-applied offline with `--rescore`, you never pay the API twice for a measurement tweak.
+
+## Head to head
+
+Compare Puritanical with its alternatives in one run, so that time of day and model drift hit every arm the same way. Nothing from the rival repositories is vendored; clone each at the commit below, or record the newer commit you used:
+
+```bash
+git clone https://github.com/DietrichGebert/ponytail && git -C ponytail checkout 7801d06
+git clone https://github.com/obra/superpowers && git -C superpowers checkout 2ce8aa1
+git clone https://github.com/multica-ai/andrej-karpathy-skills karpathy && git -C karpathy checkout 2c60614
+```
+
+```bash
+export PURITANICAL_PLUGIN_DIR=/abs/path/to/Puritanical
+export PONYTAIL_PLUGIN_DIR=/abs/path/to/ponytail
+export SUPERPOWERS_PLUGIN_DIR=/abs/path/to/superpowers
+export KARPATHY_CLAUDE_MD=/abs/path/to/karpathy/CLAUDE.md
+python run.py --selftest
+python run.py --arms baseline,puritanical,ponytail,superpowers,karpathy --models opus --runs 5 --workers 6
+```
+
+`karpathy` is a `CLAUDE.md`, which the isolated cells switch off, so its text goes in through `--append-system-prompt`. Each run records every rival's remote and commit in `rivals.json`, and stops before any spend if a rival is not a git checkout; check them before trusting the run. Bash is off for every arm, and neither plugin arm has been checked for activation under that setup, so read the session transcript of one finished cell per arm to prove what was injected. Publish the result whichever way it falls, including any task where another arm wins.
 
 ## What this can and cannot show
 

@@ -12,7 +12,7 @@
 [![tests](https://github.com/EquityBot/Puritanical/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/EquityBot/Puritanical/actions/workflows/test.yml) [![CodeQL](https://github.com/EquityBot/Puritanical/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/EquityBot/Puritanical/actions/workflows/codeql.yml) [![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=EquityBot_Puritanical&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=EquityBot_Puritanical)<br>
 [![licence: FSL-1.1-ALv2](.github/assets/badges/licence.svg)](LICENSE) [![fork of: Ponytail](.github/assets/badges/fork-of.svg)](https://github.com/DietrichGebert/ponytail)
 
-[Install](#install) · [Use](#use) · [The rules](#the-rules) · [Changes from Ponytail](#changes-from-ponytail) · [Development](#development)
+[Install](#install) · [Use](#use) · [The rules](#the-rules) · [How it compares](#how-it-compares) · [Changes from Ponytail](#changes-from-ponytail) · [Development](#development)
 
 </div>
 
@@ -78,6 +78,17 @@ The whole ruleset is [`skills/puritanical/SKILL.md`](skills/puritanical/SKILL.md
 
 The ladder never removes input validation at trust boundaries, security, accessibility, error handling that prevents data loss or required hardware calibration. A deliberate corner cut gets a `shortcut:` comment naming its limit and when to revisit it.
 
+## How it compares
+
+| Project | What it is | Choose it when you want | Licence |
+| --- | --- | --- | --- |
+| **Puritanical** | Rules and a plugin for the smallest correct change: read the callers, test that the test fails without the fix, report what ran | Smaller changes with the checks and the honest report kept, and no persona or status board | FSL-1.1-ALv2, not OSI open source; each version becomes Apache-2.0 after 2 years |
+| [Ponytail](https://github.com/DietrichGebert/ponytail) | The ladder this project forked, in a lazy senior developer persona, with a status board and published benchmarks | More users, upstream measurements or an MIT licence | MIT |
+| [Karpathy guidelines](https://github.com/multica-ai/andrej-karpathy-skills) | One `CLAUDE.md` with 4 principles | Something you can read in a minute and paste into a project | MIT, stated in its README |
+| [Superpowers](https://github.com/obra/superpowers) | A skills framework and development methodology | A whole development process, not only rules for each change | MIT |
+
+Puritanical has not yet been measured against these projects; [Benchmarks](#benchmarks) says how to run the comparison.
+
 ## Changes from Ponytail
 
 Puritanical is a fork of [Ponytail](https://github.com/DietrichGebert/ponytail) by Dietrich Gebert, taken at upstream `main` after v5.3.2 (commit `09c434a`).
@@ -108,7 +119,7 @@ The 4 fixes came from community forks: [duofuwang](https://github.com/duofuwang/
 
 ## Benchmarks
 
-Puritanical has not been benchmarked yet. The harness in [benchmarks/](benchmarks/) comes from upstream; its published results measure the upstream rulesets.
+Puritanical has not been benchmarked yet. The harness in [benchmarks/](benchmarks/) comes from upstream; its published results measure the upstream rulesets. [Head to head](benchmarks/agentic/README.md#head-to-head) runs Puritanical, Ponytail, Superpowers, the Karpathy guidelines and no skill in one run from pinned checkouts, and [`behavior.yaml`](benchmarks/behavior.yaml) probes whether the rules this fork added change what the agent does.
 
 ## Development
 
