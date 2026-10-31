@@ -25,7 +25,7 @@ over-engineering score is a later pass.
 shortcut: the claude CLI is the harness (already installed, we run inside it). No SDK
 dependency. The CLI's JSON output already carries cost/tokens/duration/permission_denials.
 """
-import argparse, concurrent.futures, datetime, json, os, re, shutil, signal, statistics, subprocess, sys, tempfile, time, zlib
+import argparse, concurrent.futures, datetime, json, os, re, shutil, signal, stat, statistics, subprocess, sys, tempfile, time, zlib
 from collections import defaultdict
 from pathlib import Path
 
@@ -283,6 +283,7 @@ def selftest():
     failures += _selftest_session()
     failures += _selftest_activation()
     failures += _selftest_retries()
+    failures += _selftest_keep_cell()
     failures += _selftest_isolated_scoring()
     failures += _selftest_plugin_dir()
     failures += _selftest_kill()
@@ -359,6 +360,17 @@ def _selftest_retries():
     ok = ok and _with_retries(lambda: calls.append(1) or {"infra": True}, waits.append).get("infra") \
         and len(calls) == len(RETRY_WAITS) + 1
     return _report("retries      a session error retries, then is reported", ok)
+
+def _selftest_keep_cell():
+    """A retry replaces the kept cell of the failed attempt, even with git's read-only objects in it."""
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as d:
+        dest, ws = Path(d) / "cell", Path(d) / "scratch" / "cell"
+        _write(dest / ".git" / "objects" / "ab" / "obj", "old attempt")
+        os.chmod(dest / ".git" / "objects" / "ab" / "obj", stat.S_IREAD)
+        _write(ws / "new.txt", "new attempt")
+        _keep_cell(ws, dest)
+        ok = (dest / "new.txt").is_file() and not (dest / "cell").exists() and not (dest / ".git").exists() and not ws.exists()
+    return _report("keep cell     a retry replaces a kept cell holding read-only files", ok)
 
 def _selftest_isolated_scoring():
     """Scoring one cell must not see another cell's code, and produced code that hangs or exits
@@ -672,6 +684,18 @@ def run_session(task_id, arm, model, workdir: Path):
     shutil.move(str(log), str(workdir / "_claude.stream.jsonl"))
     shutil.move(str(err), str(workdir / "_claude.stderr.txt"))
 
+def _unlock(func, path, _error):
+    """rmtree handler: git writes its objects read-only, and Windows will not delete a read-only file."""
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
+
+def _keep_cell(ws: Path, dest: Path):
+    """Move a cell's workspace to dest, replacing a kept cell from an earlier attempt. A leftover that
+    cannot be removed raises: moving into it would nest the workspace and lose the paid session."""
+    if dest.exists():
+        shutil.rmtree(dest, **{"onexc" if sys.version_info >= (3, 12) else "onerror": _unlock})
+    shutil.move(str(ws), str(dest))
+
 def _with_retries(run, wait=time.sleep):
     """Run a cell, retrying with backoff while its session fails: a rate limit is not the arm's fault."""
     for pause in (*RETRY_WAITS, None):
@@ -844,8 +868,7 @@ def main():
             try:
                 run_session(tid, arm, model, ws)
             finally:                                            # kept whatever happens: the session is paid for
-                shutil.rmtree(out_dir / name, ignore_errors=True)   # a failed cell from an earlier attempt
-                shutil.move(str(ws), str(out_dir / name))
+                _keep_cell(ws, out_dir / name)
             return score_isolated(tid, arm, model, out_dir / name)
         return _with_retries(attempt)
 
