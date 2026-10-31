@@ -190,7 +190,7 @@ def selftest():
               ("a duplicate cell is a problem", problems(pairs, ["x"], 0, 2) == [] and
                len(problems(defaultdict(list, {**pairs, (t0, "x"): [{"cell": "c", "completeness": 3}] * 2}), ["x"], 0, 2)) == 1),
               ("separate runs may reuse cell names, but a run counts once", separate == [] and len(same_twice) == len(TASKS)),
-              ("sign test", sign_p(9, 0) < 0.01 and sign_p(5, 5) == 1.0),
+              ("sign test", sign_p(9, 0) < 0.01 and math.isclose(sign_p(5, 5), 1.0)),
               ("primary metrics split the tasks", all(any(PRIMARY[m](t) for t in TASKS) for m in PRIMARY)
                and not any(PRIMARY["pass"](t) and PRIMARY["loc_gated"](t) for t in TASKS))]
     for name, ok in checks: print(f"{'ok ' if ok else 'XX '} compare      {name}")

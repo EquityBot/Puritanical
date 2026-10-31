@@ -305,7 +305,7 @@ def _selftest_aggregate():
     fails += _report("aggregate    an arm with only session errors has no rates", only["n"] == 0 and only["correct_rate"] == 0)
     row = aggregate([ok_cell, {"task": "t", "arm": "a", "model": "m", "correct": 0, "safe": 0, "timed_out": True}])[0]
     return fails + _report("aggregate    a timeout fails, and hides cost per pass",
-                           row["n"] == 2 and row["correct_rate"] == 0.5 and row["timeouts"] == 1 and row["cost_per_pass"] is None)
+                           row["n"] == 2 and abs(row["correct_rate"] - 0.5) < 1e-9 and row["timeouts"] == 1 and row["cost_per_pass"] is None)
 
 def _selftest_session():
     fails = 0
@@ -566,7 +566,7 @@ def score_isolated(task_id, arm, model, workdir: Path, timeout=SCORE_TIMEOUT):
     workdir = Path(workdir).resolve()
     out = workdir / "_score.json"
     out.unlink(missing_ok=True)
-    proc = subprocess.Popen([sys.executable, str(Path(__file__).resolve()), "--score-cell", task_id, arm, model, str(workdir)],
+    proc = subprocess.Popen([sys.executable, str(Path(__file__).resolve()), "--score-cell", task_id, arm, model],
                             cwd=str(workdir), stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                             start_new_session=(os.name != "nt"))
     try:
@@ -761,7 +761,7 @@ def main():
     global CELL_TIMEOUT
     ap = argparse.ArgumentParser()
     ap.add_argument("--selftest", action="store_true")
-    ap.add_argument("--score-cell", nargs=4, metavar=("TASK", "ARM", "MODEL", "DIR"), help=argparse.SUPPRESS)
+    ap.add_argument("--score-cell", nargs=3, metavar=("TASK", "ARM", "MODEL"), help=argparse.SUPPRESS)   # scores the cwd
     ap.add_argument("--rescore", help="recompute metrics from a kept run dir (no API)")
     ap.add_argument("--resume", help="kept run dir: run only its unfinished or failed cells, with the same sources")
     ap.add_argument("--timeout", type=int, default=CELL_TIMEOUT, help=f"seconds per cell (default {CELL_TIMEOUT})")
@@ -776,8 +776,9 @@ def main():
     CELL_TIMEOUT = args.timeout
 
     if args.score_cell:
-        tid, arm, model, ws = args.score_cell
-        return (Path(ws) / "_score.json").write_text(json.dumps(score_workspace(tid, arm, model, Path(ws))), encoding="utf-8")
+        tid, arm, model = args.score_cell
+        ws = Path.cwd()
+        return (ws / "_score.json").write_text(json.dumps(score_workspace(tid, arm, model, ws)), encoding="utf-8")
     if args.selftest:
         sys.exit(1 if selftest() else 0)
     if args.rescore:
