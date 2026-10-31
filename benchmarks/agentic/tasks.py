@@ -814,7 +814,7 @@ def _page_count(workdir):
 
 # Files run.py itself leaves in a workspace: the CLI output, its stderr, and (for "diff" tasks) the
 # baseline git repository. Importing pager.py can also leave a __pycache__ directory.
-_HARNESS_FILES = {"pager.py", "_claude.json", "_claude.stderr.txt"}
+_HARNESS_FILES = {"pager.py", "_claude.json", "_claude.stream.jsonl", "_claude.stderr.txt", "_score.json"}
 
 def score_abstain_fixed(workdir):
     # Unscored: whether the reply says the bug is already fixed. Scorers get only the workspace; a

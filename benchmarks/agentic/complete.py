@@ -23,13 +23,13 @@ claude CLI login when there is none.
 shortcut: reuses judge.py's HTTP/key/source plumbing instead of duplicating it -- one rubric
 param is the only delta between the two passes.
 """
-import argparse, json, re, subprocess, sys
+import argparse, json, sys
 from concurrent.futures import ThreadPoolExecutor
 from collections import defaultdict
 from pathlib import Path
 
 from tasks import TASKS
-from judge import load_key, source_text, judge_call, parse_score, RUNS_DIR, JUDGE_MODEL
+from judge import load_key, submission, judge_call, parse_score, RUNS_DIR, JUDGE_MODEL
 
 SCORE_KEY = "completeness"
 FLAG_AT = 1                 # cells scoring <= this are under-delivery (stub/partial) and get listed
@@ -104,20 +104,6 @@ def selftest_offline():
     passed = p_good and not p_bad
     print(f"\ncompleteness gate selftest (offline): {'valid' if passed else 'BROKEN'}")
     return 0 if passed else 1
-
-def submission(ws, tid):
-    """What the agent delivered. Fixture tasks: only its diff against the seeded repo, not the whole
-    repo. Open tasks may answer in chat with no file. Arm-revealing marker words are neutralized so
-    the judge stays blind."""
-    if TASKS[tid].get("fixture"):
-        text = subprocess.run(["git", "-C", str(ws), "diff", "--cached", "-U10", "HEAD", "--", ".", ":(exclude)_*"],
-                              capture_output=True, text=True).stdout
-    else:
-        text = source_text(ws)
-        if not text.strip() and (ws / "_claude.json").exists():
-            try: text = json.loads((ws / "_claude.json").read_text(encoding="utf-8")).get("result", "") or ""
-            except ValueError: text = ""                # the agent timed out: nothing delivered
-    return re.sub(r"\bpuritanical:", "note:", text, flags=re.I)
 
 def run(run_dir, key, model=JUDGE_MODEL, arms=None, workers=6):
     run_dir = Path(run_dir)

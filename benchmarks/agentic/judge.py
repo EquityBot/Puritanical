@@ -61,6 +61,22 @@ def source_text(workdir: Path):
         except Exception: continue
     return "\n\n".join(out)
 
+def submission(ws, tid):
+    """What the agent delivered. Fixture tasks: only its diff against the seeded repo, not the whole
+    repo. Open tasks may answer in chat with no file."""
+    if TASKS[tid].get("fixture"):
+        return subprocess.run(["git", "-C", str(ws), "diff", "--cached", "-U10", "HEAD", "--", ".", ":(exclude)_*"],
+                              capture_output=True, text=True).stdout
+    text = source_text(ws)
+    if not text.strip() and (ws / "_claude.json").exists():
+        try: text = json.loads((ws / "_claude.json").read_text(encoding="utf-8")).get("result", "") or ""
+        except ValueError: text = ""                # the agent timed out: nothing delivered
+    return text
+
+def blind(text):
+    """Neutralise each arm's marker word, so no judge can tell which arm wrote what it reads."""
+    return re.sub(r"\b(puritanical2?|ponytail|superpowers|karpathy|caveman):", "note:", text, flags=re.I)
+
 def _cli_call(system, user, model):
     """No API key: the same judge through the headless claude CLI and the user's login. No tools,
     no plugins, no CLAUDE.md, empty cwd. shortcut: the CLI has no temperature flag, so CLI judging
@@ -74,7 +90,7 @@ def _cli_call(system, user, model):
     return json.loads(r.stdout)["result"]
 
 def judge_call(task_prompt, files, key, retries=3, system=RUBRIC, model=JUDGE_MODEL, user=None, max_tokens=300):
-    user = user or f"TASK GIVEN TO THE AUTHOR:\n{task_prompt}\n\nFILES THEY WROTE:\n{files}"
+    user = blind(user or f"TASK GIVEN TO THE AUTHOR:\n{task_prompt}\n\nFILES THEY WROTE:\n{files}")
     body = json.dumps({"model": model, "max_tokens": max_tokens, "temperature": 0,
                        "system": system, "messages": [{"role": "user", "content": user}]}).encode()
     for attempt in range(retries):
@@ -159,8 +175,8 @@ def run(run_dir, key):
         cells.append((parts[0], parts[1], parts[2], ws))
     print(f"judging {len(cells)} workspaces with {JUDGE_MODEL} ...")
     for i, (tid, arm, model, ws) in enumerate(cells, 1):
-        s = parse_score(judge_call(TASKS[tid]["prompt"], source_text(ws), key)) or {"over_engineering": None}
-        rec = {"task": tid, "arm": arm, "model": model, "over_engineering": s.get("over_engineering"),
+        s = parse_score(judge_call(TASKS[tid]["prompt"], submission(ws, tid), key)) or {"over_engineering": None}
+        rec = {"task": tid, "arm": arm, "model": model, "cell": ws.name, "over_engineering": s.get("over_engineering"),
                "why": s.get("why", ""), "cite": s.get("cite", "")}
         scored.append(rec)
         if i % 25 == 0 or i == len(cells): print(f"  [{i}/{len(cells)}]", flush=True)
@@ -186,8 +202,7 @@ def main():
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--run", help="run dir to judge")
     args = ap.parse_args()
-    key = load_key()
-    if not key: sys.exit("no ANTHROPIC_API_KEY (.env or env)")
+    key = load_key()                       # none: judge_call uses the claude CLI login
     if args.selftest: sys.exit(selftest(key))
     if args.run:
         if selftest(key): sys.exit("judge not trustworthy; refusing to judge the matrix")

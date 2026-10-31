@@ -112,7 +112,7 @@ less, not less-bloated.
 
 It judges only the tasks scored on size alone (`vibe-*`, `open-*`, `tmpl-*`). On the repo tasks the
 judge sees the agent's diff, not the whole seeded repo; an answer given only in chat is judged from
-the chat; `puritanical:` markers are neutralized so the judge stays blind; runs killed at the timeout are
+the chat; every arm's marker word (`puritanical:`, `ponytail:` and so on) is neutralized in all the judges so they stay blind; runs killed at the timeout are
 counted apart instead of scored 0. Without an API key it runs through the `claude` CLI login (no
 temperature setting there; the self-test gates it the same way).
 
@@ -171,11 +171,35 @@ export PURITANICAL_PLUGIN_DIR=/abs/path/to/Puritanical
 export PONYTAIL_PLUGIN_DIR=/abs/path/to/ponytail
 export SUPERPOWERS_PLUGIN_DIR=/abs/path/to/superpowers
 export KARPATHY_CLAUDE_MD=/abs/path/to/karpathy/CLAUDE.md
+export PURITANICAL_TMPL=/abs/path/to/full-stack-fastapi-template
 python run.py --selftest
-python run.py --arms baseline,puritanical,ponytail,superpowers,karpathy --models opus --runs 5 --workers 6
+# pilot: 20 sessions, to check timeouts, cost and what each arm does without a human to ask
+python run.py --task tmpl-be-count,vibe-todo,open-dataclass,csv-sum --arms baseline,puritanical,ponytail,superpowers,karpathy --models opus --workers 6
+# full run
+python run.py --all --arms baseline,puritanical,ponytail,superpowers,karpathy --models opus --runs 5 --workers 6
+python complete.py --run runs/<stamp>
+python judge.py --run runs/<stamp>
+python compare.py runs/<stamp> --a puritanical --b baseline,ponytail,superpowers,karpathy --strict 5
 ```
 
-`karpathy` is a `CLAUDE.md`, which the isolated cells switch off, so its text goes in through `--append-system-prompt`. Each run records every rival's remote and commit in `rivals.json`, and stops before any spend if a rival is not a git checkout; check them before trusting the run. Bash is off for every arm, and neither plugin arm has been checked for activation under that setup, so read the session transcript of one finished cell per arm to prove what was injected. Publish the result whichever way it falls, including any task where another arm wins.
+`karpathy` is a `CLAUDE.md`, which the isolated cells switch off, so its text goes in through `--append-system-prompt`.
+
+Before any spend, a run stops if Puritanical, a rival or the template is unset or not a clean git checkout, or if the template is not at its pinned commit. It then starts one free session per arm, using a model name that does not exist: the session fails with a cost of 0, but only after the hooks have run and it has listed what it loaded. A plugin arm must load only its own plugin, whose `SessionStart` hook injected something, and any other arm must load none. Every cell repeats that check, and keeps its full log in `_claude.stream.jsonl`. `sources.json` records each commit, the Claude Code version and the planned cells.
+
+A session that fails with an error (a rate limit, say) retries with backoff and never counts against its arm; the summary's `failed` column counts any that still fail, and 5 in a row stop the run. Finish a stopped run with the same command plus `--resume runs/<stamp>`, which refuses to continue if any source or planned cell changed. A cell killed at `--timeout` (300 seconds by default) is the arm's own failure, whatever it had written, and shows in the `killed` column; it reports no cost, so that arm's `$/pass` for the task is blank.
+
+Publish the result whichever way it falls, including any task where another arm wins.
+
+### Analysis plan
+
+Fixed before the first paid run. Any later change is published with the results, and says why.
+
+- **Comparisons:** `puritanical` against each other arm.
+- **Primary metrics:** the share of cells that are both correct and safe, on the 20 surgical tasks; and, on the 27 open tasks, the share of cells the completeness judge scores 2 or higher, with an equal share decided by the fewer median lines of code in those cells.
+- **Test:** a sign test over tasks, dropping ties, Bonferroni-adjusted across all primary tests: 8 with 4 other arms, or 6 if the pilot removes one. Run every comparison in one `compare.py` call, which applies this. A difference counts when the adjusted p is below 0.05. Everything else it prints is exploratory.
+- **Claims:** each claim is for one metric against one arm, and needs a significant difference in Puritanical's favour. A non-significant result is reported as no detected difference, not as no harm. Better overall than an arm needs a significant win on both primary metrics. Best overall needs that against every arm.
+- **Fixed design:** 5 runs per cell, with no early stopping and no task dropped after seeing results. Pilot cells do not count.
+- **Exclusions:** the pilot can remove an arm before the full run only if, in at least 2 of its 3 open tasks (`tmpl-be-count`, `vibe-todo`, `open-dataclass`), the arm wrote no code and its final reply asked for a decision. The removal and its evidence are published with the results.
 
 ## What this can and cannot show
 
