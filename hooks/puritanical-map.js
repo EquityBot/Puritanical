@@ -31,8 +31,10 @@ const PATTERNS = {
        /^(?:module\.)?exports\.([A-Za-z_$][\w$]*)\s*=/gm],
   go: [/^func\s+(?:\([^)]*\)\s*)?([A-Z]\w*)/gm, /^type\s+([A-Z]\w*)/gm],
   rs: [/^pub\s+(?:async\s+)?(?:fn|struct|enum|trait|type)\s+(\w+)/gm],
-  rb: [/^\s*(?:def|class|module)\s+([A-Za-z][\w.]*)/gm],
-  jvm: [/^\s*(?:public\s+)?(?:static\s+)?(?:final\s+)?(?:class|interface|enum|record)\s+(\w+)/gm],
+  // [ \t]* rather than \s*: \s also matches newlines, so a run of blank lines cost
+  // quadratic time.
+  rb: [/^[ \t]*(?:def|class|module)\s+([A-Za-z][\w.]*)/gm],
+  jvm: [/^[ \t]*(?:public\s+)?(?:static\s+)?(?:final\s+)?(?:class|interface|enum|record)\s+(\w+)/gm],
 };
 const LANG = { py: 'py', js: 'js', jsx: 'js', mjs: 'js', cjs: 'js', ts: 'js', tsx: 'js', go: 'go', rs: 'rs',
                rb: 'rb', java: 'jvm', kt: 'jvm', swift: 'jvm', cs: 'jvm', php: 'jvm' };

@@ -11,8 +11,18 @@ const root = path.join(__dirname, '..');
 // isShellSafe gates the statusline setup snippet (issue #200): ordinary install
 // paths pass, paths carrying shell metacharacters are rejected so they never get
 // embedded in a shell command.
-const { DEFAULT_MODE, getDefaultMode, isShellSafe, writeDefaultMode } = require('../hooks/puritanical-config');
+const { DEFAULT_MODE, getDefaultMode, isDeactivationCommand, isShellSafe, writeDefaultMode } = require('../hooks/puritanical-config');
 const { getPuritanicalInstructions } = require('../hooks/puritanical-instructions');
+
+// The whole message must be the command, ignoring case and trailing punctuation,
+// and a long punctuation run must not cost quadratic time.
+assert.equal(isDeactivationCommand('  Stop Puritanical!? \n'), true);
+assert.equal(isDeactivationCommand('normal mode.'), true);
+assert.equal(isDeactivationCommand('normal mode please'), false);
+assert.equal(isDeactivationCommand('.normal mode'), false);
+const deactivationStarted = Date.now();
+assert.equal(isDeactivationCommand('.'.repeat(200000) + 'x'), false);
+assert.ok(Date.now() - deactivationStarted < 1000, 'isDeactivationCommand must run in linear time');
 assert.equal(isShellSafe('C:\\Users\\x\\.claude\\plugins\\puritanical\\hooks\\puritanical-statusline.ps1'), true);
 assert.equal(isShellSafe('/home/u/.claude/plugins/puritanical/hooks/puritanical-statusline.sh'), true);
 assert.equal(isShellSafe('/tmp/a"&calc.exe&"/x.sh'), false);

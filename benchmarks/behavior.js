@@ -33,7 +33,7 @@ const CHECKS = {
   explanation(output) {
     const p = proseOf(output);
     const words = p ? p.split(' ').length : 0;
-    const structured = /(\d+[.)]\s|[-*]\s)/.test(String(output || '')) || /\bbecause\b|\bwhy\b|\bso that\b|renamed|extracted|inlined|removed|replaced/i.test(p);
+    const structured = /(\d[.)]\s|[-*]\s)/.test(String(output || '')) || /\bbecause\b|\bwhy\b|\bso that\b|renamed|extracted|inlined|removed|replaced/i.test(p);
     return words >= 45 && structured
       ? { pass: true, reason: `Gave the requested write-up (${words} words of prose).` }
       : { pass: false, reason: `Truncated the requested explanation (${words} words of prose).` };

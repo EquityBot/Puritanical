@@ -32,7 +32,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install Python deps for correctness and manifest checks
-        run: python -m pip install pandas pyyaml
+        run: python -m pip install --only-binary=':all:' pandas pyyaml
 
       - name: Check Rust tooling
         working-directory: tools

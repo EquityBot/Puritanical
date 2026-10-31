@@ -44,3 +44,17 @@ for (const name of ['cjsFn', 'cjsAlias', 'cjsAssigned', 'cjsDefaultFn']) {
 assert.ok(map.includes('py/: default'), map);
 assert.ok(map.includes('self.helper'), map);
 fs.rmSync(dir, { recursive: true, force: true });
+
+// Indented Ruby and JVM declarations are found, and a file of blank lines (up to the
+// 64 KiB read cap) maps in linear time: the old leading \s* took seconds on one.
+const indented = fs.mkdtempSync(path.join(os.tmpdir(), 'puritanical-map-'));
+fs.writeFileSync(path.join(indented, 'a.rb'), 'module Outer\n  class Inner\n  end\nend\n');
+fs.writeFileSync(path.join(indented, 'A.java'), '\n  public static final class Widget {}\n');
+fs.writeFileSync(path.join(indented, 'blank.rb'), '\n'.repeat(65536));
+fs.writeFileSync(path.join(indented, 'Blank.java'), '\n'.repeat(65536));
+const started = Date.now();
+const indentedMap = buildMap(indented);
+const elapsed = Date.now() - started;
+assert.ok(indentedMap.includes('Inner') && indentedMap.includes('Widget'), indentedMap);
+assert.ok(elapsed < 1000, `buildMap took ${elapsed} ms on blank-line files`);
+fs.rmSync(indented, { recursive: true, force: true });
