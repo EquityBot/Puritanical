@@ -15,7 +15,7 @@ are raw and exploratory.
 
 shortcut: sign test over tasks, not a mixed model. Coarse, but honest with n=2-3 per cell.
 """
-import argparse, json, math, statistics, sys
+import argparse, json, math, statistics, sys, tempfile
 from collections import defaultdict
 from pathlib import Path
 
@@ -64,6 +64,7 @@ def load(dirs):
         d = Path(d) if Path(d).exists() else RUNS_DIR / Path(d).name
         cells = [c for c in json.loads((d / "results.json").read_text(encoding="utf-8"))["results"]
                  if "task" in c and "arm" in c]
+        for c in cells: c["source"] = str(d.resolve())   # each run numbers its cells from zero
         by_cell = {c["cell"]: c for c in cells if "cell" in c}
         rows += cells
         for name in ("completeness.json", "judge.json", "answer.json"):
@@ -82,7 +83,7 @@ def problems(by, arms, unmatched, runs):
     for arm in arms:
         for t in TASKS:
             cells = by[(t, arm)]
-            if len({c.get("cell") for c in cells}) != runs or len(cells) != runs:   # a duplicate must not hide a missing cell
+            if len({(c.get("source"), c.get("cell")) for c in cells}) != runs or len(cells) != runs:   # a duplicate must not hide a missing cell
                 found.append(f"{arm} / {t}: {len(cells)} cells, expected {runs} different ones")
             if any(c.get("infra") for c in cells): found.append(f"{arm} / {t}: session errors left unresolved")
             if TASKS[t].get("open") and any(c.get("completeness") is None and not c.get("infra") and not c.get("timed_out") for c in cells):
@@ -169,6 +170,18 @@ def selftest():
     gaps[(open_task, "x")] = [{}]
     found = problems(gaps, ["x"], 1, 1)
     pairs = defaultdict(list, {(t, "x"): [{"cell": f"{t}{r}", "completeness": 3} for r in (0, 1)] for t in TASKS})
+    with tempfile.TemporaryDirectory() as tmp:
+        runs = [Path(tmp) / n for n in ("one", "two")]
+        for d in runs:
+            d.mkdir()
+            (d / "results.json").write_text(json.dumps({"results": [
+                {"task": t, "arm": "x", "cell": t, "completeness": 3} for t in TASKS]}), encoding="utf-8")
+        def merged(*dirs):
+            rows, unmatched = load(dirs)
+            grouped = defaultdict(list)
+            for c in rows: grouped[(c["task"], c["arm"])].append(c)
+            return problems(grouped, ["x"], unmatched, 2)
+        separate, same_twice = merged(*runs), merged(runs[0], runs[0])
     checks = [("a crash fails and a failed session is dropped", (passes["wins"], passes["losses"], passes["ties"]) == (0, 1, 1)),
               ("LOC counts only where the job was done", (gated["wins"], gated["losses"]) == (1, 1)),
               ("one tiny delivery out of five loses to five larger ones", (tiny["wins"], tiny["losses"]) == (0, 1)),
@@ -176,6 +189,7 @@ def selftest():
               ("a missing cell, a missing score and an unmatched score are problems", len(found) == 3),
               ("a duplicate cell is a problem", problems(pairs, ["x"], 0, 2) == [] and
                len(problems(defaultdict(list, {**pairs, (t0, "x"): [{"cell": "c", "completeness": 3}] * 2}), ["x"], 0, 2)) == 1),
+              ("separate runs may reuse cell names, but a run counts once", separate == [] and len(same_twice) == len(TASKS)),
               ("sign test", sign_p(9, 0) < 0.01 and sign_p(5, 5) == 1.0),
               ("primary metrics split the tasks", all(any(PRIMARY[m](t) for t in TASKS) for m in PRIMARY)
                and not any(PRIMARY["pass"](t) and PRIMARY["loc_gated"](t) for t in TASKS))]
