@@ -86,9 +86,11 @@ function activate(mode) {
 
     // A statusLine already set up before #1032 can still run a script from a
     // plugin version that has since been deleted. Only absolute paths are checked,
-    // so ~ or $HOME forms are never mistaken for missing files.
+    // so ~ or $HOME forms are never mistaken for missing files. (?<!\S) starts
+    // the unquoted form only where a word starts, which finds the same match
+    // in linear time instead of rescanning a long word from every position.
     const ref = statusCommand &&
-      statusCommand.match(/"([^"]*puritanical-statusline\.(?:sh|ps1))"|(\S*puritanical-statusline\.(?:sh|ps1))/);
+      statusCommand.match(/"([^"]*puritanical-statusline\.(?:sh|ps1))"|(?<!\S)(\S*puritanical-statusline\.(?:sh|ps1))/);
     const refPath = ref ? (ref[1] || ref[2]) : null;
     // isShellSafe keeps quotes, newlines and shell metacharacters from
     // settings.json out of the model context.

@@ -9,9 +9,11 @@ permissions:
 jobs:
   test:
     uses: ./.github/workflows/test.yml
-    # A called workflow cannot request more than its caller grants, so
-    # test.yml's codecov job needs id-token here even though it skips this
-    # workflow_dispatch run. Its test job keeps the file's contents: read.
+    # A called workflow's jobs cannot request more than its caller grants, and
+    # a job requesting more stops the run starting, so test.yml's codecov job
+    # needs id-token here even though it skips this workflow_dispatch run.
+    # test.yml's test job declares contents: read itself, so the grant never
+    # reaches test code.
     permissions:
       contents: read
       id-token: write # Only test.yml's codecov job requests it.

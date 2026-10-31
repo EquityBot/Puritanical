@@ -22,18 +22,33 @@ test('publishing gates OIDC access on tests and pins executable dependencies', (
   assert.match(publish, /^  test:\n    uses: \.\/\.github\/workflows\/test\.yml$/m);
   assert.match(publish, /^  publish:\n    needs: test$/m);
   assert.match(publish, /^permissions:\n  contents: read\n\n/m);
-  assert.match(publish, /^    permissions:\n      contents: read\n      id-token: write$/m);
-  // The second grant only lets the called test.yml start: its codecov job
-  // requests id-token but never runs in a publish run, whose event is
-  // workflow_dispatch alone.
-  assert.equal((publish.match(/^\s*id-token:/gm) || []).length, 2);
+  assert.match(ci, /^permissions:\n  contents: read\n\n/m);
   assert.match(publish, /^on:\n  workflow_dispatch:\n\n/m);
-  // Test code never holds an OIDC token: only the separate codecov job
-  // requests one, after the tests, on pushes and same-repository pull requests.
+
+  // Each job's own permissions, comments dropped; null when it declares none.
+  const jobPermissions = (workflow) => {
+    const jobs = {};
+    const body = workflow.slice(workflow.indexOf('\njobs:\n'));
+    for (const job of body.matchAll(/^  ([\w-]+):\n((?:(?: {4}.*)?\n)*)/gm)) {
+      const block = job[2].match(/^    permissions:\n((?: {6}.*\n)*)/m);
+      jobs[job[1]] = block ? block[1].split('\n').map((line) => line.replace(/#.*/, '').trim()).filter(Boolean) : null;
+    }
+    return jobs;
+  };
+  const oidc = ['contents: read', 'id-token: write'];
+  // publish needs OIDC for npm. The test caller's grant only lets the called
+  // test.yml start: its codecov job requests id-token but skips a publish run,
+  // whose event is workflow_dispatch alone.
+  assert.deepEqual(jobPermissions(publish), { test: oidc, publish: oidc });
+  // Test code never holds an OIDC token: every job declares its own
+  // permissions, and only codecov, after the tests, on pushes and
+  // same-repository pull requests, requests id-token.
+  const ciJobs = jobPermissions(ci);
+  assert.deepEqual(Object.keys(ciJobs).sort(), ['codecov', 'test']);
+  for (const [name, permissions] of Object.entries(ciJobs)) {
+    assert.deepEqual(permissions, name === 'codecov' ? oidc : ['contents: read'], `test.yml job ${name}`);
+  }
   const codecov = ci.match(/^  codecov:\n(?: {4}.*\n|\n)*/m);
-  assert.ok(codecov, 'test.yml has a codecov job');
-  assert.equal((ci.match(/id-token:/g) || []).length, 1);
-  assert.match(codecov[0], /^      id-token: write /m);
   assert.match(codecov[0], /^    needs: test\n    if: github\.event_name == 'push' \|\| github\.event\.pull_request\.head\.repo\.full_name == github\.repository\n/m);
   assert.match(publish, /npm install -g npm@\d+\.\d+\.\d+(?:\r?\n|$)/);
 

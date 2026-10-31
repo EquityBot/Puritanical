@@ -13,6 +13,10 @@ jobs:
   test:
     # The hooks branch on the platform (Windows paths, PowerShell statusline,
     # O_NOFOLLOW off Windows), so every supported OS runs the suite.
+    # Job-level, so the id-token publish.yml grants this file never reaches
+    # test code.
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -84,6 +88,8 @@ jobs:
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # A Codecov outage must not turn the tests badge red.
+    continue-on-error: true
     permissions:
       contents: read
       id-token: write # Authenticate the Codecov upload with OIDC; no stored token.

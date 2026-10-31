@@ -384,6 +384,12 @@ if (process.platform !== 'win32') {
   assert.ok(!fs.lstatSync(shCopyPath).isSymbolicLink(), 'refresh must replace the symlink with a regular file');
   assert.equal(fs.statSync(shCopyPath).mode & 0o777, 0o644, 'copy must be 0644');
 }
+// A long statusLine command is scanned in linear time (the old pattern took seconds).
+fs.writeFileSync(path.join(customConfigDir, 'settings.json'), JSON.stringify({ statusLine: { type: 'command', command: 'a'.repeat(200000) } }));
+const longStarted = Date.now();
+const longRun = run('puritanical-activate.js', staleEnv);
+assert.equal(longRun.status, 0, longRun.stderr);
+assert.ok(Date.now() - longStarted < 5000, `activate took ${Date.now() - longStarted} ms on a long statusLine command`);
 // A working statusLine, or one using ~, is left alone.
 for (const command of ['bash "' + copyPath + '"', 'bash ~/.claude/puritanical-statusline.sh']) {
   fs.writeFileSync(path.join(customConfigDir, 'settings.json'), JSON.stringify({ statusLine: { type: 'command', command } }));
