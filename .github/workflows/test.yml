@@ -50,7 +50,53 @@ jobs:
         run: cargo run --locked --quiet --manifest-path tools/Cargo.toml -- check-versions
 
       - name: Run tests
+        if: matrix.os != 'ubuntu-latest'
         run: npm test
+
+      # The same suites as npm test, in one runner so a single lcov report
+      # covers both. Coverage is reported only; there is no threshold.
+      - name: Run tests with line coverage
+        if: matrix.os == 'ubuntu-latest'
+        run: >-
+          node --test --experimental-test-coverage
+          --test-coverage-exclude='tests/**' --test-coverage-exclude='pi-extension/test/**'
+          --test-reporter=spec --test-reporter-destination=stdout
+          --test-reporter=lcov --test-reporter-destination=coverage.lcov
+          tests/*.test.js pi-extension/test/*.test.js
+
+      - name: Keep the coverage report for the Codecov upload
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-node
+          path: coverage.lcov
+          retention-days: 1
 
       - name: Run benchmark selftest
         run: python benchmarks/agentic/run.py --selftest
+
+  # The upload runs apart from the tests so the OIDC token is never available
+  # while test code runs. It skips the publish workflow's call of this file,
+  # whose event is workflow_dispatch.
+  codecov:
+    name: upload coverage to Codecov
+    needs: test
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write # Authenticate the Codecov upload with OIDC; no stored token.
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: coverage-node
+      - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          use_oidc: true
+          files: coverage.lcov
+          disable_search: true
+          fail_ci_if_error: true

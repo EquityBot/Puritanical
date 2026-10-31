@@ -21,6 +21,8 @@ cargo run --manifest-path tools/Cargo.toml -- check-versions
 cd tools && cargo fmt --check && cargo clippy --all-targets -- -D warnings && cargo test
 ```
 
+New functionality and bug fixes come with automated tests in `tests/`, `pi-extension/test/` or the Rust tools' test modules, run by `npm test` and `cargo test` in CI.
+
 `npm test` needs Python with `pandas` for the CSV correctness checks; `python3` is tried before `python`. Without it the pandas case skips locally; CI installs pandas and always runs it. Keep each pull request to one change and link the issue it fixes.
 
 ## Ruleset changes need evidence
