@@ -1,8 +1,10 @@
 name: Snyk
 
-# The only third-party dependencies are the Rust maintainer tools' crates; the
-# npm packages declare none. It runs weekly and when a dependency file
-# changes, which keeps it inside the free plan's monthly test allowance.
+# The third-party dependencies are the Rust maintainer tools' crates and the
+# CI's pinned Python packages; the npm packages declare none. Each Python set
+# is installed into its own virtual environment and tested through Snyk's pip
+# support. It runs weekly and when a dependency file changes, which keeps it
+# inside the free plan's monthly test allowance.
 on:
   schedule:
     - cron: "23 4 * * 1"
@@ -12,11 +14,13 @@ on:
     paths:
       - "tools/Cargo.lock"
       - "tools/Cargo.toml"
+      - ".github/ci/requirements.txt"
       - ".github/workflows/snyk.yml"
   pull_request:
     paths:
       - "tools/Cargo.lock"
       - "tools/Cargo.toml"
+      - ".github/ci/requirements.txt"
       - ".github/workflows/snyk.yml"
 
 permissions:
@@ -27,6 +31,53 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  test:
+    name: Snyk open source test
+    # Pull requests from forks, and Dependabot's (which get Dependabot secrets
+    # only), receive no SNYK_TOKEN; the weekly run on main scans their changes.
+    if: github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # One dependency set per line: pip:<requirements file>.
+      SNYK_TARGETS: |
+        pip:.github/ci/requirements.txt
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - uses: snyk/actions/setup@9adf32b1121593767fc3c057af55b55db032dc04 # v1.0.0
+      - name: Test each dependency set
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          set -uo pipefail
+          # Without the token every set is still installed, so a broken pin
+          # shows up, but the job fails because nothing was scanned.
+          if [ -z "$SNYK_TOKEN" ]; then
+            echo "::error::The SNYK_TOKEN repository secret is not set, so nothing was scanned."
+          fi
+          status=0
+          while IFS=: read -r kind target; do
+            [ -n "$kind" ] || continue
+            work=$(mktemp -d)
+            case "$kind" in
+              pip) cp "$target" "$work/requirements.txt" \
+                    || { echo "::error::Cannot read $target"; status=1; continue; } ;;
+              *) echo "::error::Unknown dependency set $kind:$target"; status=1; continue ;;
+            esac
+            python -m venv "$work/venv"
+            "$work/venv/bin/python" -m pip install --quiet --disable-pip-version-check --no-deps \
+              --only-binary=:all: --requirement "$work/requirements.txt" || { status=1; continue; }
+            [ -z "$SNYK_TOKEN" ] || snyk test --file="$work/requirements.txt" --package-manager=pip \
+              --command="$work/venv/bin/python" --project-name="$kind:$target" || status=1
+          done <<< "$SNYK_TARGETS"
+          [ -n "$SNYK_TOKEN" ] || exit 1
+          exit "$status"
+
   rust:
     name: Snyk Rust dependencies
     # Pull requests from forks, and Dependabot's (which get Dependabot secrets
