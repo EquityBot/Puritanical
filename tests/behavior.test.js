@@ -57,6 +57,13 @@ test('explanation: terse truncation fails', () => {
   assert.equal(r.pass, false);
 });
 
+test('explanation: a long digit run is scored in linear time', () => {
+  const started = Date.now();
+  const r = check('explanation', '1'.repeat(200000) + 'x');
+  assert.equal(r.pass, false);
+  assert.ok(Date.now() - started < 1000, `took ${Date.now() - started} ms`);
+});
+
 // --- onecheck: leave one runnable check ---
 
 test('onecheck: leaves an assert passes', () => {

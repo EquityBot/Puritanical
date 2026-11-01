@@ -17,6 +17,12 @@ updates:
         update-types:
           - minor
           - patch
+  - package-ecosystem: pip
+    directory: /.github/ci
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
   - package-ecosystem: cargo
     directory: /tools
     schedule:
