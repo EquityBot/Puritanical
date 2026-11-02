@@ -13,17 +13,17 @@ test('root npm test covers bundled subprojects', () => {
   assert.match(packageJson.scripts.test, /npm test --prefix pi-extension/);
 });
 
-test('publishing gates OIDC access on tests and pins executable dependencies', () => {
-  const publish = fs.readFileSync(path.join(root, '.github', 'workflows', 'publish.yml'), 'utf8').replace(/\r\n/g, '\n');
+test('Puritanical is not published to npm', () => {
+  // INSTALL.md says so; installs come from this repository.
+  const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+  assert.equal(packageJson.private, true);
+  assert.equal(fs.existsSync(path.join(root, '.github', 'workflows', 'publish.yml')), false);
+});
+
+test('CI keeps OIDC out of test code and pins its actions', () => {
   const ci = fs.readFileSync(path.join(root, '.github', 'workflows', 'test.yml'), 'utf8').replace(/\r\n/g, '\n');
 
-  assert.match(ci, /^  workflow_call:$/m);
-  assert.doesNotMatch(ci, /^    tags:/m, 'tag tests are run by the publishing workflow');
-  assert.match(publish, /^  test:\n    uses: \.\/\.github\/workflows\/test\.yml$/m);
-  assert.match(publish, /^  publish:\n    needs: test$/m);
-  assert.match(publish, /^permissions:\n  contents: read\n\n/m);
   assert.match(ci, /^permissions:\n  contents: read\n\n/m);
-  assert.match(publish, /^on:\n  workflow_dispatch:\n\n/m);
 
   // Each job's own permissions, comments dropped; null when it declares none.
   const jobPermissions = (workflow) => {
@@ -36,10 +36,6 @@ test('publishing gates OIDC access on tests and pins executable dependencies', (
     return jobs;
   };
   const oidc = ['contents: read', 'id-token: write'];
-  // publish needs OIDC for npm. The test caller's grant only lets the called
-  // test.yml start: its codecov job requests id-token but skips a publish run,
-  // whose event is workflow_dispatch alone.
-  assert.deepEqual(jobPermissions(publish), { test: oidc, publish: oidc });
   // Test code never holds an OIDC token: every job declares its own
   // permissions, and only codecov, after the tests, on pushes and
   // same-repository pull requests, requests id-token.
@@ -50,14 +46,7 @@ test('publishing gates OIDC access on tests and pins executable dependencies', (
   }
   const codecov = ci.match(/^  codecov:\n(?: {4}.*\n|\n)*/m);
   assert.match(codecov[0], /^    needs: test\n    if: github\.event_name == 'push' \|\| github\.event\.pull_request\.head\.repo\.full_name == github\.repository\n/m);
-  // Node is pinned to a release whose bundled npm can publish through OIDC, so
-  // nothing installs npm itself.
-  assert.match(publish, /^ {10}node-version: '\d+\.\d+\.\d+'$/m);
-  assert.doesNotMatch(publish, /npm install -g/);
-
-  for (const workflow of [publish, ci]) {
-    for (const action of workflow.matchAll(/^\s+- uses: (.+)$/gm)) {
-      assert.match(action[1], /^(?:actions\/[\w-]+|codecov\/codecov-action)@[a-f0-9]{40} # v\d+\.\d+\.\d+\r?$/);
-    }
+  for (const action of ci.matchAll(/^\s+- uses: (.+)$/gm)) {
+    assert.match(action[1], /^(?:actions\/[\w-]+|codecov\/codecov-action)@[a-f0-9]{40} # v\d+\.\d+\.\d+\r?$/);
   }
 });
