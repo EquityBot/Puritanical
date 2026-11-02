@@ -97,10 +97,15 @@ jobs:
       - uses: snyk/actions/setup@9adf32b1121593767fc3c057af55b55db032dc04 # v1.0.0
       # Snyk cannot read Cargo.lock directly, so the graph is described as a
       # CycloneDX SBOM and tested with `snyk sbom test`.
+      - name: Install the toolchain
+        run: rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
+      # A prebuilt release whose checksum the action's manifest pins, instead of
+      # compiling the generator on every run.
       - name: Install the SBOM generator
-        run: |
-          rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
-          cargo install cargo-cyclonedx --locked --version 0.5.9
+        uses: taiki-e/install-action@1e29709c0ec63babbe8f266397a465f29a825f91 # v2.87.31
+        with:
+          tool: cargo-cyclonedx@0.5.9
+          fallback: none
       - name: Test the Cargo graph
         working-directory: tools
         env:
