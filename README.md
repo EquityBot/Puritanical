@@ -16,7 +16,7 @@
 
 </div>
 
-Puritanical is a skill and plugin for coding agents. Many Puritans sought to strip from worship whatever scripture did not warrant; Puritanical strips from each change whatever the request does not require. Correctness, safety, accessibility and verification are never stripped. It has adapters for 34 agent hosts, including Claude Code, Codex, Copilot CLI, Cursor, OpenCode and Gemini CLI.
+Puritanical is a skill and plugin for coding agents. Many Puritans sought to strip from worship whatever scripture did not warrant; Puritanical strips from each change whatever the request does not require. Correctness, safety, accessibility and verification are never stripped. It installs on more than 25 agent hosts, including Claude Code, Codex, Copilot CLI, Cursor, OpenCode and Gemini CLI; [INSTALL.md](INSTALL.md) lists them.
 
 **Input:** with Puritanical active, ask the agent to fix a bug where `transfer()` overdraws an account through a shared `_debit()` helper.
 
@@ -135,7 +135,7 @@ Edit `skills/*/SKILL.md`, then run `cargo run --manifest-path tools/Cargo.toml -
 
 Licensed under the Functional Source License, Version 1.1, ALv2 Future License (FSL-1.1-ALv2). You may use, modify and redistribute it for any purpose except a Competing Use as defined in LICENSE (making it available to others in a competing commercial product or service), and each version becomes available under Apache-2.0 2 years after it is made available. See [LICENSE](LICENSE) and [NOTICE](NOTICE). Portions derived from Dietrich Gebert's Ponytail remain under the MIT License, whose notice is kept in [NOTICE](NOTICE).
 
-The banner's lettering and emblem are drawn from Cascadia Mono glyphs (SIL OFL 1.1).
+The banner's lettering and emblem are drawn from Cascadia Mono and Besley glyphs (SIL OFL 1.1).
 
 Neither licence covers the scripture quotation in the footer. Scripture quoted by permission. Quotations designated (NET) are from the NET Bible® copyright ©1996, 2019 by Biblical Studies Press, L.L.C. [netbible.com](http://netbible.com) All rights reserved.
 
