@@ -50,7 +50,10 @@ test('publishing gates OIDC access on tests and pins executable dependencies', (
   }
   const codecov = ci.match(/^  codecov:\n(?: {4}.*\n|\n)*/m);
   assert.match(codecov[0], /^    needs: test\n    if: github\.event_name == 'push' \|\| github\.event\.pull_request\.head\.repo\.full_name == github\.repository\n/m);
-  assert.match(publish, /npm install -g npm@\d+\.\d+\.\d+(?:\r?\n|$)/);
+  // Node is pinned to a release whose bundled npm can publish through OIDC, so
+  // nothing installs npm itself.
+  assert.match(publish, /^ {10}node-version: '\d+\.\d+\.\d+'$/m);
+  assert.doesNotMatch(publish, /npm install -g/);
 
   for (const workflow of [publish, ci]) {
     for (const action of workflow.matchAll(/^\s+- uses: (.+)$/gm)) {
