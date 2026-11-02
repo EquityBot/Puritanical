@@ -87,6 +87,7 @@ The ladder never removes input validation at trust boundaries, security, accessi
 | [Ponytail](https://github.com/DietrichGebert/ponytail) | The ladder this project forked, in a lazy senior developer persona, with a status board and published benchmarks | More users, upstream measurements or an MIT licence | MIT |
 | [Karpathy guidelines](https://github.com/multica-ai/andrej-karpathy-skills) | One `CLAUDE.md` with 4 principles | Something you can read in a minute and paste into a project | MIT, stated in its README |
 | [Superpowers](https://github.com/obra/superpowers) | A skills framework and development methodology | A whole development process, not only rules for each change | MIT |
+| [Spec Kit](https://github.com/github/spec-kit) | GitHub's toolkit for spec-driven development | A specification and plan agreed before any code is written | MIT |
 
 Puritanical has not yet been measured against these projects; [Benchmarks](#benchmarks) says how to run the comparison.
 
