@@ -4,7 +4,6 @@ on:
   push:
     branches: [main]
   pull_request:
-  workflow_call:
 
 permissions:
   contents: read
@@ -13,8 +12,7 @@ jobs:
   test:
     # The hooks branch on the platform (Windows paths, PowerShell statusline,
     # O_NOFOLLOW off Windows), so every supported OS runs the suite.
-    # Job-level, so the id-token publish.yml grants this file never reaches
-    # test code.
+    # Job-level, so test code never holds the codecov job's id-token.
     permissions:
       contents: read
     strategy:
@@ -80,8 +78,7 @@ jobs:
         run: python benchmarks/agentic/run.py --selftest
 
   # The upload runs apart from the tests so the OIDC token is never available
-  # while test code runs. It skips the publish workflow's call of this file,
-  # whose event is workflow_dispatch.
+  # while test code runs.
   codecov:
     name: upload coverage to Codecov
     needs: test
