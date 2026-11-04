@@ -44,7 +44,7 @@ function replaceFile(file, text) {
   } catch (e) {
     if (e.code !== 'ENOENT') throw e;
     const entry = fs.lstatSync(file, { throwIfNoEntry: false });
-    if (entry && entry.isSymbolicLink()) {
+    if (entry?.isSymbolicLink()) {
       throw new Error(file + ' is a dangling symlink; nothing was changed');
     }
   }
@@ -62,7 +62,7 @@ function replaceFile(file, text) {
     }
     fs.renameSync(tmp, target);
   } finally {
-    if (owned) try { fs.unlinkSync(tmp); } catch (e) { /* renamed */ }
+    if (owned) try { fs.unlinkSync(tmp); } catch { /* renamed */ }
   }
 }
 
@@ -146,7 +146,7 @@ function getDefaultMode() {
     if (configMode) {
       return configMode;
     }
-  } catch (e) {
+  } catch {
     // Config file doesn't exist or is invalid — fall through
   }
 

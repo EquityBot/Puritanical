@@ -58,7 +58,7 @@ for (const scenario of ['blocked', 'failed', 'oversized', 'successful', 'disable
     assert.match(output.additionalContext, /Never weaken, skip or\s+delete a test/);
     // The map is opt-in: only PURITANICAL_MAP=1 with a working map adds it.
     if (scenario === 'successful') {
-      assert.match(output.additionalContext, /Codebase map[^]*lib\/: usefulHelper/);
+      assert.match(output.additionalContext, /Codebase map[\s\S]*lib\/: usefulHelper/);
     } else {
       assert.doesNotMatch(output.additionalContext, /Codebase map|unexpected map|x{1000}/);
     }

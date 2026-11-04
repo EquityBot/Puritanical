@@ -148,7 +148,7 @@ test('V2 command without $ARGUMENTS appends the typed input instead of dropping 
 });
 
 test('V2 context hook injects the ruleset, and stays silent when off', async () => {
-  try { fs.unlinkSync(statePath); } catch (e) {}
+  try { fs.unlinkSync(statePath); } catch {}
   let { hooks } = await setupV2();
   const event = { system: [] };
   await hooks.context(event);

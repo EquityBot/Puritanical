@@ -19,7 +19,7 @@ const SRC = /\.(py|js|jsx|mjs|cjs|ts|tsx|go|rs|rb|java|kt|php|swift|cs)$/;
 const SKIP_DIR = /(^|\/)(node_modules|\.git|dist|build|out|vendor|venv|\.venv|__pycache__|coverage|\.next|target|migrations|versions|fixtures|tests?|__tests__|spec)(\/|$)/;
 const SKIP_FILE = /(^|\/)(test_[^/]*|[^/]*(_test|\.test|\.spec|\.gen|\.min|\.d)\.[a-z]+)$/;
 const NAME = /^(?:type\s+)?(?:[\w$]+\s+as\s+)?([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)?)(?:\s*:\s*[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)?)?$/;
-const SAFE_PATH = /^[\w.@+$()[\]\/-]+$/;
+const SAFE_PATH = /^[\w.@+$()[\]/-]+$/;
 const SHARED = /(util|helper|lib|common|shared|service|component|hook|core|model|schema|api)/i;
 
 const PATTERNS = {
@@ -49,7 +49,7 @@ function listFiles(root) {
     const tracked = execFileSync('git', ['-C', path.resolve(root), 'ls-files'], { cwd: __dirname, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 3000, maxBuffer: 64 * 1024 * 1024 }) // NOSONAR: lists the folder the caller names; git comes from the user's PATH, never from root
       .split('\n').filter(Boolean).slice(0, MAX_FILES * 5);
     if (tracked.length) return tracked;
-  } catch (e) { /* not a git repo: walk below */ }
+  } catch { /* not a git repo: walk below */ }
   {
     // No git, or an untracked folder inside a parent repo (git ls-files is then empty, not an error).
     const out = [];
@@ -91,7 +91,7 @@ function buildMap(root = process.cwd()) {
     try {
       if (!fs.lstatSync(path.join(root, f)).isFile()) continue;
       text = fs.readFileSync(path.join(root, f), 'utf8').slice(0, 65536);
-    } catch (e) { continue; }
+    } catch { continue; }
     const names = namesIn(f, text);
     if (!names.length) continue;
     const dir = path.dirname(f) === '.' ? '.' : path.dirname(f);

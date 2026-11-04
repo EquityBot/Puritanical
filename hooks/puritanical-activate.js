@@ -43,7 +43,7 @@ function activate(mode) {
     if (rule) {
       try {
         writeHookOutput('SessionStart', mode, cursorRuleNotice(rule));
-      } catch (e) {
+      } catch {
         // Silent fail — stdout closed/EPIPE at hook exit must not surface as a hook failure
       }
       process.exit(0);
@@ -69,7 +69,7 @@ function activate(mode) {
       encoding: 'utf8', timeout: 3000, maxBuffer: 64 * 1024, stdio: ['ignore', 'pipe', 'ignore'],
     }).trimEnd();
     if (map) output += '\n\n' + map;
-  } catch (e) { /* no map */ }
+  } catch { /* no map */ }
 
   // 3. Detect missing statusline config — nudge Claude to help set it up
   if (!isCodex && !isCopilot && !isCursor && !isCodeBuddy) try {
@@ -89,8 +89,7 @@ function activate(mode) {
     // so ~ or $HOME forms are never mistaken for missing files. (?<!\S) starts
     // the unquoted form only where a word starts, which finds the same match
     // in linear time instead of rescanning a long word from every position.
-    const ref = statusCommand &&
-      statusCommand.match(/"([^"]*puritanical-statusline\.(?:sh|ps1))"|(?<!\S)(\S*puritanical-statusline\.(?:sh|ps1))/);
+    const ref = statusCommand?.match(/"([^"]*puritanical-statusline\.(?:sh|ps1))"|(?<!\S)(\S*puritanical-statusline\.(?:sh|ps1))/);
     const refPath = ref ? (ref[1] || ref[2]) : null;
     // isShellSafe keeps quotes, newlines and shell metacharacters from
     // settings.json out of the model context.
@@ -115,7 +114,7 @@ function activate(mode) {
     // per path: the flag records it.
     const nudgeFlagPath = path.join(claudeDir, '.puritanical-statusline-nudged');
     let nudged = null;
-    try { nudged = fs.readFileSync(nudgeFlagPath, 'utf8'); } catch (e) { /* not nudged yet */ }
+    try { nudged = fs.readFileSync(nudgeFlagPath, 'utf8'); } catch { /* not nudged yet */ }
     const nudge = stalePath ? nudged !== stalePath : statusCommand === null && nudged === null;
 
     // Refresh the copy every session so script fixes ship with plugin updates.
@@ -129,12 +128,12 @@ function activate(mode) {
         fs.chmodSync(tmpPath, 0o644); // NOSONAR: a readable copy of the plugin's own script holds no secret
         fs.renameSync(tmpPath, scriptPath);
       } finally {
-        try { fs.unlinkSync(tmpPath); } catch (e) { /* renamed */ }
+        try { fs.unlinkSync(tmpPath); } catch { /* renamed */ }
       }
     }
 
     if (nudge) {
-      try { fs.writeFileSync(nudgeFlagPath, stalePath || ''); } catch (e) { /* best-effort */ }
+      try { fs.writeFileSync(nudgeFlagPath, stalePath || ''); } catch { /* best-effort */ }
       if (stalePath) {
         output += "\n\n" +
           "STATUSLINE BROKEN: The statusLine in " + settingsPath + " runs " + stalePath +
