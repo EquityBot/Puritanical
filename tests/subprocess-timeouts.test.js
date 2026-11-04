@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+// Copyright 2026 Ryan Duguid
+// SPDX-License-Identifier: FSL-1.1-ALv2
+
 // A synchronous child process with no timeout hangs the whole `node --test`
 // run if a hook or script under test blocks (on stdin, say). Every sync call
 // in the tests must therefore pass one.

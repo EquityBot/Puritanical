@@ -1,3 +1,6 @@
+// Copyright 2026 Ryan Duguid
+// SPDX-License-Identifier: FSL-1.1-ALv2
+
 //! Maintainer tooling for Puritanical. Hooks and host adapters stay in their
 //! hosts' languages; this covers the repository chores that only maintainers
 //! and CI run.

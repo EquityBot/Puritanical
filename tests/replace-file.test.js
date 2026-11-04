@@ -1,3 +1,6 @@
+// Copyright 2026 Ryan Duguid
+// SPDX-License-Identifier: FSL-1.1-ALv2
+
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');

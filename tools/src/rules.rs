@@ -1,3 +1,6 @@
+// Copyright 2026 Ryan Duguid
+// SPDX-License-Identifier: FSL-1.1-ALv2
+
 //! Every shipped copy of the rules, generated from `skills/*/SKILL.md`.
 //!
 //! Hosts that cannot read a skill get the same text as `AGENTS.md`, a rule
