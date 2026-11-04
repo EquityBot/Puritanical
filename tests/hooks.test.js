@@ -1071,15 +1071,20 @@ assert.equal(
   assert.match(level(subdirectory), /level: lite/, 'a subdirectory must share its repository\'s level');
 
   const gitHome = path.join(temp, 'codex-git-home');
-  const inHome = { HOME: gitHome, USERPROFILE: gitHome };
-  const homeProjects = ['a', 'b'].map((name) => path.join(gitHome, name));
-  for (const dir of [path.join(gitHome, '.git'), ...homeProjects]) fs.mkdirSync(dir, { recursive: true });
-  inProject(homeProjects[1], 'puritanical-activate.js', '', inHome);
-  inProject(homeProjects[0], 'puritanical-activate.js', '', inHome);
-  inProject(homeProjects[0], 'puritanical-mode-tracker.js', JSON.stringify({ prompt: '@puritanical lite' }), inHome);
-  const other = inProject(homeProjects[1], 'puritanical-activate.js', JSON.stringify({ source: 'compact' }), inHome);
-  assert.equal(other.status, 0, other.stderr);
-  assert.match(other.stdout, /level: full/, 'a home folder kept in Git must not join its subfolders');
+  const linkedHome = path.join(temp, 'codex-git-home-link');
+  fs.mkdirSync(path.join(gitHome, '.git'), { recursive: true });
+  fs.symlinkSync(gitHome, linkedHome, 'junction');
+  for (const [label, homeDir] of [['plain', gitHome], ['linked', linkedHome]]) {
+    const inHome = { HOME: homeDir, USERPROFILE: homeDir };
+    const homeProjects = ['a', 'b'].map((name) => path.join(gitHome, `${label}-${name}`));
+    for (const dir of homeProjects) fs.mkdirSync(dir);
+    inProject(homeProjects[1], 'puritanical-activate.js', '', inHome);
+    inProject(homeProjects[0], 'puritanical-activate.js', '', inHome);
+    inProject(homeProjects[0], 'puritanical-mode-tracker.js', JSON.stringify({ prompt: '@puritanical lite' }), inHome);
+    const other = inProject(homeProjects[1], 'puritanical-activate.js', JSON.stringify({ source: 'compact' }), inHome);
+    assert.equal(other.status, 0, other.stderr);
+    assert.match(other.stdout, /level: full/, `a ${label} home folder kept in Git must not join its subfolders`);
+  }
 }
 
 console.log('hook compatibility checks passed');
