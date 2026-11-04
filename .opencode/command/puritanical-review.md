@@ -31,11 +31,13 @@ This is a report the user asked for, so give it in full.
 3. **Scale:** fine for one user, wrong for many: check-then-write races, the
    same work done by every process, memory or lists that only grow, a query
    per item, O(n^2) on big input, per-process state that must be shared.
-4. **Missing test:** risky new logic (a branch, a parser, money, security,
+4. **Weakened test:** an assertion deleted or loosened, or a new skip marker,
+   in a change that does not say why the old test was wrong.
+5. **Missing test:** risky new logic (a branch, a parser, money, security,
    data writes, a bug fix) with no test that fails when it breaks. Require proportionate regression coverage and the project's defined checks; there is no one-test ceiling.
-5. **Speed:** big slowdowns are problems. Small wins (work repeated in a hot
+6. **Speed:** big slowdowns are problems. Small wins (work repeated in a hot
    loop) are suggestions; some software counts every millisecond.
-6. **Lean:** code that should not exist or should be smaller.
+7. **Lean:** code that should not exist or should be smaller.
    - delete: dead code, unused options, speculative features
    - reuse: the repo already has this helper (name the path)
    - stdlib / native: the standard library or platform already does it; a

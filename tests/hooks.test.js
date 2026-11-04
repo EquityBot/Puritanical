@@ -494,7 +494,8 @@ assert.equal(result.stdout, '', 'SubagentStart must stay silent when puritanical
 // too — assert the codex branch emits hookSpecificOutput and no systemMessage (#605).
 const subCodex = path.join(temp, 'sub-codex');
 fs.mkdirSync(subCodex, { recursive: true });
-fs.writeFileSync(path.join(subCodex, '.puritanical-active'), 'full');
+// Activate first: Codex keeps its level per project, keyed on the hook's working directory.
+run('puritanical-activate.js', { HOME: subHome, USERPROFILE: subHome, PLUGIN_DATA: subCodex, PURITANICAL_DEFAULT_MODE: 'full' });
 result = run('puritanical-subagent.js', { HOME: subHome, USERPROFILE: subHome, PLUGIN_DATA: subCodex });
 assert.equal(result.status, 0, result.stderr);
 output = JSON.parse(result.stdout);
@@ -1035,6 +1036,34 @@ assert.equal(
   for (const source of ['startup', 'clear']) {
     assert.match(start(source).stdout, /PURITANICAL MODE ACTIVE — level: full/, `${source} must start at the default level`);
   }
+}
+
+// Codex gives hooks no project dir but runs them from the project, so a level set in
+// one project must not reach another.
+{
+  const data = path.join(temp, 'codex-projects-data');
+  const projects = ['one', 'two'].map((name) => path.join(temp, `codex-project-${name}`));
+  for (const dir of [data, ...projects]) fs.mkdirSync(dir, { recursive: true });
+  const env = { ...codexEnv, PLUGIN_DATA: data, PURITANICAL_DEFAULT_MODE: 'full' };
+  const inProject = (cwd, script, input = '') => spawnSync(process.execPath, [path.join(root, 'hooks', script)], {
+    env: { ...process.env, ...env },
+    input,
+    encoding: 'utf8',
+    timeout: 30000,
+    cwd,
+  });
+  const level = (cwd) => {
+    const out = inProject(cwd, 'puritanical-activate.js', JSON.stringify({ source: 'compact' }));
+    assert.equal(out.status, 0, out.stderr);
+    return out.stdout;
+  };
+
+  inProject(projects[0], 'puritanical-activate.js');
+  inProject(projects[0], 'puritanical-mode-tracker.js', JSON.stringify({ prompt: '@puritanical lite' }));
+  inProject(projects[1], 'puritanical-activate.js');
+  inProject(projects[1], 'puritanical-mode-tracker.js', JSON.stringify({ prompt: '@puritanical ultra' }));
+  assert.match(level(projects[0]), /level: lite/, 'a level set in the other project must not reach this one');
+  assert.match(level(projects[1]), /level: ultra/);
 }
 
 console.log('hook compatibility checks passed');

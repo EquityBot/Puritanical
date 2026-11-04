@@ -49,12 +49,12 @@ if (isCursor) stateDir = path.join(os.homedir(), '.cursor');
 
 const statePath = path.join(stateDir, STATE_FILE);
 
-// Claude Code hands every hook its project dir, so the live mode is kept per
-// project and concurrent sessions in different repos stop overwriting each other
-// (#662, #809). Hosts without it keep the single shared flag.
+// Claude Code hands every hook its project dir, and Codex runs hooks from it, so
+// the live mode is kept per project and concurrent sessions in different repos
+// stop overwriting each other (#662, #809). Other hosts keep the single shared flag.
 // shortcut: sessions in the SAME repo still share one mode, and the statusline
 // scripts read the shared flag (last write wins); key by session_id if either matters.
-const projectDir = (process.env.CLAUDE_PROJECT_DIR || '').trim();
+const projectDir = (process.env.CLAUDE_PROJECT_DIR || (isCodex ? process.cwd() : '')).trim();
 // Replacing separators with '_' aliases e.g. /work/a/b and /work/a_b (#662).
 // Do not read old sanitized keys: they cannot be assigned to one project safely.
 const projectStatePath = projectDir
@@ -99,8 +99,10 @@ function cursorRulePath() {
   return fs.existsSync(rule) ? rule : null;
 }
 
-function cursorRuleNotice(rule) {
-  return 'PURITANICAL: the always-on Cursor rule ' + rule + ' is active in this workspace and ' +
+// The relative path, never the workspace's: a folder name is untrusted text and this
+// message reaches the model as trusted hook context.
+function cursorRuleNotice() {
+  return 'PURITANICAL: the always-on Cursor rule .cursor/rules/puritanical.mdc is active in this workspace and ' +
     'already carries the puritanical ruleset, so the puritanical hooks injected nothing further. ' +
     'Mode switching (/puritanical lite|full|ultra|off, "stop puritanical") is unavailable while ' +
     'that rule exists. When the user tries to switch or turn off puritanical, tell them to ' +

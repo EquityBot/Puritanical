@@ -244,7 +244,8 @@ test('with the always-on rule in the workspace the hooks step back instead of du
 
   const start = parse(run('puritanical-activate.js', c.env));
   assert.match(start.additional_context, /always-on Cursor rule/);
-  assert.ok(start.additional_context.includes(rule), 'notice must name the rule file');
+  assert.ok(start.additional_context.includes('.cursor/rules/puritanical.mdc'), 'notice must name the rule file');
+  assert.ok(!start.additional_context.includes(c.project), 'a folder name is untrusted: the notice must not repeat it');
   assert.doesNotMatch(start.additional_context, /PURITANICAL MODE ACTIVE/, 'no second copy of the ruleset');
   assert.equal(fs.existsSync(c.flag), false, 'no mode flag while the rule owns the ruleset');
 

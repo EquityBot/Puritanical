@@ -32,9 +32,8 @@ function finish() {
     // writing a mode the rule would contradict (#817). Ordinary prompts
     // stay silent as usual.
     if (isCursor && (/^[/@$]puritanical/.test(prompt) || isDeactivationCommand(prompt))) {
-      const rule = cursorRulePath();
-      if (rule) {
-        writeHookOutput('UserPromptSubmit', readMode() || 'off', cursorRuleNotice(rule));
+      if (cursorRulePath()) {
+        writeHookOutput('UserPromptSubmit', readMode() || 'off', cursorRuleNotice());
         return;
       }
     }
