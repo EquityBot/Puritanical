@@ -253,7 +253,7 @@ const realSettings = path.join(dotfiles, 'settings.json');
 fs.writeFileSync(realSettings, JSON.stringify({ statusLine: { type: 'command', command: 'bash /p/puritanical-statusline.sh' } }));
 fs.rmSync(settingsPath);
 let linked = true;
-try { fs.symlinkSync(realSettings, settingsPath); } catch (e) { linked = false; } // Windows without symlink rights
+try { fs.symlinkSync(realSettings, settingsPath); } catch { linked = false; } // Windows without symlink rights
 if (linked) {
   result = runUninstall(env);
   assert.equal(result.status, 0, result.stderr);

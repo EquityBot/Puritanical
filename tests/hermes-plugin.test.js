@@ -12,7 +12,6 @@ const { spawnSync } = require('child_process');
 const { filterSkillBodyForMode } = require('../hooks/puritanical-instructions');
 
 const commands = ['puritanical', 'puritanical-review', 'puritanical-audit', 'puritanical-debt', 'puritanical-help'];
-const skillCommands = commands.filter((name) => name !== 'puritanical');
 
 const root = path.join(__dirname, '..');
 
@@ -25,10 +24,12 @@ function pythonExe() {
     const probe = spawnSync(cmd, ['-c', 'import sys'], { encoding: 'utf8', timeout: 30000 });
     if (probe.error && probe.error.code !== 'ENOENT') throw probe.error;
     if (probe.status === 0) {
-      return (pythonCmd = cmd);
+      pythonCmd = cmd;
+      return pythonCmd;
     }
   }
-  return (pythonCmd = 'python3');
+  pythonCmd = 'python3';
+  return pythonCmd;
 }
 
 function python(script, env = {}) {

@@ -148,7 +148,7 @@ function finish() {
         // First prompt in session — initialize from config/env default
         currentMode = getDefaultMode();
         if (currentMode !== 'off') {
-          try { setMode(currentMode); } catch (e) {}
+          try { setMode(currentMode); } catch {}
         }
       }
       if (currentMode && currentMode !== 'off') {
@@ -162,7 +162,7 @@ function finish() {
         writeHookOutput('UserPromptSubmit', currentMode, defaultNotice);
       }
     }
-  } catch (e) {
+  } catch {
     // Silent fail
   }
 }

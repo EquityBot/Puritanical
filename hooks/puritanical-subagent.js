@@ -62,7 +62,7 @@ function finish() {
   try {
     // Strip UTF-8 BOM some shells prepend when piping (breaks JSON.parse)
     agentType = String(JSON.parse(input.replace(/^\uFEFF/, '')).agent_type || '').trim();
-  } catch (e) {
+  } catch {
     // Unparseable payload — fall through and inject to be safe.
   }
   // .test() is synchronous, so a backtracking-heavy matcher like (a+)+$ would

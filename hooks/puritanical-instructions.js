@@ -61,7 +61,7 @@ function getPuritanicalInstructions(mode) {
   try {
     return 'PURITANICAL MODE ACTIVE — level: ' + effectiveMode + '\n\n' +
       filterSkillBodyForMode(fs.readFileSync(SKILL_PATH, 'utf8'), effectiveMode);
-  } catch (e) {
+  } catch {
     return getFallbackInstructions(effectiveMode);
   }
 }

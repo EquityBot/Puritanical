@@ -59,7 +59,7 @@ const settingsPath = path.join(getClaudeDir(), 'settings.json');
 try {
   const raw = fs.readFileSync(settingsPath, 'utf8').replace(/^\uFEFF/, '');
   const settings = JSON.parse(raw);
-  const cmd = settings.statusLine && settings.statusLine.command;
+  const cmd = settings.statusLine?.command;
   // Only remove the parts puritanical owns. If the user combined statuslines
   // (e.g. caveman && puritanical), keep the other plugin's command intact.
   // shortcut: splits on && / ; to detect other segments — good enough; a user

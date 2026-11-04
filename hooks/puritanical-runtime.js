@@ -72,7 +72,7 @@ function setMode(mode) {
 
 function clearMode() {
   for (const file of [projectStatePath, statePath]) {
-    if (file) try { fs.unlinkSync(file); } catch (e) {}
+    if (file) try { fs.unlinkSync(file); } catch {}
   }
 }
 
@@ -80,7 +80,7 @@ function clearMode() {
 function readMode() {
   try {
     return fs.readFileSync(projectStatePath || statePath, 'utf8').trim() || null;
-  } catch (e) {
+  } catch {
     return null;
   }
 }

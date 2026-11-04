@@ -38,7 +38,7 @@ function readMode() {
   try {
     // review is a one-shot command, never a level (#736); an old saved review falls back.
     return normalizeMode(fs.readFileSync(statePath, 'utf8')) || getDefaultMode();
-  } catch (e) {
+  } catch {
     return getDefaultMode();
   }
 }
@@ -169,7 +169,7 @@ export default {
   // OpenCode V1: same three behaviors, as hooks on the V1 hook names.
   async server({ client } = {}) {
     const log = (level, message) => {
-      try { client && client.app && client.app.log({ body: { service: 'puritanical', level, message } }); } catch (e) {}
+      try { client?.app?.log({ body: { service: 'puritanical', level, message } }); } catch {}
     };
 
     return {
@@ -200,7 +200,7 @@ export default {
       },
 
       'command.execute.before': async (input) => {
-        if (!input || input.command !== 'puritanical') return;
+        if (input?.command !== 'puritanical') return;
         persistMode(input.arguments);
         log('info', 'puritanical ' + readMode());
       },
