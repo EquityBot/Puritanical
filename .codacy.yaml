@@ -5,9 +5,22 @@
 #
 # Opengrep's path-traversal rules fire on every test that reads a fixture or a
 # temporary path, so it does not scan tests; shipped code is still scanned.
+#
+# The host rule files repeat AGENTS.md's body (tools/src/rules.rs generates
+# them and CI runs `sync --check`), so Agentlinter reads AGENTS.md alone
+# instead of reporting each finding once per copy.
 exclude_paths:
   - "benchmarks/**"
 engines:
   opengrep:
     exclude_paths:
       - "tests/**"
+  agentlinter:
+    exclude_paths:
+      - ".agents/rules/puritanical.md"
+      - ".clinerules/puritanical.md"
+      - ".cursor/rules/puritanical.mdc"
+      - ".github/copilot-instructions.md"
+      - ".kiro/steering/puritanical.md"
+      - ".qoder/rules/puritanical.md"
+      - ".windsurf/rules/puritanical.md"

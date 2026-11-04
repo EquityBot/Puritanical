@@ -2,16 +2,12 @@
 // puritanical — UserPromptSubmit hook to track which puritanical mode is active
 // Inspects user input for /puritanical commands and writes mode to flag file
 
-const fs = require('fs');
-const path = require('path');
-const { getClaudeDir, getDefaultMode, isDeactivationCommand, writeDefaultMode } = require('./puritanical-config');
+const { getDefaultMode, isDeactivationCommand, writeDefaultMode } = require('./puritanical-config');
 const {
   clearMode,
   cursorRuleNotice,
   cursorRulePath,
-  isCodeBuddy,
   isCodex,
-  isCopilot,
   isCursor,
   isQoder,
   readMode,
