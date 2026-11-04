@@ -1064,6 +1064,11 @@ assert.equal(
   inProject(projects[1], 'puritanical-mode-tracker.js', JSON.stringify({ prompt: '@puritanical ultra' }));
   assert.match(level(projects[0]), /level: lite/, 'a level set in the other project must not reach this one');
   assert.match(level(projects[1]), /level: ultra/);
+
+  const subdirectory = path.join(projects[0], 'src');
+  fs.mkdirSync(path.join(projects[0], '.git'));
+  fs.mkdirSync(subdirectory);
+  assert.match(level(subdirectory), /level: lite/, 'a subdirectory must share its repository\'s level');
 }
 
 console.log('hook compatibility checks passed');

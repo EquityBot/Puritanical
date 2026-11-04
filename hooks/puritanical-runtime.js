@@ -54,7 +54,7 @@ const statePath = path.join(stateDir, STATE_FILE);
 // stop overwriting each other (#662, #809). Other hosts keep the single shared flag.
 // shortcut: sessions in the SAME repo still share one mode, and the statusline
 // scripts read the shared flag (last write wins); key by session_id if either matters.
-const projectDir = (process.env.CLAUDE_PROJECT_DIR || (isCodex ? process.cwd() : '')).trim();
+const projectDir = (process.env.CLAUDE_PROJECT_DIR || (isCodex ? codexProjectDir() : '')).trim();
 // Replacing separators with '_' aliases e.g. /work/a/b and /work/a_b (#662).
 // Do not read old sanitized keys: they cannot be assigned to one project safely.
 const projectStatePath = projectDir
@@ -82,6 +82,17 @@ function readMode() {
     return fs.readFileSync(projectStatePath || statePath, 'utf8').trim() || null;
   } catch {
     return null;
+  }
+}
+
+// Codex gives hooks no project dir. The repository root stands in for it, so a session
+// started in a subdirectory shares its project's level; outside a repository, the
+// working directory.
+function codexProjectDir() {
+  const cwd = process.cwd();
+  for (let dir = cwd; ; dir = path.dirname(dir)) {
+    if (fs.existsSync(path.join(dir, '.git'))) return dir;
+    if (dir === path.dirname(dir)) return cwd;
   }
 }
 
