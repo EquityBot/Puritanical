@@ -91,7 +91,8 @@ function readMode() {
 function codexProjectDir() {
   const cwd = process.cwd();
   const home = os.homedir();
-  for (let dir = cwd; dir !== home; dir = path.dirname(dir)) {
+  // path.relative, not ===: Windows paths differ by case.
+  for (let dir = cwd; path.relative(home, dir) !== ''; dir = path.dirname(dir)) {
     if (fs.existsSync(path.join(dir, '.git'))) return dir;
     if (dir === path.dirname(dir)) break;
   }

@@ -1074,10 +1074,12 @@ assert.equal(
   const inHome = { HOME: gitHome, USERPROFILE: gitHome };
   const homeProjects = ['a', 'b'].map((name) => path.join(gitHome, name));
   for (const dir of [path.join(gitHome, '.git'), ...homeProjects]) fs.mkdirSync(dir, { recursive: true });
+  inProject(homeProjects[1], 'puritanical-activate.js', '', inHome);
   inProject(homeProjects[0], 'puritanical-activate.js', '', inHome);
   inProject(homeProjects[0], 'puritanical-mode-tracker.js', JSON.stringify({ prompt: '@puritanical lite' }), inHome);
   const other = inProject(homeProjects[1], 'puritanical-activate.js', JSON.stringify({ source: 'compact' }), inHome);
-  assert.doesNotMatch(other.stdout, /level: lite/, 'a home folder kept in Git must not join its subfolders');
+  assert.equal(other.status, 0, other.stderr);
+  assert.match(other.stdout, /level: full/, 'a home folder kept in Git must not join its subfolders');
 }
 
 console.log('hook compatibility checks passed');
