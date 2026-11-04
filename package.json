@@ -6,16 +6,16 @@
   "keywords": ["opencode-plugin", "opencode", "puritanical", "pi-package", "pi", "skills", "qoder"],
   "license": "FSL-1.1-ALv2 AND MIT",
   "author": {
-    "name": "EquityBot",
-    "url": "https://github.com/EquityBot"
+    "name": "yungSNAT",
+    "url": "https://github.com/yungSNAT"
   },
-  "homepage": "https://github.com/EquityBot/Puritanical",
+  "homepage": "https://github.com/yungSNAT/Puritanical",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/EquityBot/Puritanical.git"
+    "url": "git+https://github.com/yungSNAT/Puritanical.git"
   },
   "bugs": {
-    "url": "https://github.com/EquityBot/Puritanical/issues"
+    "url": "https://github.com/yungSNAT/Puritanical/issues"
   },
   "main": "./.opencode/plugins/puritanical.mjs",
   "exports": {

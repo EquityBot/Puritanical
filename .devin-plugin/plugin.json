@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "Strict simplicity for coding agents. Correctness, safety and verification come first; then YAGNI, reuse, the standard library and the smallest change that meets every requirement.",
   "author": {
-    "name": "EquityBot",
-    "url": "https://github.com/EquityBot"
+    "name": "yungSNAT",
+    "url": "https://github.com/yungSNAT"
   },
-  "homepage": "https://github.com/EquityBot/Puritanical",
-  "repository": "https://github.com/EquityBot/Puritanical",
+  "homepage": "https://github.com/yungSNAT/Puritanical",
+  "repository": "https://github.com/yungSNAT/Puritanical",
   "license": "FSL-1.1-ALv2 AND MIT",
   "keywords": ["yagni", "minimalism", "code-review", "productivity"]
 }
