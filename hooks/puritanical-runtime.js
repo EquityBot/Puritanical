@@ -87,13 +87,15 @@ function readMode() {
 
 // Codex gives hooks no project dir. The repository root stands in for it, so a session
 // started in a subdirectory shares its project's level; outside a repository, the
-// working directory.
+// working directory. The walk stops at the home folder: one kept in Git is not a project.
 function codexProjectDir() {
   const cwd = process.cwd();
-  for (let dir = cwd; ; dir = path.dirname(dir)) {
+  const home = os.homedir();
+  for (let dir = cwd; dir !== home; dir = path.dirname(dir)) {
     if (fs.existsSync(path.join(dir, '.git'))) return dir;
-    if (dir === path.dirname(dir)) return cwd;
+    if (dir === path.dirname(dir)) break;
   }
+  return cwd;
 }
 
 // Cursor's always-on project rule (.cursor/rules/puritanical.mdc) already puts the

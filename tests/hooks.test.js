@@ -1045,8 +1045,8 @@ assert.equal(
   const projects = ['one', 'two'].map((name) => path.join(temp, `codex-project-${name}`));
   for (const dir of [data, ...projects]) fs.mkdirSync(dir, { recursive: true });
   const env = { ...codexEnv, PLUGIN_DATA: data, PURITANICAL_DEFAULT_MODE: 'full' };
-  const inProject = (cwd, script, input = '') => spawnSync(process.execPath, [path.join(root, 'hooks', script)], {
-    env: { ...process.env, ...env },
+  const inProject = (cwd, script, input = '', extra = {}) => spawnSync(process.execPath, [path.join(root, 'hooks', script)], {
+    env: { ...process.env, ...env, ...extra },
     input,
     encoding: 'utf8',
     timeout: 30000,
@@ -1069,6 +1069,15 @@ assert.equal(
   fs.mkdirSync(path.join(projects[0], '.git'));
   fs.mkdirSync(subdirectory);
   assert.match(level(subdirectory), /level: lite/, 'a subdirectory must share its repository\'s level');
+
+  const gitHome = path.join(temp, 'codex-git-home');
+  const inHome = { HOME: gitHome, USERPROFILE: gitHome };
+  const homeProjects = ['a', 'b'].map((name) => path.join(gitHome, name));
+  for (const dir of [path.join(gitHome, '.git'), ...homeProjects]) fs.mkdirSync(dir, { recursive: true });
+  inProject(homeProjects[0], 'puritanical-activate.js', '', inHome);
+  inProject(homeProjects[0], 'puritanical-mode-tracker.js', JSON.stringify({ prompt: '@puritanical lite' }), inHome);
+  const other = inProject(homeProjects[1], 'puritanical-activate.js', JSON.stringify({ source: 'compact' }), inHome);
+  assert.doesNotMatch(other.stdout, /level: lite/, 'a home folder kept in Git must not join its subfolders');
 }
 
 console.log('hook compatibility checks passed');
