@@ -44,7 +44,9 @@ function listFiles(root) {
     // 64 MiB: in repos with many tracked files `git ls-files` overflows Node's 1 MiB
     // default, and the catch below reads that as "not a git repo" and falls back to a
     // walk that ignores .gitignore. The list is capped at MAX_FILES * 5 lines anyway.
-    const tracked = execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 3000, maxBuffer: 64 * 1024 * 1024 })
+    // Windows looks a bare 'git' up in cwd before PATH, so git runs from this folder and -C
+    // points it at root: a git.exe inside the mapped repository never runs.
+    const tracked = execFileSync('git', ['-C', path.resolve(root), 'ls-files'], { cwd: __dirname, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 3000, maxBuffer: 64 * 1024 * 1024 }) // NOSONAR: lists the folder the caller names; git comes from the user's PATH, never from root
       .split('\n').filter(Boolean).slice(0, MAX_FILES * 5);
     if (tracked.length) return tracked;
   } catch (e) { /* not a git repo: walk below */ }

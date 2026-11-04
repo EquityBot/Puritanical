@@ -71,7 +71,7 @@ function finish() {
   let matches = true;
   try {
     if (agentType) {
-      matches = vm.runInNewContext('re.test(s)', { re: matcherRe, s: agentType }, { timeout: 100 });
+      matches = vm.runInNewContext('re.test(s)', { re: matcherRe, s: agentType }, { timeout: 100 }); // NOSONAR: fixed code; the matcher and agent type are passed as data
     }
   } catch (e) {
     matches = true;

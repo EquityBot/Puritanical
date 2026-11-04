@@ -126,7 +126,7 @@ function activate(mode) {
       const tmpPath = scriptPath + '.' + process.pid + '.tmp';
       try {
         fs.copyFileSync(path.join(__dirname, scriptName), tmpPath, fs.constants.COPYFILE_EXCL);
-        fs.chmodSync(tmpPath, 0o644);
+        fs.chmodSync(tmpPath, 0o644); // NOSONAR: a readable copy of the plugin's own script holds no secret
         fs.renameSync(tmpPath, scriptPath);
       } finally {
         try { fs.unlinkSync(tmpPath); } catch (e) { /* renamed */ }
