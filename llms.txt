@@ -26,3 +26,7 @@ then `/plugin install puritanical@puritanical` as a separate prompt.
 
 - [EquityBot](https://github.com/EquityBot): other EquityBot tools.
 - [Ponytail](https://github.com/DietrichGebert/ponytail): the upstream project.
+
+## Reuse
+
+- [Reusing this code](https://github.com/EquityBot/Puritanical/blob/main/REUSING.md#reusing-this-code): Ryan Duguid's changes to Ponytail, under FSL-1.1-ALv2; keep the notices and licences; public credit is requested.
