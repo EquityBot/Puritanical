@@ -39,10 +39,9 @@ function activate(mode) {
   // ruleset and would contradict any other level, so leave the flag alone and
   // hand the model a one-line notice instead of a second copy (#817).
   if (isCursor) {
-    const rule = cursorRulePath();
-    if (rule) {
+    if (cursorRulePath()) {
       try {
-        writeHookOutput('SessionStart', mode, cursorRuleNotice(rule));
+        writeHookOutput('SessionStart', mode, cursorRuleNotice());
       } catch {
         // Silent fail — stdout closed/EPIPE at hook exit must not surface as a hook failure
       }
