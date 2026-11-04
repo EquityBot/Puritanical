@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+// Copyright 2026 Ryan Duguid
+// SPDX-License-Identifier: FSL-1.1-ALv2
+
 // Shared Puritanical instruction builder for Claude hooks and Pi extension.
 
 const fs = require('fs');

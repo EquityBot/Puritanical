@@ -1,3 +1,6 @@
+// Copyright 2026 Ryan Duguid
+// SPDX-License-Identifier: FSL-1.1-ALv2
+
 //! Version-consistency guard. Puritanical declares its version in every host
 //! manifest, and a release bumps all of them by hand. Manifests that agree
 //! with each other can still all be stale, so on a release-tag CI run the

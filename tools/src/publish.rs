@@ -1,3 +1,6 @@
+// Copyright 2026 Ryan Duguid
+// SPDX-License-Identifier: FSL-1.1-ALv2
+
 //! Publish the generated `OpenClaw` skills (`.openclaw/skills/`) to `ClawHub`.
 //!
 //! `ClawHub` does not sync from GitHub: each skill is pushed with the clawhub
