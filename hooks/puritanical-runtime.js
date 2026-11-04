@@ -90,7 +90,9 @@ function readMode() {
 // working directory. The walk stops at the home folder: one kept in Git is not a project.
 function codexProjectDir() {
   const cwd = process.cwd();
-  const home = os.homedir();
+  // process.cwd() is a real path, but the home folder can sit behind a symlink.
+  let home = os.homedir();
+  try { home = fs.realpathSync(home); } catch {}
   // path.relative, not ===: Windows paths differ by case.
   for (let dir = cwd; path.relative(home, dir) !== ''; dir = path.dirname(dir)) {
     if (fs.existsSync(path.join(dir, '.git'))) return dir;
