@@ -423,7 +423,7 @@ assert.match(output.additionalContext, /PURITANICAL MODE ACTIVE — level: full/
 // Code Copilot doesn't read Claude's statusLine setting.
 const vscodeHome = path.join(temp, 'vscode-copilot-home');
 const vscodePluginRoot = path.join(
-  vscodeHome, '.vscode', 'agent-plugins', 'github.com', 'EquityBot', 'Puritanical', 'hooks',
+  vscodeHome, '.vscode', 'agent-plugins', 'github.com', 'yungSNAT', 'Puritanical', 'hooks',
 );
 fs.mkdirSync(vscodeHome, { recursive: true });
 result = run('puritanical-activate.js', {

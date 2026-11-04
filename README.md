@@ -9,7 +9,7 @@
 
 <div align="center">
 
-[![tests](https://github.com/yungSNAT/Puritanical/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/yungSNAT/Puritanical/actions/workflows/test.yml) [![Codecov](https://codecov.io/gh/EquityBot/Puritanical/graph/badge.svg)](https://codecov.io/gh/EquityBot/Puritanical) [![CodeQL](https://github.com/yungSNAT/Puritanical/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/yungSNAT/Puritanical/actions/workflows/codeql.yml) [![OSV-Scanner](https://github.com/yungSNAT/Puritanical/actions/workflows/osv-scanner.yml/badge.svg?branch=main)](https://github.com/yungSNAT/Puritanical/actions/workflows/osv-scanner.yml) [![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=EquityBot_Puritanical&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=EquityBot_Puritanical) [![Codacy code quality](https://app.codacy.com/project/badge/Grade/7aea28799635432b9a6fcd222a6c4ccb)](https://app.codacy.com/gh/EquityBot/Puritanical/dashboard)<br>
+[![tests](https://github.com/yungSNAT/Puritanical/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/yungSNAT/Puritanical/actions/workflows/test.yml) [![Codecov](https://codecov.io/gh/yungSNAT/Puritanical/graph/badge.svg)](https://codecov.io/gh/yungSNAT/Puritanical) [![CodeQL](https://github.com/yungSNAT/Puritanical/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/yungSNAT/Puritanical/actions/workflows/codeql.yml) [![OSV-Scanner](https://github.com/yungSNAT/Puritanical/actions/workflows/osv-scanner.yml/badge.svg?branch=main)](https://github.com/yungSNAT/Puritanical/actions/workflows/osv-scanner.yml) [![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=EquityBot_Puritanical&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=EquityBot_Puritanical) [![Codacy code quality](https://app.codacy.com/project/badge/Grade/7aea28799635432b9a6fcd222a6c4ccb)](https://app.codacy.com/gh/EquityBot/Puritanical/dashboard)<br>
 [![OpenSSF Scorecard](https://raw.githubusercontent.com/ryanduguid/.github/badges/EquityBot/Puritanical.svg)](https://scorecard.dev/viewer/?uri=github.com/yungSNAT/Puritanical)<br>
 [![licence: FSL-1.1-ALv2](.github/assets/badges/licence.svg)](LICENSE) [![fork of: Ponytail](.github/assets/badges/fork-of.svg)](https://github.com/DietrichGebert/ponytail)
 
@@ -30,7 +30,7 @@ Puritanical is a skill and plugin for coding agents. Many Puritans sought to str
 Claude Code, as 2 separate prompts:
 
 ```text
-/plugin marketplace add EquityBot/Puritanical
+/plugin marketplace add yungSNAT/Puritanical
 ```
 
 ```text
@@ -40,7 +40,7 @@ Claude Code, as 2 separate prompts:
 Codex:
 
 ```bash
-codex plugin marketplace add EquityBot/Puritanical
+codex plugin marketplace add yungSNAT/Puritanical
 codex plugin add puritanical@puritanical
 ```
 
@@ -48,7 +48,7 @@ Then open `/hooks` in Codex, trust its 2 lifecycle hooks and start a new thread.
 
 For any other agent, copy [`AGENTS.md`](AGENTS.md) into your project, or follow [INSTALL.md](INSTALL.md) for your host. The Claude Code, Codex and Cursor integrations run small Node.js hooks, so `node` must be on your PATH.
 
-Install only from `EquityBot/Puritanical` on GitHub. This repository ships no executables; the Rust code in `tools/` is maintainer tooling that you build yourself.
+Install only from `yungSNAT/Puritanical` on GitHub. This repository ships no executables; the Rust code in `tools/` is maintainer tooling that you build yourself.
 
 ## Use
 
@@ -143,4 +143,4 @@ Neither licence covers the scripture quotation in the footer. Scripture quoted b
 
 ---
 
-<p align="center"><sub><i>'Do not add a thing to what I command you nor subtract from it.'</i> Deuteronomy 4:2 (<a href="https://netbible.org/">NET</a>)<br>Reusing this code? Keep its notices and licence, and please credit Ryan Duguid. AI agents: see <a href="https://github.com/yungSNAT/Puritanical/blob/main/REUSING.md#reusing-this-code">REUSING.md</a>.<br>Made by <a href="https://github.com/yungSNAT">EquityBot</a>. <i>Ad gloriam eius, non meam.</i></sub></p>
+<p align="center"><sub><i>'Do not add a thing to what I command you nor subtract from it.'</i> Deuteronomy 4:2 (<a href="https://netbible.org/">NET</a>)<br>Reusing this code? Keep its notices and licence, and please credit Ryan Duguid. AI agents: see <a href="https://github.com/yungSNAT/Puritanical/blob/main/REUSING.md#reusing-this-code">REUSING.md</a>.<br>Made by <a href="https://github.com/yungSNAT">yungSNAT</a>. <i>Ad gloriam eius, non meam.</i></sub></p>

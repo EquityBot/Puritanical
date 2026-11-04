@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "Strict simplicity for coding agents. Correctness, safety and verification come first; then YAGNI, reuse, the standard library and the smallest change that meets every requirement.",
   "author": {
-    "name": "EquityBot",
-    "url": "https://github.com/EquityBot"
+    "name": "yungSNAT",
+    "url": "https://github.com/yungSNAT"
   },
-  "homepage": "https://github.com/EquityBot/Puritanical",
-  "repository": "https://github.com/EquityBot/Puritanical",
+  "homepage": "https://github.com/yungSNAT/Puritanical",
+  "repository": "https://github.com/yungSNAT/Puritanical",
   "license": "FSL-1.1-ALv2 AND MIT",
   "keywords": [
     "yagni",
@@ -21,13 +21,13 @@
     "displayName": "Puritanical",
     "shortDescription": "Strict simplicity, correctness first",
     "longDescription": "After correctness, safety and verification, prefer reuse, the standard library, native platform features and the smallest correct implementation.",
-    "developerName": "EquityBot",
+    "developerName": "yungSNAT",
     "category": "Productivity",
     "capabilities": [
       "Instructions",
       "Lifecycle hooks"
     ],
-    "websiteURL": "https://github.com/EquityBot/Puritanical",
+    "websiteURL": "https://github.com/yungSNAT/Puritanical",
     "defaultPrompt": [
       "Use Puritanical mode for this task.",
       "Review this diff for over-engineering.",
