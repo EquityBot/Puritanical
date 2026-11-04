@@ -1,0 +1,13 @@
+# benchmarks/ is the evaluation harness inherited from Ponytail. It is not
+# shipped (see `files` in package.json) and it scores generated code on
+# purpose: it imports and runs that code, catches whatever it raises and signs
+# test tokens with fixed fake secrets. No tool analyses it.
+#
+# Opengrep's path-traversal rules fire on every test that reads a fixture or a
+# temporary path, so it does not scan tests; shipped code is still scanned.
+exclude_paths:
+  - "benchmarks/**"
+engines:
+  opengrep:
+    exclude_paths:
+      - "tests/**"
