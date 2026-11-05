@@ -39,7 +39,7 @@ test('the statusline nudge flag refuses to follow a planted symlink', { skip: !f
     const stale = path.join(dir, 'gone', 'puritanical-statusline.sh');
     fs.writeFileSync(path.join(dir, 'settings.json'), JSON.stringify({ statusLine: { command: 'bash "' + stale + '"' } }));
     fs.symlinkSync(victim, path.join(dir, '.puritanical-statusline-nudged'));
-    const env = { ...process.env, CLAUDE_CONFIG_DIR: dir, CLAUDE_PROJECT_DIR: '' };
+    const env = { ...process.env, CLAUDE_CONFIG_DIR: dir, CLAUDE_PROJECT_DIR: '', XDG_CONFIG_HOME: dir };
     for (const name of ['PLUGIN_DATA', 'COPILOT_PLUGIN_DATA', 'CURSOR_VERSION', 'QODER_PROJECT_DIR', 'CODEBUDDY_PLUGIN_ROOT', 'PURITANICAL_DEFAULT_MODE']) delete env[name];
     const hook = path.join(__dirname, '..', 'hooks', 'puritanical-activate.js');
     const result = spawnSync(process.execPath, [hook], { env, input: '', encoding: 'utf8', timeout: 30000 });

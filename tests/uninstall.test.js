@@ -261,6 +261,24 @@ if (linked) {
   assert.deepEqual(JSON.parse(fs.readFileSync(realSettings, 'utf8')), {}, 'the link target must be updated');
 }
 
+// Per-project mode flags live in a folder. Removing it must not reach through a
+// link inside it.
+const modesDir = path.join(claudeDir, 'puritanical-modes');
+fs.mkdirSync(modesDir);
+fs.writeFileSync(path.join(modesDir, 'project-key'), 'lite');
+const outsideModes = path.join(temp, 'outside-modes');
+fs.mkdirSync(outsideModes);
+fs.writeFileSync(path.join(outsideModes, 'keep'), 'keep');
+let modesLinked = true;
+try { fs.symlinkSync(outsideModes, path.join(modesDir, 'link'), 'dir'); } catch { modesLinked = false; } // Windows without symlink rights
+result = runUninstall(env);
+assert.equal(result.status, 0, result.stderr);
+assert.equal(fs.existsSync(modesDir), false, 'the per-project mode flags folder must be removed');
+assert.match(result.stdout, /Removed per-project mode flags: /);
+if (modesLinked) {
+  assert.equal(fs.readFileSync(path.join(outsideModes, 'keep'), 'utf8'), 'keep', 'a linked outside folder must survive');
+}
+
 // Running on an already-clean machine must not throw.
 result = runUninstall({ HOME: path.join(temp, 'home-empty'), USERPROFILE: path.join(temp, 'home-empty') });
 assert.equal(result.status, 0, result.stderr);

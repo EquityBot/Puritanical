@@ -9,6 +9,7 @@ const assert = require('node:assert/strict');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { spawnSync } = require('child_process');
 const { getDefaultMode, getHideStatus, getQuietStartup, readJsonFile } = require('../hooks/puritanical-config');
 
 const SETTINGS = ['PURITANICAL_DEFAULT_MODE', 'PURITANICAL_HIDE_STATUS', 'PURITANICAL_QUIET_STARTUP'];
@@ -44,6 +45,22 @@ test('settings are read through a UTF-8 BOM', (t) => {
   assert.equal(getDefaultMode(), 'lite');
   assert.equal(getHideStatus(), true);
   assert.equal(getQuietStartup(), true);
+});
+
+test('a malformed settings.json leaves the statusline alone', (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'puritanical-settings-'));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  fs.writeFileSync(path.join(dir, 'settings.json'), '{ "statusLine": ');
+  const env = { ...process.env, CLAUDE_CONFIG_DIR: dir, CLAUDE_PROJECT_DIR: '', XDG_CONFIG_HOME: dir };
+  for (const name of ['PLUGIN_DATA', 'COPILOT_PLUGIN_DATA', 'CURSOR_VERSION', 'QODER_PROJECT_DIR', 'CODEBUDDY_PLUGIN_ROOT', 'PURITANICAL_DEFAULT_MODE']) delete env[name];
+  const hook = path.join(__dirname, '..', 'hooks', 'puritanical-activate.js');
+  const result = spawnSync(process.execPath, [hook], { env, input: '', encoding: 'utf8', timeout: 30000 });
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /PURITANICAL MODE ACTIVE/);
+  assert.doesNotMatch(result.stdout, /STATUSLINE/);
+  for (const name of ['puritanical-statusline.ps1', 'puritanical-statusline.sh', '.puritanical-statusline-nudged']) {
+    assert.equal(fs.existsSync(path.join(dir, name)), false, name);
+  }
 });
 
 test('readJsonFile keeps a missing file and malformed JSON apart for its callers', (t) => {
