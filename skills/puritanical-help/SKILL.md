@@ -1,5 +1,6 @@
 ---
 name: puritanical-help
+author: yungSNAT
 disable-model-invocation: true
 description: >
   Quick reference for puritanical levels, skills and commands. One-shot display.

@@ -1,5 +1,6 @@
 ---
 name: puritanical-debt
+author: yungSNAT
 disable-model-invocation: true
 description: >
   List every `shortcut:` comment (and older `ponytail:` ones) as a debt ledger. One-shot report,

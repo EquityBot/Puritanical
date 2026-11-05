@@ -1,5 +1,6 @@
 ---
 name: puritanical-review
+author: yungSNAT
 disable-model-invocation: true
 description: >
   Quality review of a change: is the logic right, is it safe, does it hold

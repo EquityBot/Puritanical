@@ -1,5 +1,6 @@
 ---
 name: puritanical-audit
+author: yungSNAT
 disable-model-invocation: true
 description: >
   Quality audit of a whole repo: bugs, security holes, what breaks under real

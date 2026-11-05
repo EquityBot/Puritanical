@@ -1,5 +1,6 @@
 ---
 name: puritanical
+author: yungSNAT
 description: >
   Applies to coding tasks: implementation, debugging, refactoring, code review,
   design and dependency choices, and to explicit Puritanical, YAGNI or
