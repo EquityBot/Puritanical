@@ -16,6 +16,7 @@ const {
   isShellSafe,
   readJsonFile,
   writeFileAtomic,
+  writeFileNoFollow,
 } = require('./puritanical-config');
 const { getPuritanicalInstructions } = require('./puritanical-instructions');
 const {
@@ -131,7 +132,7 @@ function activate(mode) {
     }
 
     if (nudge) {
-      try { fs.writeFileSync(nudgeFlagPath, stalePath || ''); } catch { /* best-effort */ }
+      try { writeFileNoFollow(nudgeFlagPath, stalePath || ''); } catch { /* best-effort */ }
       if (stalePath) {
         output += "\n\n" +
           "STATUSLINE BROKEN: The statusLine in " + settingsPath + " runs " + stalePath +
