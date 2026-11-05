@@ -11,7 +11,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { isShellSafe, replaceFile } = require('../hooks/puritanical-config');
+const { isShellSafe, readJsonFile, replaceFile } = require('../hooks/puritanical-config');
 
 const ROOT = path.join(__dirname, '..');
 const TEMPLATE = path.join(ROOT, 'hooks', 'cursor-hooks.json');
@@ -32,7 +32,7 @@ function hooksPath(scope) {
 function readConfig(file) {
   let config = {};
   try {
-    config = JSON.parse(fs.readFileSync(file, 'utf8').replace(/^\uFEFF/, ''));
+    config = readJsonFile(file);
   } catch (e) {
     if (e.code !== 'ENOENT') throw e;
   }
@@ -65,7 +65,7 @@ function puritanicalEntries() {
     throw new Error('puritanical is checked out at a path with shell metacharacters (' + ROOT +
       '); move it, or copy hooks/cursor-hooks.json by hand and quote the path for your shell');
   }
-  const template = JSON.parse(fs.readFileSync(TEMPLATE, 'utf8'));
+  const template = readJsonFile(TEMPLATE);
   const hooks = {};
   for (const [event, entries] of Object.entries(template.hooks)) {
     hooks[event] = entries.map((entry) => ({ ...entry, command: entry.command.replace(/PURITANICAL_DIR/g, root) }));

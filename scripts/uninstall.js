@@ -9,15 +9,15 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { getConfigPath, getClaudeDir, getQoderDir, replaceFile } = require('../hooks/puritanical-config');
+const { getConfigPath, getClaudeDir, getQoderDir, readJsonFile, replaceFile } = require('../hooks/puritanical-config');
 const cursorHooks = require('./cursor-hooks');
 
 const STATUSLINE_SCRIPT = /(?:^|[\s"'\\/])puritanical-statusline\.(?:sh|ps1)(?=$|[\s"'])/;
 
-function removeIfExists(filePath, label) {
+function removeIfExists(target, label, options) {
   try {
-    fs.unlinkSync(filePath);
-    console.log(`Removed ${label}: ${filePath}`);
+    fs.rmSync(target, options);
+    console.log(`Removed ${label}: ${target}`);
   } catch (e) {
     if (e.code !== 'ENOENT') throw e;
   }
@@ -28,10 +28,7 @@ removeIfExists(path.join(getClaudeDir(), '.puritanical-statusline-nudged'), 'sta
 removeIfExists(path.join(os.homedir(), '.cursor', '.puritanical-active'), 'Cursor mode flag');
 removeIfExists(path.join(getQoderDir(), '.puritanical-active'), 'Qoder mode flag');
 for (const dir of [path.join(getClaudeDir(), 'puritanical-modes'), path.join(os.homedir(), '.cursor', 'puritanical-modes'), path.join(process.env.CODEBUDDY_CONFIG_DIR || path.join(os.homedir(), '.codebuddy'), 'puritanical-modes')]) {
-  if (fs.existsSync(dir)) {
-    fs.rmSync(dir, { recursive: true });
-    console.log(`Removed per-project mode flags: ${dir}`);
-  }
+  removeIfExists(dir, 'per-project mode flags', { recursive: true });
 }
 removeIfExists(path.join(process.env.CODEBUDDY_CONFIG_DIR || path.join(os.homedir(), '.codebuddy'), '.puritanical-active'), 'CodeBuddy mode flag');
 removeIfExists(path.join(process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config'), 'opencode', '.puritanical-active'), 'OpenCode mode flag');
@@ -57,8 +54,7 @@ try {
 
 const settingsPath = path.join(getClaudeDir(), 'settings.json');
 try {
-  const raw = fs.readFileSync(settingsPath, 'utf8').replace(/^\uFEFF/, '');
-  const settings = JSON.parse(raw);
+  const settings = readJsonFile(settingsPath);
   const cmd = settings.statusLine?.command;
   // Only remove the parts puritanical owns. If the user combined statuslines
   // (e.g. caveman && puritanical), keep the other plugin's command intact.

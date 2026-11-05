@@ -45,12 +45,11 @@ def _default_mode() -> str:
         return env_mode
     try:
         data = json.loads((_config_dir() / "config.json").read_text(encoding="utf-8-sig"))
-        file_mode = _normalize_runtime_mode(data.get("defaultMode"))
-        if file_mode:
-            return file_mode
-    except Exception:
-        pass
-    return DEFAULT_MODE
+    except (OSError, ValueError, RuntimeError):
+        # Missing, unreadable or malformed file, or no home folder to find it in.
+        return DEFAULT_MODE
+    file_mode = _normalize_runtime_mode(data.get("defaultMode")) if isinstance(data, dict) else None
+    return file_mode or DEFAULT_MODE
 
 
 def _strip_frontmatter(text: str) -> str:

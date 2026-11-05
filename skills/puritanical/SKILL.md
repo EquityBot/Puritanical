@@ -6,6 +6,8 @@ description: >
   over-engineering requests. Not for non-coding prose or general knowledge.
 argument-hint: "[lite|full|ultra]"
 license: FSL-1.1-ALv2 AND MIT
+metadata:
+  author: yungSNAT
 ---
 
 # Puritanical

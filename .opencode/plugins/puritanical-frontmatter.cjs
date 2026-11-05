@@ -20,9 +20,9 @@ function parseCommandFile(filePath) {
   return { description, template: match[2].trim() };
 }
 
-// shortcut: flat frontmatter only — the shape every shipped SKILL.md uses. A
-// nested key or an anchor is not interpreted, and a real YAML parser is the
-// upgrade path if a skill ever needs one.
+// shortcut: top-level keys only, which covers every field read here. A nested
+// key (metadata.author) or an anchor is not interpreted, and a real YAML parser
+// is the upgrade path if a skill ever needs one.
 function frontmatterField(frontmatter, key) {
   const lines = frontmatter.split(/\r?\n/);
   const at = lines.findIndex((line) => line.startsWith(key + ':'));

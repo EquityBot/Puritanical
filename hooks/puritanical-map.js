@@ -87,10 +87,11 @@ function buildMap(root = process.cwd()) {
   // One line per directory: names are enough to know something exists; grep finds the file.
   const dirs = new Map();
   for (const f of files) {
+    const file = path.join(root, f);
     let text;
     try {
-      if (!fs.lstatSync(path.join(root, f)).isFile()) continue;
-      text = fs.readFileSync(path.join(root, f), 'utf8').slice(0, 65536);
+      if (!fs.lstatSync(file).isFile()) continue;
+      text = fs.readFileSync(file, 'utf8').slice(0, 65536);
     } catch { continue; }
     const names = namesIn(f, text);
     if (!names.length) continue;

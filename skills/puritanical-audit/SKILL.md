@@ -7,6 +7,8 @@ description: >
   split. Ranked, each finding explained in plain English. One-shot report,
   changes nothing. Use for "audit this codebase", "review the whole repo",
   "find bloat", "what can I delete", /puritanical-audit.
+metadata:
+  author: yungSNAT
 ---
 
 Audit the whole repo like the senior developer who just inherited it and
