@@ -128,7 +128,7 @@ PREFLIGHT_MODEL = "claude-preflight-no-such-model"
 # tests is still explicitly allowed, so puritanical's "leave a runnable check" discipline is not suppressed.
 NO_RUN = ("Write the implementation (include tests if you normally would for a change like this). "
           "Do not run a dev server, install dependencies, run a database, or open a browser to verify -- "
-          "just write the code and stop. Only the code you write is measured, not its execution.")
+          "just write the code and stop.")
 
 def _is_test(p: Path, workdir: Path):
     rel = p.relative_to(workdir)
@@ -225,7 +225,7 @@ def _git_snapshot(workdir):
     """Commit the seeded repo so we can diff exactly what the agent changes."""
     _git(workdir, "init", "-q")
     _git(workdir, "add", "-A")
-    _git(workdir, "-c", "user.email=bench@local", "-c", "user.name=bench",
+    _git(workdir, "-c", "user.email=dev@example.invalid", "-c", "user.name=dev",
          "commit", "-q", "-m", "base", "--no-verify")
 
 _SKIP_DIFF = ("-lock", ".lock", ".gen.ts", "lock.json", "routeTree.gen")
@@ -284,6 +284,7 @@ def selftest():
     failures += _selftest_activation()
     failures += _selftest_retries()
     failures += _selftest_keep_cell()
+    failures += _selftest_blind_cell()
     failures += _selftest_isolated_scoring()
     failures += _selftest_plugin_dir()
     failures += _selftest_kill()
@@ -371,6 +372,17 @@ def _selftest_keep_cell():
         _keep_cell(ws, dest)
         ok = (dest / "new.txt").is_file() and not (dest / "cell").exists() and not (dest / ".git").exists() and not ws.exists()
     return _report("keep cell     a retry replaces a kept cell holding read-only files", ok)
+
+def _selftest_blind_cell():
+    """The agent sees its working directory and the seeded commit: neither may name the benchmark or an arm."""
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as d:
+        scratch = _neutral_dir(d)
+        ws = _neutral_dir(scratch)
+        _write(ws / "app.py", "x = 1\n")
+        _git_snapshot(ws)
+        seen = f"{ws.relative_to(d)} {_git(ws, 'log', '--format=%an %ae %s').stdout} {NO_RUN}".lower()
+    leaks = [word for word in ("bench", "measured", *ARMS) if word in seen]
+    return _report(f"blind cell    the path, commit and shared prompt don't name the test {leaks or ''}", not leaks)
 
 def _selftest_isolated_scoring():
     """Scoring one cell must not see another cell's code, and produced code that hangs or exits
@@ -689,6 +701,11 @@ def _unlock(func, path, _error):
     os.chmod(path, stat.S_IWRITE)
     func(path)
 
+def _neutral_dir(parent=None):
+    """A unique folder for a running cell. Claude Code shows the agent its working directory, so the
+    path names neither the benchmark nor the arm; `_keep_cell` gives the cell its labelled name."""
+    return Path(tempfile.mkdtemp(prefix="work-", dir=parent))
+
 def _keep_cell(ws: Path, dest: Path):
     """Move a cell's workspace to dest, replacing a kept cell from an earlier attempt. A leftover that
     cannot be removed raises: moving into it would nest the workspace and lose the paid session."""
@@ -856,12 +873,12 @@ def main():
     # Cells run outside any git repo, then move into out_dir. Inside a repo, Claude Code shows the
     # model that repo's branch and recent commit messages, so this repo's own history leaked into
     # every task without its own git snapshot.
-    scratch = Path(tempfile.mkdtemp(prefix=f"puritanical-bench-{stamp}-"))
+    scratch = _neutral_dir()
 
     def _one(spec):
         tid, arm, model, r = spec
         name = f"{tid}__{arm}__{model}__{r}"
-        ws = scratch / name
+        ws = _neutral_dir(scratch)
         def attempt():
             shutil.rmtree(ws, ignore_errors=True)
             ws.mkdir(parents=True)
