@@ -28,10 +28,30 @@ function writeFileNoFollow(file, data) {
   fs.writeFileSync(file, data, { encoding: 'utf8', flag: NO_FOLLOW_WRITE });
 }
 
+// The data goes to a new temp file beside target, then one rename replaces it: a
+// reader never sees a half-written file, and a symlink at target is replaced, not
+// written through. A null mode leaves the permissions to the umask.
+function writeFileAtomic(target, data, mode) {
+  const tmp = target + '.' + process.pid + '.tmp';
+  let owned = false;
+  try {
+    const fd = fs.openSync(tmp, 'wx', mode === null ? 0o666 : mode);
+    owned = true;
+    try {
+      fs.writeFileSync(fd, data, 'utf8');
+      if (mode !== null) fs.fchmodSync(fd, mode); // the umask may have narrowed it
+    } finally {
+      fs.closeSync(fd);
+    }
+    fs.renameSync(tmp, target);
+  } finally {
+    if (owned) try { fs.unlinkSync(tmp); } catch { /* renamed */ }
+  }
+}
+
 // Rewrites a user-owned file (settings.json, hooks.json) without leaving it
-// half-written: the text goes to a temp file beside the real target, then one
-// rename replaces it. A symlink is followed so a dotfiles link survives, and the
-// old file's UTF-8 BOM and mode carry over.
+// half-written. A symlink is followed so a dotfiles link survives, and the old
+// file's UTF-8 BOM and mode carry over.
 function replaceFile(file, text) {
   let target = file;
   let mode = null;
@@ -49,21 +69,12 @@ function replaceFile(file, text) {
     }
   }
   fs.mkdirSync(path.dirname(target), { recursive: true });
-  const tmp = target + '.' + process.pid + '.tmp';
-  let owned = false;
-  try {
-    const fd = fs.openSync(tmp, 'wx', mode === null ? 0o666 : mode);
-    owned = true;
-    try {
-      fs.writeFileSync(fd, bom + text, 'utf8');
-      if (mode !== null) fs.fchmodSync(fd, mode); // the umask may have narrowed it
-    } finally {
-      fs.closeSync(fd);
-    }
-    fs.renameSync(tmp, target);
-  } finally {
-    if (owned) try { fs.unlinkSync(tmp); } catch { /* renamed */ }
-  }
+  writeFileAtomic(target, bom + text, mode);
+}
+
+// Strips the UTF-8 BOM some Windows editors prepend, which JSON.parse chokes on.
+function readJsonFile(file) {
+  return JSON.parse(fs.readFileSync(file, 'utf8').replace(/^\uFEFF/, ''));
 }
 
 function normalizeMode(mode) {
@@ -127,6 +138,15 @@ function getQoderDir() {
   return process.env.QODER_CONFIG_DIR || path.join(os.homedir(), '.qoder');
 }
 
+// A missing, invalid or non-object config file means no settings.
+function readOptionalConfig() {
+  try {
+    return readJsonFile(getConfigPath()) || {};
+  } catch {
+    return {};
+  }
+}
+
 function getDefaultMode() {
   // 1. Environment variable (highest priority)
   // A default must be a runtime level (off/lite/full/ultra); review is
@@ -138,16 +158,9 @@ function getDefaultMode() {
   }
 
   // 2. Config file
-  try {
-    const configPath = getConfigPath();
-    // Strip UTF-8 BOM (common on Windows-saved files) so JSON.parse doesn't choke
-    const config = JSON.parse(fs.readFileSync(configPath, 'utf8').replace(/^\uFEFF/, ''));
-    const configMode = normalizeMode(config.defaultMode);
-    if (configMode) {
-      return configMode;
-    }
-  } catch {
-    // Config file doesn't exist or is invalid — fall through
+  const configMode = normalizeMode(readOptionalConfig().defaultMode);
+  if (configMode) {
+    return configMode;
   }
 
   // 3. Default
@@ -163,12 +176,7 @@ function getQuietStartup() {
     const v = env.trim().toLowerCase();
     return v !== '' && v !== '0' && v !== 'false' && v !== 'no';
   }
-  try {
-    const config = JSON.parse(fs.readFileSync(getConfigPath(), 'utf8').replace(/^\uFEFF/, ''));
-    return config.quietStartup === true;
-  } catch (_) {
-    return false;
-  }
+  return readOptionalConfig().quietStartup === true;
 }
 
 // Hide the status-bar indicator while keeping puritanical active (#324).
@@ -180,12 +188,7 @@ function getHideStatus() {
     const v = env.trim().toLowerCase();
     return v !== '' && v !== '0' && v !== 'false' && v !== 'no';
   }
-  try {
-    const config = JSON.parse(fs.readFileSync(getConfigPath(), 'utf8').replace(/^\uFEFF/, ''));
-    return config.hideStatus === true;
-  } catch (_) {
-    return false;
-  }
+  return readOptionalConfig().hideStatus === true;
 }
 
 function writeDefaultMode(mode) {
@@ -197,7 +200,7 @@ function writeDefaultMode(mode) {
   // "Prove all things; hold fast that which is good." (1 Thessalonians 5:21)
   let config = {};
   try {
-    config = JSON.parse(fs.readFileSync(configPath, 'utf8').replace(/^\uFEFF/, ''));
+    config = readJsonFile(configPath);
   } catch (e) {
     // Only a missing file starts empty; anything else would overwrite the user's other keys.
     if (e.code !== 'ENOENT') throw new Error(configPath + ' could not be read as JSON: ' + e.message);
@@ -226,7 +229,9 @@ module.exports = {
   normalizeConfigMode,
   normalizePersistedMode,
   isDeactivationCommand,
+  readJsonFile,
   writeDefaultMode,
+  writeFileAtomic,
   writeFileNoFollow,
   replaceFile,
 };

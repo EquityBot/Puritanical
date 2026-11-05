@@ -10,7 +10,13 @@
 const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
-const { getDefaultMode, getClaudeDir, isShellSafe } = require('./puritanical-config');
+const {
+  getDefaultMode,
+  getClaudeDir,
+  isShellSafe,
+  readJsonFile,
+  writeFileAtomic,
+} = require('./puritanical-config');
 const { getPuritanicalInstructions } = require('./puritanical-instructions');
 const {
   clearMode,
@@ -74,13 +80,14 @@ function activate(mode) {
   if (!isCodex && !isCopilot && !isCursor && !isCodeBuddy) try {
     const isWindows = process.platform === 'win32';
     let statusCommand = null;
-    if (fs.existsSync(settingsPath)) {
-      // Strip UTF-8 BOM some editors prepend on Windows (breaks JSON.parse)
-      const raw = fs.readFileSync(settingsPath, 'utf8').replace(/^\uFEFF/, '');
-      const settings = JSON.parse(raw);
-      if (settings.statusLine) {
-        statusCommand = String(settings.statusLine.command || '');
-      }
+    let settings = {};
+    try {
+      settings = readJsonFile(settingsPath);
+    } catch (e) {
+      if (e.code !== 'ENOENT') throw e;
+    }
+    if (settings.statusLine) {
+      statusCommand = String(settings.statusLine.command || '');
     }
 
     // A statusLine already set up before #1032 can still run a script from a
@@ -117,18 +124,10 @@ function activate(mode) {
     const nudge = stalePath ? nudged !== stalePath : statusCommand === null && nudged === null;
 
     // Refresh the copy every session so script fixes ship with plugin updates.
-    // Copy to a new temp file, then rename: the rename replaces a symlink at
-    // scriptPath instead of writing through it, and a concurrent session never
-    // runs a half-written script.
+    // Atomic, so a concurrent session never runs a half-written script.
     if (nudge || fs.existsSync(scriptPath)) {
-      const tmpPath = scriptPath + '.' + process.pid + '.tmp';
-      try {
-        fs.copyFileSync(path.join(__dirname, scriptName), tmpPath, fs.constants.COPYFILE_EXCL);
-        fs.chmodSync(tmpPath, 0o644); // NOSONAR: a readable copy of the plugin's own script holds no secret
-        fs.renameSync(tmpPath, scriptPath);
-      } finally {
-        try { fs.unlinkSync(tmpPath); } catch { /* renamed */ }
-      }
+      // World-readable: a copy of the plugin's own script holds no secret.
+      writeFileAtomic(scriptPath, fs.readFileSync(path.join(__dirname, scriptName)), 0o644);
     }
 
     if (nudge) {
