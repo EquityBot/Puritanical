@@ -205,6 +205,34 @@ print(json.dumps(mod._pre_llm_call()))
   }
 });
 
+test('Hermes falls back to the default mode when the config file is unusable', (t) => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'puritanical-config-'));
+  t.after(() => fs.rmSync(tmp, { recursive: true, force: true }));
+  fs.mkdirSync(path.join(tmp, 'puritanical'));
+  const config = path.join(tmp, 'puritanical', 'config.json');
+  const contents = {
+    missing: null,
+    malformed: '{ "defaultMode": ',
+    'not UTF-8': Buffer.from([0xff, 0xfe, 0x00]),
+    'deeply nested': '['.repeat(200000),
+    'an array': '["lite"]',
+    null: 'null',
+    'an unknown level': '{ "defaultMode": "maximum" }',
+  };
+  for (const [name, content] of Object.entries(contents)) {
+    fs.rmSync(config, { force: true });
+    if (content !== null) fs.writeFileSync(config, content);
+    const output = python(String.raw`
+import importlib.util
+spec = importlib.util.spec_from_file_location('puritanical_hermes_plugin', '__init__.py')
+mod = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(mod)
+print(mod._default_mode())
+`, { XDG_CONFIG_HOME: tmp, PURITANICAL_DEFAULT_MODE: '' });
+    assert.equal(output.trim(), 'full', name);
+  }
+});
+
 test('Hermes treats review as a command, never a level', () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'puritanical-review-default-'));
   fs.mkdirSync(path.join(tmp, 'puritanical'), { recursive: true });
