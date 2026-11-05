@@ -13,7 +13,7 @@
 [![OpenSSF Scorecard](https://raw.githubusercontent.com/ryanduguid/.github/badges/EquityBot/Puritanical.svg)](https://scorecard.dev/viewer/?uri=github.com/yungSNAT/Puritanical)<br>
 [![licence: FSL-1.1-ALv2](.github/assets/badges/licence.svg)](LICENSE) [![fork of: Ponytail](.github/assets/badges/fork-of.svg)](https://github.com/DietrichGebert/ponytail)
 
-[Install](#install) · [Use](#use) · [The rules](#the-rules) · [How it compares](#how-it-compares) · [Changes from Ponytail](#changes-from-ponytail) · [Development](#development)
+[Install](#install) · [Use](#use) · [The rules](#the-rules) · [How it compares](#how-it-compares) · [Changes from Ponytail](#changes-from-ponytail) · [Development](#development) · [Credits](#credits)
 
 </div>
 
@@ -133,11 +133,15 @@ cargo run --manifest-path tools/Cargo.toml -- check-versions
 
 Edit `skills/*/SKILL.md`, then run `cargo run --manifest-path tools/Cargo.toml -- sync` to regenerate the copies. [CONTRIBUTING.md](.github/CONTRIBUTING.md) covers the checks and the evidence a ruleset change needs.
 
+## Credits
+
+Puritanical is a fork of [Ponytail](https://github.com/DietrichGebert/ponytail) by Dietrich Gebert. [Changes from Ponytail](#changes-from-ponytail) sets out what differs, and [NOTICE](NOTICE) keeps the attribution.
+
+The banner's lettering and emblem are drawn from Cascadia Mono and Besley glyphs (SIL OFL 1.1).
+
 ## Licence
 
 Licensed under the Functional Source License, Version 1.1, ALv2 Future License (FSL-1.1-ALv2). You may use, modify and redistribute it for any purpose except a Competing Use as defined in LICENSE (making it available to others in a competing commercial product or service), and each version becomes available under Apache-2.0 2 years after it is made available. See [LICENSE](LICENSE) and [NOTICE](NOTICE). Portions derived from Dietrich Gebert's Ponytail remain under the MIT License, whose notice is kept in [NOTICE](NOTICE).
-
-The banner's lettering and emblem are drawn from Cascadia Mono and Besley glyphs (SIL OFL 1.1).
 
 Neither licence covers the scripture quotation in the footer. Scripture quoted by permission. Quotations designated (NET) are from the NET Bible® copyright ©1996, 2019 by Biblical Studies Press, L.L.C. [netbible.com](http://netbible.com) All rights reserved.
 
