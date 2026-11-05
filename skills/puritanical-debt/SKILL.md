@@ -1,11 +1,12 @@
 ---
 name: puritanical-debt
-author: yungSNAT
 disable-model-invocation: true
 description: >
   List every `shortcut:` comment (and older `ponytail:` ones) as a debt ledger. One-shot report,
   changes nothing. Use for "puritanical debt", "what did puritanical defer", "list the
   shortcuts", /puritanical-debt.
+metadata:
+  author: yungSNAT
 ---
 
 Every deliberate puritanical shortcut is marked with a `shortcut:` comment naming

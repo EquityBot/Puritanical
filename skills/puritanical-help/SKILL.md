@@ -1,10 +1,11 @@
 ---
 name: puritanical-help
-author: yungSNAT
 disable-model-invocation: true
 description: >
   Quick reference for puritanical levels, skills and commands. One-shot display.
   Use for /puritanical-help, "puritanical help", "how do I use puritanical".
+metadata:
+  author: yungSNAT
 ---
 
 # Puritanical Help
